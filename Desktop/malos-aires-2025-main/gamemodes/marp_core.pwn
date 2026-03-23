@@ -210,6 +210,7 @@ new socialPay;
 #include "system\marp_key_chain.pwn" 			//Sistema de llaveros
 #include "player/marp_inventory.pwn" 			//Sistema de inventario
 #include "system/marp_hotkeys.pwn"				//Sistema de teclas rapidas
+#include "player/marp_holster.pwn"			//Sistema de funda de cadera (/cadera)
 #include "player/marp_duty_belt.pwn"
 #include "vehicle/marp_vehicles.pwn" 			//Sistema de vehiculos
 #include "vehicle/marp_speedo.pwn"

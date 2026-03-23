@@ -6,11 +6,12 @@
 #define HAND_LEFT						(0)
 #define HAND_RIGHT						(1)
 
-// Índices reservados de objetos adjuntos
+// ï¿½ndices reservados de objetos adjuntos
 #define ATTACH_INDEX_ID_HAND_LEFT		(9)
 #define ATTACH_INDEX_ID_HAND_RIGHT		(8)
 #define ATTACH_INDEX_ID_BACK			(7)
 #define ATTACH_INDEX_ID_HANDCUFFS		(6)
+#define ATTACH_INDEX_ID_HOLSTER			(5)  // Funda de cadera (slot 5 reservado; TOY_MAX_AMOUNT reducido a 5)
 
 #define ATTACH_BONE_ID_SPINE			(1)
 #define ATTACH_BONE_ID_HEAD				(2)

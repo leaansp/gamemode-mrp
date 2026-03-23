@@ -5,7 +5,7 @@
 
 #include <YSI_Coding\y_hooks>
 
-const TOY_MAX_AMOUNT = 6;
+const TOY_MAX_AMOUNT = 5; // Slot 5 reservado para ATTACH_INDEX_ID_HOLSTER (funda de cadera)
 
 enum e_TOY_UNLOAD_TYPE
 {
@@ -54,7 +54,7 @@ hook OnPlayerSpawn(playerid)
 {
 	ToyDataPlayerSpawned[playerid] = 1;
 
-	// Si todavía no devolvió la query de carga inicial, el iterador estará vacío y no efectuará ninguna carga
+	// Si todavï¿½a no devolviï¿½ la query de carga inicial, el iterador estarï¿½ vacï¿½o y no efectuarï¿½ ninguna carga
 	Toy_AttachAllGraphicObjects(playerid);
 	return 1;
 }
@@ -90,7 +90,7 @@ public Toy_OnDataLoad(playerid)
 		Iter_Add(ToyData[playerid], toyid);
 		Toy_OnLoaded(playerid, ToyData[playerid][toyid][tItemId], ToyData[playerid][toyid][tParam]);
 
-		// Si el cliente ya hizo el spawn inicial antes de la obtención de las posiciones y no pudo cargar los toys, los cargamos acá
+		// Si el cliente ya hizo el spawn inicial antes de la obtenciï¿½n de las posiciones y no pudo cargar los toys, los cargamos acï¿½
 		if(ToyDataPlayerSpawned[playerid]) {
 			Toy_AttachGraphicObject(playerid, toyid, .useCachePos = true);
 		}
@@ -308,10 +308,13 @@ public Toy_OnSavedPosLoaded(playerid, toyid, itemid)
 	return 1;
 }
 
-public OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ)
+forward Holster_OnEditAttached(playerid, response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ);
+
+hook OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ)
 {
+	if(index == ATTACH_INDEX_ID_HOLSTER) return Holster_OnEditAttached(playerid, response, index, modelid, boneid, fOffsetX, fOffsetY, fOffsetZ, fRotX, fRotY, fRotZ, fScaleX, fScaleY, fScaleZ);
 	if(!response)
-		return 0;
+		return 1;
 
 	RemovePlayerAttachedObject(playerid, index);
 	SetPlayerAttachedObject(playerid, index, modelid, boneid, fOffsetX, fOffsetY, fOffsetZ, fRotX, fRotY, fRotZ, fScaleX, fScaleY, fScaleZ);
@@ -395,7 +398,7 @@ Toy_TakeItem(playerid, playerhand, toyid)
 	new itemid, param;
 
 	if(!Toy_Remove(playerid, toyid, itemid, param))
-		return SendClientMessage(playerid, COLOR_YELLOW2, "número de toy inválido o no puedes quitártelo en este momento.");
+		return SendClientMessage(playerid, COLOR_YELLOW2, "nï¿½mero de toy invï¿½lido o no puedes quitï¿½rtelo en este momento.");
 
 	new str[128];
 	format(str, sizeof(str), "Se quita %s.", ItemModel_GetName(itemid));
@@ -425,7 +428,7 @@ CMD:toy(playerid, params[])
 	else if(!strcmp(subcmd, "editar", true))
 	{
 		if(!Toy_Edit(playerid, toyid))
-			return SendClientMessage(playerid, COLOR_YELLOW2, "número de toy inválido.");
+			return SendClientMessage(playerid, COLOR_YELLOW2, "nï¿½mero de toy invï¿½lido.");
 	}
 	return 1;
 }
