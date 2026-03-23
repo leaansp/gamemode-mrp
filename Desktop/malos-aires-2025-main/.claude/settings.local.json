@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find C:UsersAdminDesktopmalos-aires-2025-main -type f -name *.pwn)",
+      "Bash(grep -rn \"SendFactionMessage\\\\|SendFactionRadioMessage\" C:UsersAdminDesktopmalos-aires-2025-maingamemodes --include=*.pwn)",
+      "Bash(find C:UsersAdminDesktopmalos-aires-2025-maingamemodes -name *.pwn -exec grep -l \"entradera\\\\|robo\\\\|911\\\\|delito\\\\|asalto\" {})",
+      "Bash(2)",
+      "Bash(grep -rn \"entradera\\\\|reportado\\\\|\\\\[911\\\\]\" C:UsersAdminDesktopmalos-aires-2025-maingamemodes --include=*.pwn)"
+    ]
+  }
+}

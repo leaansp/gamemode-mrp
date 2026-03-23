@@ -1,0 +1,61 @@
+{
+	"user": "Malos Aires",
+	"repo": "MalosAiresRolePlay",
+	"entry": "gamemodes/marp_core.pwn",
+	"output": "gamemodes/marp_core.amx",
+	"local": true,
+	"dependencies": [
+        "sampctl/samp-stdlib",
+        "pBlueG/SA-MP-MySQL:R41-4",
+        "samp-incognito/samp-streamer-plugin:v2.9.4",
+        "Y-Less/sscanf:v2.13.8",
+        "IllidanS4/PawnPlus:v1.5.1",
+        "pawn-lang/YSI-Includes:5.10.0006",
+        "Southclaws/zcmd",
+        "Awsomedude/easyDialog"
+	],
+	"build": {
+		"version": "3.10.10",
+		"args": ["-;+", "-(+", "-\\+", "-t4", "-d2", "-O1", "-Z+"],
+		"includes": ["./include/"]
+	},
+	"runtime": {
+		"version":"0.3.DL-R1",
+		"mode": "server",
+		"gamemodes": ["marp_core"],
+		"password": " ",
+		"rcon": false,
+		"rcon_password": "asduty123",
+		"gamemodetext": "MA:RP v1.2.5",
+		"mapname": "Malos Aires",
+		"weburl": "www.pheek.net",
+		"plugins": ["crashdetect", "cstl"],
+		"announce": false,
+		"query": true,
+		"logtimeformat": "[%d/%m/%Y %H:%M:%S]",
+		"chatlogging": false,
+		"stream_distance": 300.0,
+		"maxnpc": 0,
+		"extra": {
+			"useartwork": "1",
+			"crashdetect_log": "logs/crashdetect.log"
+		}
+	},
+	"runtimes": [
+		{
+			"name": "invalid",
+			"rcon_password": "asduty123",
+			"maxplayers": -1
+		},
+		{
+			"name": "test",
+			"port": 7779,
+			"maxplayers": 20
+		},
+		{
+			"name": "prod",
+			"port": 7777,
+			"maxplayers": 150
+		}
+	]
+}
