@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Malos Aires RP — Progreso sesión 23/03/2026</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 960px; margin: 40px auto; color: #222; line-height: 1.6; }
+  h1 { background: #1a1a2e; color: #e0c97f; padding: 20px 28px; border-radius: 8px; font-size: 1.5em; margin-bottom: 4px; }
+  h2 { color: #1a1a2e; border-bottom: 2px solid #e0c97f; padding-bottom: 4px; margin-top: 36px; }
+  h3 { color: #444; margin-top: 20px; }
+  .subtitle { color: #555; font-size: 0.95em; margin-bottom: 28px; }
+  .status-ok     { background: #d4edda; border-left: 5px solid #28a745; padding: 10px 16px; border-radius: 4px; margin: 8px 0; }
+  .status-bug    { background: #fff3cd; border-left: 5px solid #ffc107; padding: 10px 16px; border-radius: 4px; margin: 8px 0; }
+  .status-err    { background: #f8d7da; border-left: 5px solid #dc3545; padding: 10px 16px; border-radius: 4px; margin: 8px 0; }
+  .status-info   { background: #d1ecf1; border-left: 5px solid #17a2b8; padding: 10px 16px; border-radius: 4px; margin: 8px 0; }
+  code { background: #f4f4f4; border: 1px solid #ddd; border-radius: 3px; padding: 1px 6px; font-family: Consolas, monospace; font-size: 0.92em; }
+  pre  { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: Consolas, monospace; font-size: 0.85em; line-height: 1.55; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th { background: #1a1a2e; color: #e0c97f; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f9f9f9; }
+  ul li { margin: 4px 0; }
+  ol li { margin: 4px 0; }
+  .tag { display: inline-block; background: #1a1a2e; color: #e0c97f; border-radius: 12px; padding: 1px 10px; font-size: 0.82em; margin-left: 6px; vertical-align: middle; }
+  .tag-green  { background: #28a745; color: #fff; }
+  .tag-red    { background: #dc3545; color: #fff; }
+  .tag-yellow { background: #856404; color: #fff; }
+  .tag-blue   { background: #17a2b8; color: #fff; }
+  .section-divider { border: none; border-top: 1px solid #e0c97f; margin: 40px 0; }
+  footer { margin-top: 48px; color: #999; font-size: 0.85em; border-top: 1px solid #eee; padding-top: 12px; }
+  @media print {
+    body { margin: 20px; }
+    pre  { white-space: pre-wrap; word-break: break-all; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Malos Aires RP &mdash; Informe de sesión</h1>
+<div class="subtitle">
+  Fecha: 23 de marzo de 2026 &nbsp;|&nbsp;
+  Branch: <code>feature/hotkeys</code> &nbsp;|&nbsp;
+  Desarrollador: santog
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>1. Sistema de Hotkeys <span class="tag tag-green">COMPLETADO</span></h2>
+
+<h3>Descripción</h3>
+<p>
+  Se implementó un sistema de teclas rápidas que permite a los jugadores interactuar con el mundo
+  sin necesidad de escribir comandos. Funciona mediante el hook <code>OnPlayerKeyStateChange</code>
+  detectando combinaciones de teclas en tiempo real.
+</p>
+
+<h3>Archivos modificados</h3>
+<table>
+  <tr><th>Archivo</th><th>Cambio</th></tr>
+  <tr><td><code>gamemodes/player/marp_inventory.pwn</code></td><td>Hook <code>OnPlayerKeyStateChange</code> — lógica de todas las teclas rápidas</td></tr>
+  <tr><td><code>gamemodes/system/marp_hotkeys.pwn</code></td><td>Archivo nuevo — comando <code>/teclas</code> con lista de atajos</td></tr>
+  <tr><td><code>gamemodes/marp_core.pwn</code></td><td>Agregado <code>#include "system/marp_hotkeys.pwn"</code></td></tr>
+</table>
+
+<h3>Teclas implementadas</h3>
+<table>
+  <tr><th>Tecla</th><th>Contexto</th><th>Acción</th></tr>
+  <tr><td><code>H</code> (GROUP_CONTROL_BWD)</td><td>A pie</td><td>Entrar/salir edificios, casas, negocios</td></tr>
+  <tr><td><code>Alt izq</code></td><td>A pie</td><td>Trabajo de basura / recargar arma</td></tr>
+  <tr><td><code>Alt + Y</code></td><td>A pie</td><td>Intercambiar manos (<code>/mano cambiar</code>)</td></tr>
+  <tr><td><code>Shift + Y</code></td><td>A pie</td><td>Guardar mano derecha al inventario</td></tr>
+  <tr><td><code>Y</code></td><td>A pie</td><td>Abrir inventario</td></tr>
+  <tr><td><code>N</code></td><td>A pie</td><td>Agarrar objeto del suelo / guardar mano derecha</td></tr>
+  <tr><td><code>Alt + N</code></td><td>A pie</td><td>Guardar mano izquierda al inventario</td></tr>
+  <tr><td><code>Shift + N</code></td><td>A pie</td><td>Tirar item mano derecha (sin animación)</td></tr>
+  <tr><td><code>Alt + Click derecho</code></td><td>A pie</td><td>Cerrar maletero del vehículo cercano</td></tr>
+  <tr><td><code>Espacio + Click derecho</code></td><td>A pie</td><td>Usar maletero del vehículo cercano</td></tr>
+  <tr><td><code>Numpad 2</code></td><td>En vehículo</td><td>Encender/apagar motor</td></tr>
+  <tr><td><code>N</code></td><td>En vehículo</td><td>Cinturón de seguridad</td></tr>
+</table>
+
+<h3>Limitación SA-MP documentada</h3>
+<div class="status-bug">
+  <strong>Alt, Shift y combos NO funcionan en vehículo</strong> vía <code>OnPlayerKeyStateChange</code>.<br>
+  Solo disparan en vehículo: <code>KEY_NO (N)</code>, <code>KEY_YES (Y)</code>, <code>KEY_CROUCH (C)</code>, <code>KEY_SUBMISSION (Numpad2)</code>.<br>
+  Por eso <strong>luces y puertas del vehículo no tienen hotkey</strong> — se usan los comandos <code>/vehluces</code> y <code>/vehpuertas</code>.
+</div>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>2. Sistema de Funda de Cadera (<code>/cadera</code>) <span class="tag tag-yellow">EN PROGRESO — pendiente testeo</span></h2>
+
+<h3>Descripción</h3>
+<p>
+  Sistema que permite a los jugadores guardar armas cortas (pistolas, subfusiles compactos)
+  en la cadera con representación visual mediante <code>SetPlayerAttachedObject</code> en el
+  hueso del muslo derecho (<code>ATTACH_BONE_ID_RIGHT_THIGH = 8</code>). El arma persiste entre
+  relogueos vía MySQL. La posición del attachment es editable por cada jugador individualmente
+  con <code>/cadera editar</code>.
+</p>
+
+<h3>Archivos modificados</h3>
+<table>
+  <tr><th>Archivo</th><th>Tipo</th><th>Cambio</th></tr>
+  <tr><td><code>gamemodes/player/marp_holster.pwn</code></td><td><span class="tag tag-blue">NUEVO</span></td><td>Sistema completo de funda de cadera</td></tr>
+  <tr><td><code>gamemodes/item/marp_item_model_data.pwn</code></td><td><span class="tag tag-yellow">MODIFICADO</span></td><td>Agregado <code>ITEM_TAG_HOLSTER</code> al enum y taggeadas 19 armas</td></tr>
+  <tr><td><code>gamemodes/item/marp_item_model_ids.pwn</code></td><td><span class="tag tag-yellow">MODIFICADO</span></td><td>Agregado <code>#define ATTACH_INDEX_ID_HOLSTER (5)</code></td></tr>
+  <tr><td><code>gamemodes/item/marp_toy.pwn</code></td><td><span class="tag tag-yellow">MODIFICADO</span></td><td>Reducido <code>TOY_MAX_AMOUNT</code> 6→5; agregado forward a <code>Holster_OnEditAttached</code></td></tr>
+  <tr><td><code>gamemodes/marp_core.pwn</code></td><td><span class="tag tag-yellow">MODIFICADO</span></td><td>Agregado <code>#include "player/marp_holster.pwn"</code></td></tr>
+  <tr><td><code>database/holster.sql</code></td><td><span class="tag tag-blue">NUEVO</span></td><td>CREATE TABLE para la tabla <code>holster</code></td></tr>
+</table>
+
+<h3>Detalle: <code>marp_holster.pwn</code></h3>
+
+<p><strong>Variables estáticas por jugador:</strong></p>
+<pre>static HolsterItem[MAX_PLAYERS];           // itemid en la funda (0 = vacía)
+static HolsterParam[MAX_PLAYERS];          // munición/param del arma
+static Float:HolsterPos[MAX_PLAYERS][6];   // x, y, z, rx, ry, rz
+static Float:HolsterScale[MAX_PLAYERS][3]; // sx, sy, sz
+static bool:HolsterEditing[MAX_PLAYERS];   // flag modo edición activo</pre>
+
+<p><strong>Hooks implementados:</strong></p>
+<table>
+  <tr><th>Hook</th><th>Acción</th></tr>
+  <tr><td><code>OnPlayerDisconnect</code></td><td>Limpia datos en memoria</td></tr>
+  <tr><td><code>OnPlayerSpawn</code></td><td>Re-attachea el arma con timer de 100ms</td></tr>
+  <tr><td><code>LoadAccountDataEnded</code></td><td>Dispara SELECT desde MySQL al terminar el login</td></tr>
+</table>
+
+<p><strong>Callbacks públicas:</strong></p>
+<table>
+  <tr><th>Callback</th><th>Acción</th></tr>
+  <tr><td><code>Holster_OnLoad(playerid)</code></td><td>Procesa resultado del SELECT al cargar cuenta — lee item, param y posición</td></tr>
+  <tr><td><code>Holster_AttachDelayed(playerid)</code></td><td>Timer de 100ms — llama a <code>Holster_Attach</code> con delay</td></tr>
+  <tr><td><code>Holster_OnEditAttached(...)</code></td><td>Procesa resultado de <code>EditAttachedObject</code>, actualiza posición y guarda en DB</td></tr>
+</table>
+
+<p><strong>Funciones internas (static):</strong></p>
+<table>
+  <tr><th>Función</th><th>Descripción</th></tr>
+  <tr><td><code>Holster_SetDefaultPos</code></td><td>Inicializa posición por defecto (x=0.08, y=0.07, z=-0.10, escala 0.8)</td></tr>
+  <tr><td><code>Holster_Attach</code></td><td>Llama a <code>SetPlayerAttachedObject</code> en slot 5, hueso RIGHT_THIGH</td></tr>
+  <tr><td><code>Holster_Detach</code></td><td>Llama a <code>RemovePlayerAttachedObject</code> slot 5</td></tr>
+  <tr><td><code>Holster_SaveItemToDB</code></td><td>INSERT … ON DUPLICATE KEY UPDATE — guarda itemid y param</td></tr>
+  <tr><td><code>Holster_SavePosToDB</code></td><td>INSERT … ON DUPLICATE KEY UPDATE — guarda posición/rotación/escala</td></tr>
+</table>
+
+<p><strong>API pública (stock):</strong></p>
+<table>
+  <tr><th>Función</th><th>Descripción</th></tr>
+  <tr><td><code>Holster_IsEligible(itemid)</code></td><td>Verifica que el item sea ITEM_WEAPON y tenga ITEM_TAG_HOLSTER</td></tr>
+  <tr><td><code>Holster_IsEmpty(playerid)</code></td><td>Devuelve true si la funda está vacía</td></tr>
+  <tr><td><code>Holster_ClearWeapon(playerid)</code></td><td>Vacía la funda — para usar cuando la policía confisca armas</td></tr>
+</table>
+
+<p><strong>Comando <code>/cadera</code>:</strong></p>
+<table>
+  <tr><th>Uso</th><th>Resultado</th></tr>
+  <tr><td><code>/cadera</code></td><td>Si funda vacía: guarda arma de la mano. Si funda llena: saca arma a mano libre.</td></tr>
+  <tr><td><code>/cadera editar</code></td><td>Abre editor visual de posición (<code>EditAttachedObject</code>). Al confirmar guarda en DB.</td></tr>
+  <tr><td><code>/cadera guardar</code></td><td>Guarda la posición actual en DB manualmente.</td></tr>
+</table>
+
+<h3>Armas taggeadas con <code>ITEM_TAG_HOLSTER</code> (19 armas)</h3>
+<p>
+  BERETTA_PX4_STORM, COLT45, SILENCED, DEAGLE, SAWEDOFF, UZI, TEC9, TASER,
+  BERSA_BP9, GLOCK_19, BALLESTER_MOLINA_45, BERSA_TPR_45, REVOLVER_ROSSI_38,
+  REVOLVER_SW_60, SAWEDOFF_TUMBERA, TAURUS_PT_92, BERETTA_93R, INGRAM_MAC10, SKORPION_VZ68.
+</p>
+
+<h3>Mapa de slots de attachment</h3>
+<table>
+  <tr><th>Slot</th><th>Sistema</th></tr>
+  <tr><td>0 – 4</td><td>Toys (reducido de 6 a 5 para liberar slot 5)</td></tr>
+  <tr><td><strong>5</strong></td><td><strong>Holster — funda de cadera</strong></td></tr>
+  <tr><td>6</td><td>Esposas</td></tr>
+  <tr><td>7</td><td>Espalda / pecho</td></tr>
+  <tr><td>8</td><td>Mano derecha</td></tr>
+  <tr><td>9</td><td>Mano izquierda</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>3. Base de datos</h2>
+
+<h3>Tabla nueva: <code>holster</code></h3>
+<p>Una fila por jugador (PRIMARY KEY = <code>playerid</code> de la tabla <code>accounts</code>).
+  Se usa <code>INSERT … ON DUPLICATE KEY UPDATE</code> para upsert en cada guardado.</p>
+
+<pre>CREATE TABLE IF NOT EXISTS `holster` (
+    `playerid` INT UNSIGNED NOT NULL,
+    `itemid`   INT UNSIGNED NOT NULL DEFAULT 0,
+    `param`    INT UNSIGNED NOT NULL DEFAULT 0,
+    `pos_x`    FLOAT NOT NULL DEFAULT 0.08,
+    `pos_y`    FLOAT NOT NULL DEFAULT 0.07,
+    `pos_z`    FLOAT NOT NULL DEFAULT -0.10,
+    `rot_x`    FLOAT NOT NULL DEFAULT 0.0,
+    `rot_y`    FLOAT NOT NULL DEFAULT 0.0,
+    `rot_z`    FLOAT NOT NULL DEFAULT 0.0,
+    `sc_x`     FLOAT NOT NULL DEFAULT 0.8,
+    `sc_y`     FLOAT NOT NULL DEFAULT 0.8,
+    `sc_z`     FLOAT NOT NULL DEFAULT 0.8,
+    PRIMARY KEY (`playerid`)
+);</pre>
+
+<table>
+  <tr><th>Columna</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>playerid</code></td><td>INT UNSIGNED</td><td>ID del jugador (clave primaria, referencia a <code>accounts</code>)</td></tr>
+  <tr><td><code>itemid</code></td><td>INT UNSIGNED</td><td>ID del item guardado en la funda (0 = vacía)</td></tr>
+  <tr><td><code>param</code></td><td>INT UNSIGNED</td><td>Munición u otro parámetro del item</td></tr>
+  <tr><td><code>pos_x / pos_y / pos_z</code></td><td>FLOAT</td><td>Offset de posición del attachment</td></tr>
+  <tr><td><code>rot_x / rot_y / rot_z</code></td><td>FLOAT</td><td>Rotación del attachment</td></tr>
+  <tr><td><code>sc_x / sc_y / sc_z</code></td><td>FLOAT</td><td>Escala del attachment</td></tr>
+</table>
+
+<div class="status-ok">
+  <strong>Estado:</strong> Tabla creada correctamente en la DB de testing.
+  phpMyAdmin confirmó la ejecución con "conjunto de valores vacío" — mensaje normal para queries DDL.
+</div>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>4. Problemas resueltos durante el desarrollo</h2>
+
+<h3>Problema 1 — Conflicto de símbolo al compilar</h3>
+<div class="status-ok">
+  <strong>Causa:</strong> <code>OnPlayerEditAttachedObject</code> supera 31 caracteres, límite del compilador Pawn.
+  Al hookear ese callback en dos archivos (<code>marp_toy.pwn</code> y <code>marp_holster.pwn</code>)
+  el compilador truncaba el símbolo y generaba un conflicto de nombre duplicado.<br><br>
+  <strong>Solución:</strong> El hook <code>OnPlayerEditAttachedObject</code> se dejó <em>únicamente</em>
+  en <code>marp_toy.pwn</code>. Dentro de ese hook, cuando <code>index == ATTACH_INDEX_ID_HOLSTER</code>,
+  se llama al forward <code>Holster_OnEditAttached(...)</code> definido en <code>marp_holster.pwn</code>.
+  Build exitoso.
+</div>
+
+<h3>Problema 2 — Toy invisible al hacer <code>/cadera</code></h3>
+<div class="status-ok">
+  <strong>Causa identificada:</strong> La secuencia en <code>CMD:cadera</code> llama a
+  <code>SetHandItemAndParam(playerid, hand, 0, 0)</code> que internamente ejecuta
+  <code>Weapon_RemoveFromPlayer</code> → <code>ResetPlayerWeapons</code>.
+  Esa llamada al motor de SA-MP genera un re-sync del personaje en el cliente que puede pisar
+  el <code>SetPlayerAttachedObject</code> llamado inmediatamente después en el mismo tick del servidor.<br><br>
+  <strong>Solución:</strong> Se reemplazó la llamada directa a <code>Holster_Attach(playerid)</code>
+  por un timer de 100ms (<code>SetTimerEx("Holster_AttachDelayed", 100, false, "i", playerid)</code>).
+  Lo mismo se aplicó al hook <code>OnPlayerSpawn</code> donde el spawn del cliente también resetea attachments.
+</div>
+
+<h3>Problema 3 — Toy invisible al spawnear / reloguear</h3>
+<div class="status-ok">
+  <strong>Causa:</strong> <code>OnPlayerSpawn</code> se dispara en el momento exacto del spawn,
+  antes de que el cliente termine de cargar el modelo del jugador. Cualquier
+  <code>SetPlayerAttachedObject</code> llamado en ese instante puede perderse.<br><br>
+  <strong>Solución:</strong> Mismo timer de 100ms aplicado al hook de spawn.
+</div>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>5. Estado del repositorio</h2>
+
+<table>
+  <tr><th>Item</th><th>Estado</th></tr>
+  <tr><td>Sistema de hotkeys</td><td>✅ Completo — build OK</td></tr>
+  <tr><td>Sistema /cadera (código)</td><td>✅ Build OK</td></tr>
+  <tr><td>Tabla <code>holster</code> en DB</td><td>✅ Creada en testing</td></tr>
+  <tr><td>Fix toy invisible (timer 100ms)</td><td>⏳ Aplicado — pendiente testeo en servidor</td></tr>
+  <tr><td>Bug persistencia entre relogueos</td><td>⏳ Pendiente testeo (depende de tabla en DB)</td></tr>
+  <tr><td>Push a GitHub</td><td>⏸ En espera de confirmación tras testeo</td></tr>
+</table>
+
+<h3>Próximos pasos</h3>
+<ol>
+  <li>Levantar servidor con <code>sampctl run test</code>.</li>
+  <li>Hacer <code>/cadera</code> con un arma en la mano — verificar que aparece el modelo visual en la cadera.</li>
+  <li>Reconectar y verificar que el arma sigue en la cadera.</li>
+  <li>Si el visual sigue invisible: investigar si el <code>objectModel</code> del arma (ej. 346) es visible en 0.3DL o hay que usar el modelo custom (20000+).</li>
+  <li>Una vez todo funcione: <code>git push origin feature/hotkeys</code>.</li>
+</ol>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>6. Resumen de archivos tocados en la sesión</h2>
+
+<table>
+  <tr><th>Archivo</th><th>Tipo de cambio</th></tr>
+  <tr><td><code>gamemodes/player/marp_inventory.pwn</code></td><td>Modificado — hotkeys</td></tr>
+  <tr><td><code>gamemodes/system/marp_hotkeys.pwn</code></td><td>Nuevo — comando /teclas</td></tr>
+  <tr><td><code>gamemodes/player/marp_holster.pwn</code></td><td>Nuevo — sistema /cadera completo</td></tr>
+  <tr><td><code>gamemodes/item/marp_item_model_data.pwn</code></td><td>Modificado — ITEM_TAG_HOLSTER + 19 armas</td></tr>
+  <tr><td><code>gamemodes/item/marp_item_model_ids.pwn</code></td><td>Modificado — ATTACH_INDEX_ID_HOLSTER</td></tr>
+  <tr><td><code>gamemodes/item/marp_toy.pwn</code></td><td>Modificado — TOY_MAX_AMOUNT 6→5, forward holster</td></tr>
+  <tr><td><code>gamemodes/marp_core.pwn</code></td><td>Modificado — #include marp_hotkeys y marp_holster</td></tr>
+  <tr><td><code>database/holster.sql</code></td><td>Nuevo — CREATE TABLE holster</td></tr>
+</table>
+
+<footer>
+  Generado el 23/03/2026 &nbsp;|&nbsp; Malos Aires Roleplay &nbsp;|&nbsp; SA-MP 0.3DL
+</footer>
+</body>
+</html>

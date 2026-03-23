@@ -11,13 +11,12 @@ PrintInvForPlayer(playerid, targetid) {
 	return true;
 }
 
-static const KEY_CUSTOM_INV_SAVE   = KEY_SPRINT | KEY_YES; // Correr + Y â†’ guardar mano derecha
-static const KEY_CUSTOM_MC         = KEY_WALK   | KEY_YES; // Alt + Y   â†’ intercambiar manos
-static const KEY_CUSTOM_QUICK_DROP = KEY_SPRINT | KEY_NO;  // Correr + N â†’ tirar mano derecha
-static const KEY_CUSTOM_INV_SAVE_I = KEY_WALK   | KEY_NO;  // Alt + N   â†’ guardar mano izquierda
+static const KEY_CUSTOM_INV_SAVE   = KEY_SPRINT | KEY_YES; // Correr + Y -> guardar mano derecha
+static const KEY_CUSTOM_MC         = KEY_WALK   | KEY_YES; // Alt + Y   -> intercambiar manos
+static const KEY_CUSTOM_QUICK_DROP = KEY_SPRINT | KEY_NO;  // Correr + N -> tirar mano derecha
+static const KEY_CUSTOM_INV_SAVE_I = KEY_WALK   | KEY_NO;  // Alt + N   -> guardar mano izquierda
 
 hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
-	// --- Combos con Y ---
 	if(KEY_PRESSED_MULTI(KEY_CUSTOM_INV_SAVE))
 	{
 		Inv_SaveItem(playerid, GetHandItem(playerid, HAND_RIGHT), HAND_RIGHT);
@@ -53,13 +52,12 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
 
 	if(KEY_PRESSED_SINGLE(KEY_NO))
 	{
-		if(SearchHandsForItem(playerid, ITEM_ID_TELEFONO_CELULAR) != -1) return true; // telefono en mano, no interferir
+		if(SearchHandsForItem(playerid, ITEM_ID_TELEFONO_CELULAR) != -1) return true;
 		if(IsPlayerInAnyVehicle(playerid))
 		{
-			cmd_cinturon(playerid, ""); // N en vehiculo â†’ cinturon
+			cmd_cinturon(playerid, "");
 			return ~1;
 		}
-		// Si hay un objeto cerca y tiene una mano libre, agarrar del suelo
 		if(GetClosestObject(playerid) != -1)
 		{
 			if(GetHandItem(playerid, HAND_RIGHT) == 0)
@@ -67,7 +65,7 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
 			else if(GetHandItem(playerid, HAND_LEFT) == 0)
 				TakeObject(playerid, HAND_LEFT);
 			else
-				cmd_guardar(playerid); // ambas manos ocupadas, guardar la derecha
+				cmd_guardar(playerid);
 		}
 		else
 			cmd_guardar(playerid);
@@ -85,7 +83,7 @@ Inv_SaveItem(playerid, itemid, hand) {
 	if(!ItemModel_HasTag(itemid, ITEM_TAG_INV))
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Ese item no se puede guardar en el inventario.");
 	if(Item_IsHandlingCooldownOn(playerid))
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?Deb?s esperar un tiempo antes de volver a interactuar con otro item!");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"¡Debés esperar un tiempo antes de volver a interactuar con otro item!");
 
 	if(!Container_AddItemAndParam(PlayerInfo[playerid][pContainerID], itemid, GetHandParam(playerid, hand)))
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No hay suficiente espacio libre en tu inventario.");
@@ -140,7 +138,7 @@ CMD:sacar(playerid, params[])
 
 	if(Container_TakeItem(PlayerInfo[playerid][pContainerID], slot, itemid, param))
 	{
-		SetHandItemAndParam(playerid, free_hand, itemid, param); // Creaci?n l?gica y grafica en la mano.
+		SetHandItemAndParam(playerid, free_hand, itemid, param); // Creación lógica y grafica en la mano.
 		Item_ApplyHandlingCooldown(playerid);
 		new str[128];
 		format(str, sizeof(str), "Toma un/a %s de su inventario.", ItemModel_GetName(itemid));
@@ -187,7 +185,7 @@ Dialog:Dlg_Show_Inv_Container(playerid, response, listitem, inputtext[])
 
 	if(Container_TakeItem(container_id, slot, itemid, itemparam))
 	{
-		SetHandItemAndParam(playerid, free_hand, itemid, itemparam); // Creaci?n l?gica y grafica en la mano.
+		SetHandItemAndParam(playerid, free_hand, itemid, itemparam); // Creación lógica y grafica en la mano.
 		Item_ApplyHandlingCooldown(playerid);
 		new str[128];
 		format(str, sizeof(str), "saca un/a %s.", ItemModel_GetName(itemid));

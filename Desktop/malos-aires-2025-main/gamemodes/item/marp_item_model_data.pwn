@@ -13,7 +13,7 @@ enum e_ITEM_TAG(<<= 1)
 {
 	ITEM_TAG_INV = 1, // Si se puede guardar en el inventario (mayor prioridad que ITEM_TAG_SAVE en caso de inventario)
 	ITEM_TAG_BACK, // Si se puede guardar en la espalda
-	ITEM_TAG_BOTH_HANDS, // Si requiere ambas manos y animaciï¿½n de carga
+	ITEM_TAG_BOTH_HANDS, // Si requiere ambas manos y animación de carga
 	ITEM_TAG_SAVE, // Si se puede guardar en contenedores
 	ITEM_TAG_GIVE, // Si se puede dar a otro jugador
 	ITEM_TAG_THROW, // Si se puede tirar al piso
@@ -31,19 +31,19 @@ static enum e_ITEM_MODEL_DATA
 	Name[ITEM_MODEL_MAX_NAME_LEN],
 	TextDrawNameString[ITEM_MODEL_MAX_NAME_LEN],
 	ParamName[ITEM_MODEL_MAX_PARAM_NAME_LEN],
-	ParamDefaultValue, // Valor default para el parï¿½metro al crearse el item (en general por compra)
+	ParamDefaultValue, // Valor default para el parámetro al crearse el item (en general por compra)
 	Type,
 	BasePrice,
 	ObjectModel,
 	e_ITEM_TAG:ItemTag,
-	Float:LeftPos[3], // posiciï¿½n para attachear en mano izquierda
-	Float:LeftRot[3], // Rotaciï¿½n para attachear en mano izquierda
+	Float:LeftPos[3], // posición para attachear en mano izquierda
+	Float:LeftRot[3], // Rotación para attachear en mano izquierda
 	Float:LeftScale[3], // Escala para attachear en mano izquierda
-	Float:RightPos[3], // posiciï¿½n para attachear en mano derecha
-	Float:RightRot[3], // Rotaciï¿½n para attachear en mano derecha
+	Float:RightPos[3], // posición para attachear en mano derecha
+	Float:RightRot[3], // Rotación para attachear en mano derecha
 	Float:RightScale[3], // Escala para attachear en mano derecha
-	OccupiedSpace, // Espacio/volï¿½men que ocupa el item en el mundo
-	ExtraId // Campo ï¿½til para referenciar a otras estructuras de datos, segï¿½n convenga
+	OccupiedSpace, // Espacio/volúmen que ocupa el item en el mundo
+	ExtraId // Campo útil para referenciar a otras estructuras de datos, según convenga
 };
 
 static ServerItemModels[ITEM_MODEL_MAX_AMOUNT][e_ITEM_MODEL_DATA] = {
@@ -349,7 +349,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_CANE,
-		.name = "Bastï¿½n",
+		.name = "Bastón",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_WEAPON,
@@ -410,7 +410,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BERETTA_PX4_STORM,
 		.name = "Pistola Beretta PX4 Storm",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 17,
 		.type = ITEM_WEAPON,
 		.basePrice = 10200,
@@ -425,7 +425,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_COLT45,
 		.name = "Pistola Colt 45 9mm",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 17,
 		.type = ITEM_WEAPON,
 		.basePrice = 9000,
@@ -440,7 +440,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_SILENCED,
 		.name = "Pistola 9mm con silenciador",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 17,
 		.type = ITEM_WEAPON,
 		.basePrice = 12000,
@@ -455,7 +455,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_DEAGLE,
 		.name = "Pistola Desert Eagle",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 7,
 		.type = ITEM_WEAPON,
 		.basePrice = 14800,
@@ -470,7 +470,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_SHOTGUN,
 		.name = "Escopeta",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 8,
 		.type = ITEM_WEAPON,
 		.basePrice = 15500,
@@ -485,7 +485,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_SAWEDOFF,
 		.name = "Escopeta recortada",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 2,
 		.type = ITEM_WEAPON,
 		.basePrice = 14000,
@@ -500,7 +500,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_SHOTGSPA,
 		.name = "Escopeta de combate",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 7,
 		.type = ITEM_WEAPON,
 		.basePrice = 32000,
@@ -515,7 +515,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_UZI,
 		.name = "Uzi",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 50,
 		.type = ITEM_WEAPON,
 		.basePrice = 16500,
@@ -530,7 +530,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_MP5,
 		.name = "Subfusil MP-5",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 30,
 		.type = ITEM_WEAPON,
 		.basePrice = 28000,
@@ -545,7 +545,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_AK47,
 		.name = "Fusil AK-47",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 30,
 		.type = ITEM_WEAPON,
 		.basePrice = 40000,
@@ -560,7 +560,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_M4,
 		.name = "Fusil M4",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 50,
 		.type = ITEM_WEAPON,
 		.basePrice = 48000,
@@ -574,8 +574,8 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TEC9,
-		.name = "Pistola semiautomï¿½tica TEC-9",
-		.paramName = "Municiï¿½n",
+		.name = "Pistola semiautomática TEC-9",
+		.paramName = "Munición",
 		.paramDefaultValue = 50,
 		.type = ITEM_WEAPON,
 		.basePrice = 19000,
@@ -590,7 +590,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_RIFLE,
 		.name = "Rifle de caza",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 10,
 		.type = ITEM_WEAPON,
 		.basePrice =  30000,
@@ -605,7 +605,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_SNIPER,
 		.name = "Rifle de francotirador",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 10,
 		.type = ITEM_WEAPON,
 		.basePrice = 75000,
@@ -620,7 +620,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_ROCKETLAUNCHER,
 		.name = "RPG-7",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 1,
 		.type = ITEM_WEAPON,
 		.basePrice = 200000,
@@ -635,7 +635,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_HEATSEEKER,
 		.name = "Lanzamisiles",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 1,
 		.type = ITEM_WEAPON,
 		.basePrice = 250000,
@@ -650,7 +650,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_FLAMETHROWER,
 		.name = "Lanzallamas",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 1,
 		.type = ITEM_WEAPON,
 		.basePrice = 150000,
@@ -665,7 +665,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_MINIGUN,
 		.name = "Minigun",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 1,
 		.type = ITEM_WEAPON,
 		.objectModel = 362,
@@ -731,7 +731,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_CAMARA,
-		.name = "Cï¿½mara fotogrï¿½fica",
+		.name = "Cámara fotográfica",
 		.paramName = "Fotos",
 		.paramDefaultValue = 20,
 		.type = ITEM_WEAPON,
@@ -744,7 +744,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_NIGHT_VISION,
-		.name = "Visiï¿½n nocturna",
+		.name = "Visión nocturna",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_WEAPON,
@@ -755,7 +755,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_THERMAL_VISION,
-		.name = "Visiï¿½n tï¿½rmica",
+		.name = "Visión térmica",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_WEAPON,
@@ -766,7 +766,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_PARACHUTE,
-		.name = "Paracaï¿½das",
+		.name = "Paracaídas",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_WEAPON,
@@ -794,7 +794,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BIDON,
-		.name = "Bidï¿½n de combustible",
+		.name = "Bidón de combustible",
 		.paramName = "Contenido",
 		.paramDefaultValue = 0,
 		.type = ITEM_OTHER,
@@ -874,7 +874,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_CHORIPAN,
-		.name = "Choripï¿½n",
+		.name = "Choripán",
 		.paramName = "Usos",
 		.paramDefaultValue = 3,
 		.type = ITEM_BASIC_NEEDS,
@@ -940,7 +940,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_MALETINDINERO,
-		.name = "Maletï¿½n de dinero",
+		.name = "Maletín de dinero",
 		.paramName = "$",
 		.paramDefaultValue = 1,
 		.type = ITEM_OTHER,
@@ -956,7 +956,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_CASCOCOMUN,
-		.name = "Casco comï¿½n",
+		.name = "Casco común",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -1662,8 +1662,8 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TELEFONO_CELULAR,
-		.name = "telï¿½fono celular negro",
-		.paramName = "nï¿½mero",
+		.name = "teléfono celular negro",
+		.paramName = "número",
 		.paramDefaultValue = 1,
 		.type = ITEM_OTHER,
 		.basePrice = 500,
@@ -1741,7 +1741,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_MEDIC_CASE,
-		.name = "Maletï¿½n de primeros auxilios",
+		.name = "Maletín de primeros auxilios",
 		.paramName = "Usos",
 		.paramDefaultValue = 5,
 		.type = ITEM_TAG_SAVE | ITEM_TAG_GIVE | ITEM_TAG_THROW | ITEM_TAG_USE | ITEM_TAG_BLACK_MARKET,
@@ -1821,7 +1821,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_MALETIN,
-		.name = "Maletï¿½n",
+		.name = "Maletín",
 		.paramName = "Espacio",
 		.paramDefaultValue = 1,
 		.type = ITEM_NONE,
@@ -1837,7 +1837,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_PARLANTE,
-		.name = "Reproductor de mï¿½sica",
+		.name = "Reproductor de música",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_OTHER,
@@ -2201,7 +2201,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_CAFE,
-		.name = "Cafï¿½",
+		.name = "Café",
 		.paramName = "Usos",
 		.paramDefaultValue = 3,
 		.type = ITEM_BASIC_NEEDS,
@@ -2335,7 +2335,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_WANTAN_SALMON,
-		.name = "Wantan de salmï¿½n",
+		.name = "Wantan de salmón",
 		.paramName = "Usos",
 		.paramDefaultValue = 3,
 		.type = ITEM_BASIC_NEEDS,
@@ -2367,7 +2367,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_ENSALADA_CESAR,
-		.name = "Ensalada Cï¿½sar",
+		.name = "Ensalada César",
 		.paramName = "Usos",
 		.paramDefaultValue = 3,
 		.type = ITEM_BASIC_NEEDS,
@@ -2399,7 +2399,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_MUFFINS,
-		.name = "Muffins con cafï¿½",
+		.name = "Muffins con café",
 		.paramName = "Usos",
 		.paramDefaultValue = 3,
 		.type = ITEM_BASIC_NEEDS,
@@ -2415,7 +2415,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_DONAS_SURTIDAS,
-		.name = "Donas surtidas con cafï¿½",
+		.name = "Donas surtidas con café",
 		.paramName = "Usos",
 		.paramDefaultValue = 3,
 		.type = ITEM_BASIC_NEEDS,
@@ -2431,7 +2431,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_DONAS_BLANCAS,
-		.name = "Donas blancas con cafï¿½",
+		.name = "Donas blancas con café",
 		.paramName = "Usos",
 		.paramDefaultValue = 3,
 		.type = ITEM_BASIC_NEEDS,
@@ -2606,7 +2606,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TASER,
 		.name = "Pistola Taser",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 10,
 		.type = ITEM_WEAPON,
 		.basePrice = 9000,
@@ -2621,7 +2621,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_ESCOPETA_NO_LETAL,
 		.name = "Escopeta no letal",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 8,
 		.type = ITEM_WEAPON,
 		.basePrice = 12000,
@@ -2663,7 +2663,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_PORCION_DE_PIZZA,
-		.name = "Porciï¿½n de pizza",
+		.name = "Porción de pizza",
 		.paramName = "Usos",
 		.paramDefaultValue = 3,
 		.type = ITEM_BASIC_NEEDS,
@@ -2865,7 +2865,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TAPABOCA_2,
-		.name = "Tapaboca negro clï¿½sico",
+		.name = "Tapaboca negro clásico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -2881,7 +2881,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TAPABOCA_3,
-		.name = "Tapaboca verde clï¿½sico",
+		.name = "Tapaboca verde clásico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -2913,7 +2913,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TAPABOCA_5,
-		.name = "Tapaboca rosa diseï¿½o",
+		.name = "Tapaboca rosa diseño",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -2929,7 +2929,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TAPABOCA_6,
-		.name = "Tapaboca amarillo diseï¿½o",
+		.name = "Tapaboca amarillo diseño",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -2945,7 +2945,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TAPABOCA_7,
-		.name = "Tapaboca azul elï¿½ctrico",
+		.name = "Tapaboca azul eléctrico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -2977,7 +2977,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TAPABOCA_9,
-		.name = "Tapaboca blanco clï¿½sico",
+		.name = "Tapaboca blanco clásico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -2993,7 +2993,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TAPABOCA_10,
-		.name = "Tapaboca de diseï¿½o",
+		.name = "Tapaboca de diseño",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -3009,7 +3009,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_PASAMONTANAS,
-		.name = "Pasamontaï¿½as tejido",
+		.name = "Pasamontañas tejido",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -3025,7 +3025,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_MASCARA_TERROR_BLANCA,
-		.name = "mï¿½scara blanca de terror",
+		.name = "máscara blanca de terror",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -3041,7 +3041,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_GORRA_POLICIA,
-		.name = "Gorra de oficial de policï¿½a",
+		.name = "Gorra de oficial de policía",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -3121,7 +3121,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_MASCARA_GAS,
-		.name = "mï¿½scara de gas",
+		.name = "máscara de gas",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -3221,7 +3221,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_PACK_COCAINA,
-		.name = "Paquete de cocaï¿½na",
+		.name = "Paquete de cocaína",
 		.paramName = "Gramos",
 		.paramDefaultValue = 1,
 		.type = ITEM_BATCH,
@@ -3239,7 +3239,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_PACK_EXTASIS,
-		.name = "Paquete de ï¿½xtasis",
+		.name = "Paquete de éxtasis",
 		.paramName = "Gramos",
 		.paramDefaultValue = 1,
 		.type = ITEM_BATCH,
@@ -3275,7 +3275,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_COCAINA,
-		.name = "Bolsa de cocaï¿½na",
+		.name = "Bolsa de cocaína",
 		.paramName = "Usos",
 		.paramDefaultValue = 1,
 		.type = ITEM_DRUG,
@@ -3291,7 +3291,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_EXTASIS,
-		.name = "Pastilla de ï¿½xtasis",
+		.name = "Pastilla de éxtasis",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_DRUG,
@@ -3307,7 +3307,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_LSD,
-		.name = "Cartï¿½n de LSD",
+		.name = "Cartón de LSD",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_DRUG,
@@ -3374,7 +3374,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TACTIC_KNIFE,
-		.name = "Cuchillo tï¿½ctico",
+		.name = "Cuchillo táctico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_WEAPON,
@@ -3432,7 +3432,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BERSA_BP9,
 		.name = "Pistola Bersa BP9CC",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 17,
 		.type = ITEM_WEAPON,
 		.basePrice = 8100,
@@ -3447,7 +3447,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_GLOCK_19,
 		.name = "Pistola Glock 19",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 17,
 		.type = ITEM_WEAPON,
 		.basePrice = 8700,
@@ -3462,7 +3462,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BALLESTER_MOLINA_45,
 		.name = "Pistola Ballester Molina .45",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 7,
 		.type = ITEM_WEAPON,
 		.basePrice = 15200,
@@ -3477,7 +3477,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BERSA_TPR_45,
 		.name = "Pistola Bersa TPR-45C",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 7,
 		.type = ITEM_WEAPON,
 		.basePrice = 14400,
@@ -3492,7 +3492,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_REVOLVER_ROSSI_38,
 		.name = "Revolver Rossi Cal.38 Spl",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 7,
 		.type = ITEM_WEAPON,
 		.basePrice = 13600,
@@ -3507,7 +3507,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_REVOLVER_SW_60,
 		.name = "Revolver S&W 60 357 corto",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 7,
 		.type = ITEM_WEAPON,
 		.basePrice = 14000,
@@ -3522,7 +3522,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_MOSSBERG_500,
 		.name = "Escopeta Mossberg 500",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 8,
 		.type = ITEM_WEAPON,
 		.basePrice = 16000,
@@ -3537,7 +3537,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_REMINGTON_870,
 		.name = "Escopeta Remington 870",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 8,
 		.type = ITEM_WEAPON,
 		.basePrice = 15000,
@@ -3552,7 +3552,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BATAAN_71,
 		.name = "Escopeta Bataan 71",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 8,
 		.type = ITEM_WEAPON,
 		.basePrice = 14500,
@@ -3567,7 +3567,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_SAWEDOFF_TUMBERA,
 		.name = "Escopeta tumbera",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 2,
 		.type = ITEM_WEAPON,
 		.basePrice = 13500,
@@ -3582,7 +3582,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TAURUS_PT_92,
 		.name = "Pistola Taurus PT92",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 17,
 		.type = ITEM_WEAPON,
 		.basePrice = 8400,
@@ -3597,7 +3597,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BENELLI_M3_S90,
 		.name = "Escopeta Benelli M3 Super 90",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 7,
 		.type = ITEM_WEAPON,
 		.basePrice = 30000,
@@ -3612,7 +3612,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_AKKAR_12_70,
 		.name = "Escopeta Akkar 12/70",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 7,
 		.type = ITEM_WEAPON,
 		.basePrice = 28000,
@@ -3627,7 +3627,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_STEYR_MPI_69,
 		.name = "Subfusil Steyr MPi 69",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 50,
 		.type = ITEM_WEAPON,
 		.basePrice = 17000,
@@ -3642,7 +3642,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_FMK_3,
 		.name = "Subfusil FMK-3",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 50,
 		.type = ITEM_WEAPON,
 		.basePrice = 17500,
@@ -3657,7 +3657,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BERETTA_93R,
 		.name = "Pistola Ametralladora Beretta 93R",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 50,
 		.type = ITEM_WEAPON,
 		.basePrice = 16000,
@@ -3672,7 +3672,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_HECKLER_KOCH_UMP9,
 		.name = "Subfusil Heckler & Koch UMP9",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 30,
 		.type = ITEM_WEAPON,
 		.basePrice = 27500,
@@ -3687,7 +3687,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_TAURUS_SMT9,
 		.name = "Subfusil Taurus SMT9",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 30,
 		.type = ITEM_WEAPON,
 		.basePrice = 27000,
@@ -3702,7 +3702,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_FAMAE_SAF,
 		.name = "Subfusil Famae SAF",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 30,
 		.type = ITEM_WEAPON,
 		.basePrice = 26500,
@@ -3717,7 +3717,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_INGRAM_MAC10,
 		.name = "Pistola Ametralladora Ingram MAC-10",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 50,
 		.type = ITEM_WEAPON,
 		.basePrice = 18000,
@@ -3732,7 +3732,7 @@ public ItemModel_OnInit()
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_SKORPION_VZ68,
 		.name = "Subfusil Skorpion vz. 68",
-		.paramName = "Municiï¿½n",
+		.paramName = "Munición",
 		.paramDefaultValue = 50,
 		.type = ITEM_WEAPON,
 		.basePrice = 18500,
@@ -4114,7 +4114,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA1,
-		.name = "Paï¿½uelo azul oscuro",
+		.name = "Pañuelo azul oscuro",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4130,7 +4130,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA2,
-		.name = "Paï¿½uelo rojo oscuro",
+		.name = "Pañuelo rojo oscuro",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4146,7 +4146,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA3,
-		.name = "Paï¿½uelo blanco y rojo a rayas",
+		.name = "Pañuelo blanco y rojo a rayas",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4162,7 +4162,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA4,
-		.name = "Paï¿½uelo amarillo chalas",
+		.name = "Pañuelo amarillo chalas",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4178,7 +4178,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA5,
-		.name = "Paï¿½uelo negro calaveras",
+		.name = "Pañuelo negro calaveras",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4194,7 +4194,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA6,
-		.name = "Paï¿½uelo negro clï¿½sico",
+		.name = "Pañuelo negro clásico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4210,7 +4210,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA7,
-		.name = "Paï¿½uelo azul clï¿½sico",
+		.name = "Pañuelo azul clásico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4226,7 +4226,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA8,
-		.name = "Paï¿½uelo verde clï¿½sico",
+		.name = "Pañuelo verde clásico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4242,7 +4242,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA9,
-		.name = "Paï¿½uelo rosa clï¿½sico",
+		.name = "Pañuelo rosa clásico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4258,7 +4258,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA10,
-		.name = "Paï¿½uelo colores trip",
+		.name = "Pañuelo colores trip",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4274,7 +4274,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA11,
-		.name = "Paï¿½uelo animal print",
+		.name = "Pañuelo animal print",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4290,7 +4290,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA12,
-		.name = "Paï¿½uelo amarillo",
+		.name = "Pañuelo amarillo",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4306,7 +4306,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA13,
-		.name = "Paï¿½uelo lila",
+		.name = "Pañuelo lila",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4322,7 +4322,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA14,
-		.name = "Paï¿½uelo diseï¿½o electrico",
+		.name = "Pañuelo diseño electrico",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4338,7 +4338,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA15,
-		.name = "Paï¿½uelo dorado",
+		.name = "Pañuelo dorado",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4354,7 +4354,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA16,
-		.name = "Paï¿½uelo naranja diseï¿½o",
+		.name = "Pañuelo naranja diseño",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4370,7 +4370,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA17,
-		.name = "Paï¿½uelo colores trip 2",
+		.name = "Pañuelo colores trip 2",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4386,7 +4386,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA18,
-		.name = "Paï¿½uelo azul diseï¿½o",
+		.name = "Pañuelo azul diseño",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4402,7 +4402,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA19,
-		.name = "Paï¿½uelo claro diseï¿½o",
+		.name = "Pañuelo claro diseño",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4418,7 +4418,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_BANDANA20,
-		.name = "Paï¿½uelo naranja diseï¿½o 2",
+		.name = "Pañuelo naranja diseño 2",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4514,7 +4514,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_GORRA1,
-		.name = "Gorra azul diseï¿½o",
+		.name = "Gorra azul diseño",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4578,7 +4578,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_GORRA5,
-		.name = "Gorra naranja diseï¿½o",
+		.name = "Gorra naranja diseño",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,
@@ -4946,7 +4946,7 @@ public ItemModel_OnInit()
 
 	ItemModel_SetNewDataId(
 		.itemid = ITEM_ID_CASCO_SWAT1,
-		.name = "Casco tï¿½ctico de policia",
+		.name = "Casco táctico de policia",
 		.paramName = "Cantidad",
 		.paramDefaultValue = 1,
 		.type = ITEM_TOY,

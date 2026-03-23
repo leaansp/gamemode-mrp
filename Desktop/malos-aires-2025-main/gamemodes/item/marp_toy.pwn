@@ -5,7 +5,7 @@
 
 #include <YSI_Coding\y_hooks>
 
-const TOY_MAX_AMOUNT = 5; // Slot 5 reservado para ATTACH_INDEX_ID_HOLSTER (funda de cadera)
+const TOY_MAX_AMOUNT = 5; // Slot 5 reservado para ATTACH_INDEX_ID_HOLSTER
 
 enum e_TOY_UNLOAD_TYPE
 {
