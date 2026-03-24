@@ -17,14 +17,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*400*/	{
 	/*mName*/ "Landstalker",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 100000,
+	/*mPrice*/ 45000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*401*/	{
 	/*mName*/ "Bravura",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 40000,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -45,14 +45,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*404*/	{
 	/*mName*/ "Perenniel",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 45000,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*405*/	{
 	/*mName*/ "Sentinel",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 75000,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -73,7 +73,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*408*/	{
 	/*mName*/ "Trashmaster",
 	/*mType*/ VTYPE_HEAVY,
-	/*mPrice*/ 280000,
+	/*mPrice*/ 120000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 2
 	},
@@ -87,7 +87,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*410*/	{
 	/*mName*/ "Manana",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 36000,
+	/*mPrice*/ 9000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -101,21 +101,21 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*412*/	{
 	/*mName*/ "Voodoo",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 69100,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
 /*413*/	{
 	/*mName*/ "Pony",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 105100,
+	/*mPrice*/ 40000,
 	/*mTrunkSpace*/ 300,
 	/*mSeats*/ 4
 	},
 /*414*/	{
 	/*mName*/ "Mule",
 	/*mType*/ VTYPE_HEAVY,
-	/*mPrice*/ 98200,
+	/*mPrice*/ 45000,
 	/*mTrunkSpace*/ 400,
 	/*mSeats*/ 4
 	},
@@ -143,49 +143,49 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*418*/	{
 	/*mName*/ "Moonbeam",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 80400,
+	/*mPrice*/ 20000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*419*/	{
 	/*mName*/ "Esperanto",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 58000,
+	/*mPrice*/ 16000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
 /*420*/	{
 	/*mName*/ "Taxi",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 86000,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*421*/	{
 	/*mName*/ "Washington",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 75100,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*422*/	{
 	/*mName*/ "Bobcat",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 35800,
+	/*mPrice*/ 10000,
 	/*mTrunkSpace*/ 300,
 	/*mSeats*/ 2
 	},
 /*423*/	{
 	/*mName*/ "Mr Whoopee",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 98800,
+	/*mPrice*/ 30000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 2
 	},
 /*424*/	{
 	/*mName*/ "BF Injection",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 95000,
+	/*mPrice*/ 35000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 2
 	},
@@ -199,7 +199,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*426*/	{
 	/*mName*/ "Premier",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 90000,
+	/*mPrice*/ 25000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -269,7 +269,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*436*/	{
 	/*mName*/ "Previon",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 39000,
+	/*mPrice*/ 10000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -283,21 +283,21 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*438*/	{
 	/*mName*/ "Cabbie",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 79000,
+	/*mPrice*/ 20000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*439*/	{
 	/*mName*/ "Stallion",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 65000,
+	/*mPrice*/ 17000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
 /*440*/	{
 	/*mName*/ "Rumpo",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 95000,
+	/*mPrice*/ 30000,
 	/*mTrunkSpace*/ 300,
 	/*mSeats*/ 4
 	},
@@ -311,7 +311,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*442*/	{
 	/*mName*/ "Romero",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 105000,
+	/*mPrice*/ 20000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -332,7 +332,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*445*/	{
 	/*mName*/ "Admiral",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 76750,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -402,35 +402,35 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*455*/	{
 	/*mName*/ "Flatbed",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 180000,
+	/*mPrice*/ 55000,
 	/*mTrunkSpace*/ 400,
 	/*mSeats*/ 2
 	},
 /*456*/	{
 	/*mName*/ "Yankee",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 155000,
+	/*mPrice*/ 50000,
 	/*mTrunkSpace*/ 400,
 	/*mSeats*/ 2
 	},
 /*457*/	{
 	/*mName*/ "Caddy",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 85000,
+	/*mPrice*/ 28000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 2
 	},
 /*458*/	{
 	/*mName*/ "Solair",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 80000,
+	/*mPrice*/ 20000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*459*/	{
 	/*mName*/ "Berkley's RC Van",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 90000,
+	/*mPrice*/ 30000,
 	/*mTrunkSpace*/ 300,
 	/*mSeats*/ 4
 	},
@@ -451,14 +451,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*462*/	{
 	/*mName*/ "Faggio",
 	/*mType*/ VTYPE_BIKE,
-	/*mPrice*/ 7855,
+	/*mPrice*/ 6000,
 	/*mTrunkSpace*/ 15,
 	/*mSeats*/ 2
 	},
 /*463*/	{
 	/*mName*/ "Freeway",
 	/*mType*/ VTYPE_BIKE,
-	/*mPrice*/ 82950,
+	/*mPrice*/ 15000,
 	/*mTrunkSpace*/ 15,
 	/*mSeats*/ 2
 	},
@@ -479,21 +479,21 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*466*/	{
 	/*mName*/ "Glendale",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 55000,
+	/*mPrice*/ 14000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*467*/	{
 	/*mName*/ "Oceanic",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 47770,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*468*/	{
 	/*mName*/ "Sanchez",
 	/*mType*/ VTYPE_BIKE,
-	/*mPrice*/ 68790,
+	/*mPrice*/ 15000,
 	/*mTrunkSpace*/ 15,
 	/*mSeats*/ 2
 	},
@@ -514,7 +514,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*471*/	{
 	/*mName*/ "Quad",
 	/*mType*/ VTYPE_QUAD,
-	/*mPrice*/ 30000,
+	/*mPrice*/ 15000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 2
 	},
@@ -535,14 +535,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*474*/	{
 	/*mName*/ "Hermes",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 76000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
 /*475*/	{
 	/*mName*/ "Sabre",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 100000,
+	/*mPrice*/ 35000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -563,14 +563,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*478*/	{
 	/*mName*/ "Walton",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 29950,
+	/*mPrice*/ 8000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
 /*479*/	{
 	/*mName*/ "Regina",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 70000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -584,21 +584,21 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*481*/	{
 	/*mName*/ "BMX",
 	/*mType*/ VTYPE_BMX,
-	/*mPrice*/ 6500,
+	/*mPrice*/ 3000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 1
 	},
 /*482*/	{
 	/*mName*/ "Burrito",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 125000,
+	/*mPrice*/ 40000,
 	/*mTrunkSpace*/ 300,
 	/*mSeats*/ 4
 	},
 /*483*/	{
 	/*mName*/ "Camper",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 66000,
+	/*mPrice*/ 20000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 3
 	},
@@ -612,7 +612,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*485*/	{
 	/*mName*/ "Baggage",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 40000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 1
 	},
@@ -640,7 +640,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*489*/	{
 	/*mName*/ "Rancher",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 105000,
+	/*mPrice*/ 25000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
@@ -654,14 +654,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*491*/	{
 	/*mName*/ "Virgo",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 55000,
+	/*mPrice*/ 16000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
 /*492*/	{
 	/*mName*/ "Greenwood",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 70000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -689,7 +689,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*496*/	{
 	/*mName*/ "Blista Compact",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 100500,
+	/*mPrice*/ 40000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -703,21 +703,21 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*498*/	{
 	/*mName*/ "Boxville",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 95000,
+	/*mPrice*/ 28000,
 	/*mTrunkSpace*/ 400,
 	/*mSeats*/ 4
 	},
 /*499*/	{
 	/*mName*/ "Benson",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 90000,
+	/*mPrice*/ 25000,
 	/*mTrunkSpace*/ 400,
 	/*mSeats*/ 2
 	},
 /*500*/	{
 	/*mName*/ "Mesa",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 75000,
+	/*mPrice*/ 30000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -752,7 +752,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*505*/	{
 	/*mName*/ "Rancher",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 105000,
+	/*mPrice*/ 25000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
@@ -766,7 +766,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*507*/	{
 	/*mName*/ "Elegant",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 90000,
+	/*mPrice*/ 28000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -780,14 +780,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*509*/	{
 	/*mName*/ "Bike",
 	/*mType*/ VTYPE_BMX,
-	/*mPrice*/ 2500,
+	/*mPrice*/ 1500,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 1
 	},
 /*510*/	{
 	/*mName*/ "Mountain Bike",
 	/*mType*/ VTYPE_BMX,
-	/*mPrice*/ 10000,
+	/*mPrice*/ 5000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 1
 	},
@@ -829,21 +829,21 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*516*/	{
 	/*mName*/ "Nebula",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 55000,
+	/*mPrice*/ 16000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*517*/	{
 	/*mName*/ "Majestic",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 60000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
 /*518*/	{
 	/*mName*/ "Buccaneer",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 45000,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -885,28 +885,28 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*524*/	{
 	/*mName*/ "Cement Truck",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 285000,
+	/*mPrice*/ 85000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 2
 	},
 /*525*/	{
 	/*mName*/ "Towtruck",
 	/*mType*/ VTYPE_HEAVY,
-	/*mPrice*/ 75000,
+	/*mPrice*/ 30000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 2
 	},
 /*526*/	{
 	/*mName*/ "Fortune",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 85000,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
 /*527*/	{
 	/*mName*/ "Cadrona",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 41000,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -920,7 +920,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*529*/	{
 	/*mName*/ "Willard",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 55000,
+	/*mPrice*/ 15000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -934,7 +934,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*531*/	{
 	/*mName*/ "Tractor",
 	/*mType*/ VTYPE_HEAVY,
-	/*mPrice*/ 40000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 1
 	},
@@ -948,28 +948,28 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*533*/	{
 	/*mName*/ "Feltzer",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 110000,
+	/*mPrice*/ 45000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
 /*534*/	{
 	/*mName*/ "Remington",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 86000,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
 /*535*/	{
 	/*mName*/ "Slamvan",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 90000,
+	/*mPrice*/ 25000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
 /*536*/	{
 	/*mName*/ "Blade",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 100000,
+	/*mPrice*/ 30000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -997,7 +997,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*540*/	{
 	/*mName*/ "Vincent",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 70000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -1011,14 +1011,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*542*/	{
 	/*mName*/ "Clover",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 45000,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
 /*543*/	{
 	/*mName*/ "Sadler",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 50000,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 300,
 	/*mSeats*/ 2
 	},
@@ -1039,14 +1039,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*546*/	{
 	/*mName*/ "Intruder",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 65000,
+	/*mPrice*/ 16000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*547*/	{
 	/*mName*/ "Primo",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 50000,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -1060,28 +1060,28 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*549*/	{
 	/*mName*/ "Tampa",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 50000,
+	/*mPrice*/ 14000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
 /*550*/	{
 	/*mName*/ "Sunrise",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 85000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*551*/	{
 	/*mName*/ "Merit",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 110000,
+	/*mPrice*/ 24000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*552*/	{
 	/*mName*/ "Utility Van",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 230000,
+	/*mPrice*/ 70000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
@@ -1095,7 +1095,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*554*/	{
 	/*mName*/ "Yosemite",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 90000,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 300,
 	/*mSeats*/ 2
 	},
@@ -1123,7 +1123,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*558*/	{
 	/*mName*/ "Uranus",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 350000,
+	/*mPrice*/ 28000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -1144,7 +1144,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*561*/	{
 	/*mName*/ "Stratum",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 200000,
+	/*mPrice*/ 28000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -1179,21 +1179,21 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*566*/	{
 	/*mName*/ "Tahoma",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 92000,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*567*/	{
 	/*mName*/ "Savanna",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 85000,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*568*/	{
 	/*mName*/ "Bandito",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 65000,
+	/*mPrice*/ 15000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 1
 	},
@@ -1214,7 +1214,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*571*/	{
 	/*mName*/ "Kart",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 25000,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 1
 	},
@@ -1235,21 +1235,21 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*574*/	{
 	/*mName*/ "Sweeper",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 50000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 1
 	},
 /*575*/	{
 	/*mName*/ "Broadway",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 85000,
+	/*mPrice*/ 22000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
 /*576*/	{
 	/*mName*/ "Tornado",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 68000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -1263,7 +1263,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*578*/	{
 	/*mName*/ "DFT-30",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 190000,
+	/*mPrice*/ 60000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -1277,14 +1277,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*580*/	{
 	/*mName*/ "Stafford",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 100000,
+	/*mPrice*/ 35000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
 /*581*/	{
 	/*mName*/ "BF-400",
 	/*mType*/ VTYPE_BIKE,
-	/*mPrice*/ 60000,
+	/*mPrice*/ 18000,
 	/*mTrunkSpace*/ 15,
 	/*mSeats*/ 2
 	},
@@ -1298,7 +1298,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*583*/	{
 	/*mName*/ "Tug",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 25000,
+	/*mPrice*/ 12000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 1
 	},
@@ -1312,14 +1312,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*585*/	{
 	/*mName*/ "Emperor",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 50000,
+	/*mPrice*/ 14000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*586*/	{
 	/*mName*/ "Wayfarer",
 	/*mType*/ VTYPE_BIKE,
-	/*mPrice*/ 50000,
+	/*mPrice*/ 10000,
 	/*mTrunkSpace*/ 15,
 	/*mSeats*/ 2
 	},
@@ -1340,7 +1340,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*589*/	{
 	/*mName*/ "Club",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 150000,
+	/*mPrice*/ 40000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -1417,7 +1417,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*600*/	{
 	/*mName*/ "Picador",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 40000,
+	/*mPrice*/ 10000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
@@ -1445,14 +1445,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*604*/	{
 	/*mName*/ "Glendale Shit",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 22000,
+	/*mPrice*/ 8000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
 /*605*/	{
 	/*mName*/ "Sadler Shit",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 22000,
+	/*mPrice*/ 8000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
