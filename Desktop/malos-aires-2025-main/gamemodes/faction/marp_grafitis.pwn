@@ -4,11 +4,11 @@
 #define _marp_grafitis_included
 
 #define MAX_GRAFFITI 500
-#define GRAFFITI_TEXT_LEN 32
+#define GRAFFITI_TEXT_LEN 14
 
 #define DIALOG_GRAFFITI_COLOR 2100
 #define DIALOG_GRAFFITI_TEXT  2101
-#define GRAFFITI_OBJECT_MODEL 19325
+#define GRAFFITI_OBJECT_MODEL 19482
 
 
 
@@ -33,6 +33,8 @@ enum e_GRAFFITI_DATA {
     Float:graffitiY,
     Float:graffitiZ,
     Float:graffitiA,
+    Float:graffitiRX,
+    Float:graffitiRY,
     graffitiColor,
     graffitiCreator[32],
     graffitiCreatedAt[20],
@@ -95,6 +97,8 @@ public Graffiti_OnLoadAll()
         cache_get_value_name(i, "pos_y", tmp); GraffitiInfo[id][graffitiY] = floatstr(tmp);
         cache_get_value_name(i, "pos_z", tmp); GraffitiInfo[id][graffitiZ] = floatstr(tmp);
         cache_get_value_name(i, "angle", tmp); GraffitiInfo[id][graffitiA] = floatstr(tmp);
+        cache_get_value_name(i, "rot_x", tmp); GraffitiInfo[id][graffitiRX] = floatstr(tmp);
+        cache_get_value_name(i, "rot_y", tmp); GraffitiInfo[id][graffitiRY] = floatstr(tmp);
 
         // Color (convertido a unsigned int)
         cache_get_value_name(i, "color", tmp);
@@ -181,7 +185,7 @@ stock Graffiti_CreateFromDB(id)
         GraffitiInfo[id][graffitiX],
         GraffitiInfo[id][graffitiY],
         GraffitiInfo[id][graffitiZ],
-        0.0, 0.0, GraffitiInfo[id][graffitiA],
+        GraffitiInfo[id][graffitiRX], GraffitiInfo[id][graffitiRY], GraffitiInfo[id][graffitiA],
         .worldid = -1, .interiorid = -1, .streamdistance = 300.0
     );
 
@@ -288,7 +292,7 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
         ShowPlayerDialog(playerid, DIALOG_GRAFFITI_TEXT, DIALOG_STYLE_INPUT,
             "Texto del grafiti",
-            "Escribí el texto que querés pintar en la pared (máx. 16 caracteres):",
+            "Escribí el texto que querés pintar en la pared (máx. 14 caracteres):",
             "Pintar", "Cancelar");
         return 1;
     }
@@ -299,6 +303,8 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
         if (!response) return 1;
         if (strlen(inputtext) < 1)
             return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Debes ingresar un texto.");
+        if (strlen(inputtext) > 14)
+            return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"No puedes realizar un graffiti de más de 14 caracteres. Intentalo nuevamente.");
 
         new faction = PlayerInfo[playerid][pFaction];
         if (!Faction_IsValidId(faction))
@@ -351,6 +357,7 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
         SetPVarInt(playerid, "EditingGraffitiID", id);
         SetTimerEx("Graffiti_FinishSpray", 3000, false, "i", playerid);
+        SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"¡Comenzaste a hacer un graffiti! Recordá respetar la interpretación de la zona para evitar sanciones.");
         EditDynamicObject(playerid, GraffitiInfo[id][graffitiLabel]);
         SendClientMessage(playerid, COLOR_INFO, "Se ha abierto el editor para ajustar la posición del grafiti.");
         return 1;
@@ -465,6 +472,8 @@ public GODOS(playerid, STREAMER_TAG_OBJECT:objectid, response, Float:x, Float:y,
                 GraffitiInfo[i][graffitiY] = cy;
                 GraffitiInfo[i][graffitiZ] = cz;
                 GraffitiInfo[i][graffitiA] = rz;
+                GraffitiInfo[i][graffitiRX] = rx;
+                GraffitiInfo[i][graffitiRY] = ry;
                 // No se actualiza en DB, pero se mantiene sincronizado en memoria
                 SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "Edición cancelada. El grafiti quedó donde lo dejaste.");
                 return 1;
@@ -476,11 +485,16 @@ public GODOS(playerid, STREAMER_TAG_OBJECT:objectid, response, Float:x, Float:y,
                 GraffitiInfo[i][graffitiY] = y;
                 GraffitiInfo[i][graffitiZ] = z;
                 GraffitiInfo[i][graffitiA] = rz;
+                GraffitiInfo[i][graffitiRX] = rx;
+                GraffitiInfo[i][graffitiRY] = ry;
+
+                SetDynamicObjectPos(objectid, x, y, z);
+                SetDynamicObjectRot(objectid, rx, ry, rz);
 
                 new q[256];
                 mysql_format(MYSQL_HANDLE, q, sizeof(q),
-                    "UPDATE graffiti SET pos_x=%f, pos_y=%f, pos_z=%f, angle=%f WHERE id=%d",
-                    x, y, z, rz, GraffitiInfo[i][graffitiID]
+                    "UPDATE graffiti SET pos_x=%f, pos_y=%f, pos_z=%f, angle=%f, rot_x=%f, rot_y=%f WHERE id=%d",
+                    x, y, z, rz, rx, ry, GraffitiInfo[i][graffitiID]
                 );
                 mysql_tquery(MYSQL_HANDLE, q);
 

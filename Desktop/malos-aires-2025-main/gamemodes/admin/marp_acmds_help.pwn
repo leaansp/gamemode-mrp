@@ -132,7 +132,7 @@ stock ShowModerationCommands(playerid) {
 	
 	if(level >= 3) {
 		if(!hasCommands) SendClientMessage(playerid, COLOR_INFO, "==============[Ayuda Staff - Moderación]==============");
-		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/cooldowntwitter");
+		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/cooldowntwitter, /cooldowncambiopj");
 		hasCommands = true;
 	}
 	
@@ -269,9 +269,21 @@ stock ShowOtherCommands(playerid) {
 	new level = AccountInfo[playerid][accAdminLevel];
 	new bool:hasCommands = false;
 	
+	if(level >= 1) {
+		if(!hasCommands) SendClientMessage(playerid, COLOR_INFO, "=================[Ayuda Staff - Otros]=================");
+		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/ayudatwitter");
+		hasCommands = true;
+	}
+	
 	if(level >= 14) {
 		if(!hasCommands) SendClientMessage(playerid, COLOR_INFO, "=================[Ayuda Staff - Otros]=================");
 		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/money, /givemoney");
+		hasCommands = true;
+	}
+	
+	if(level >= 3) {
+		if(!hasCommands) SendClientMessage(playerid, COLOR_INFO, "=================[Ayuda Staff - Otros]=================");
+		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/cooldowntwitter, /cooldowncambiopj");
 		hasCommands = true;
 	}
 	

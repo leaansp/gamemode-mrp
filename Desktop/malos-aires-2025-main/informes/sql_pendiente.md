@@ -72,6 +72,21 @@ Sistema: Twitter in-game. Sin esta tabla, `/registrarsetwitter` y `/tw` fallan.
 
 ---
 
+## 4. Columnas `rot_x` y `rot_y` en tabla `graffiti`
+
+> **La tabla `graffiti` ya existe en produccion. Solo agregar las columnas.**
+
+```sql
+ALTER TABLE `graffiti` ADD COLUMN `rot_x` FLOAT NOT NULL DEFAULT 0 AFTER `angle`;
+ALTER TABLE `graffiti` ADD COLUMN `rot_y` FLOAT NOT NULL DEFAULT 0 AFTER `rot_x`;
+```
+
+Agrega soporte para rotacion completa en los 3 ejes al editar grafitis con `/editargrafiti`.
+Sin estas columnas, el UPDATE al guardar la posicion editada falla y la rotacion en X/Y se pierde al relog.
+Los grafitis existentes quedaran con `rot_x=0, rot_y=0` (default correcto para grafitis planos contra pared).
+
+---
+
 ## Resumen
 
 | # | Accion | Archivo |
@@ -79,5 +94,6 @@ Sistema: Twitter in-game. Sin esta tabla, `/registrarsetwitter` y `/tw` fallan.
 | 1 | CREATE TABLE holster | `database/holster.sql` |
 | 2 | ALTER TABLE holster ADD COLUMN mode | `database/holster_mode.sql` |
 | 3 | CREATE TABLE twitter | `database/twitter.sql` |
+| 4 | ALTER TABLE graffiti ADD COLUMN rot_x, rot_y | — (ejecutar directo) |
 
-Los tres usan `IF NOT EXISTS` o `DEFAULT` seguros — no rompen datos existentes si se ejecutan dos veces (excepto el ALTER, que daria error si la columna ya existe, pero no perderia datos).
+Los tres primeros usan `IF NOT EXISTS` o `DEFAULT` seguros — no rompen datos existentes si se ejecutan dos veces (excepto los ALTER, que darian error si la columna ya existe, pero no perderian datos).

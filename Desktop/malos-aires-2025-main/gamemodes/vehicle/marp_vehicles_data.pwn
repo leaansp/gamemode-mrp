@@ -493,7 +493,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*468*/	{
 	/*mName*/ "Sanchez",
 	/*mType*/ VTYPE_BIKE,
-	/*mPrice*/ 15000,
+	/*mPrice*/ 115000,
 	/*mTrunkSpace*/ 15,
 	/*mSeats*/ 2
 	},
@@ -864,7 +864,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*521*/	{
 	/*mName*/ "FCR-900",
 	/*mType*/ VTYPE_BIKE,
-	/*mPrice*/ 110000,
+	/*mPrice*/ 135000,
 	/*mTrunkSpace*/ 15,
 	/*mSeats*/ 2
 	},
@@ -1284,7 +1284,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*581*/	{
 	/*mName*/ "BF-400",
 	/*mType*/ VTYPE_BIKE,
-	/*mPrice*/ 18000,
+	/*mPrice*/ 130000,
 	/*mTrunkSpace*/ 15,
 	/*mSeats*/ 2
 	},

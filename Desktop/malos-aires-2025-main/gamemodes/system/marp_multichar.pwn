@@ -1128,6 +1128,18 @@ CMD:cambiarpersonaje(playerid, params[])
 	if(PlayerInfo[playerid][pHospitalized])
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No puedes cambiar de personaje estando hospitalizado.");
 
+	if(CambioPJ_IsDisabled())
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El cambio de personaje esta deshabilitado actualmente.");
+
+	new remaining = CambioPJ_GetRemaining(playerid);
+	if(remaining > 0)
+	{
+		new msg[128];
+		format(msg, sizeof(msg), "[INFO] Debes esperar %d segundo(s) para cambiar de personaje nuevamente.", remaining);
+		return SendClientMessage(playerid, COLOR_INFO, msg);
+	}
+	CambioPJ_SetLastUse(playerid);
+
 	CharSwitch_Begin(playerid);
 	MultiChar_ShowCharSelect(playerid);
 	return 1;

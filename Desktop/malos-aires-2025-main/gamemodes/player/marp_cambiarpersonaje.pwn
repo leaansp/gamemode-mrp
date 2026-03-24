@@ -144,3 +144,54 @@ hook OnPlayerDisconnect(playerid, reason)
 	}
 	return 1;
 }
+
+// --- COOLDOWN DE CAMBIO DE PERSONAJE ---
+
+#define CAMBIOPJ_DLG_COOLDOWN 9602
+
+static CambioPJCooldown      = 180;
+static bool:CambioPJDisabled = false;
+static CambioPJLastUse[MAX_PLAYERS];
+
+stock bool:CambioPJ_IsDisabled()          { return CambioPJDisabled; }
+stock        CambioPJ_GetCooldown()        { return CambioPJCooldown; }
+stock        CambioPJ_SetLastUse(playerid) { CambioPJLastUse[playerid] = gettime(); }
+stock        CambioPJ_GetRemaining(playerid)
+{
+	if (CambioPJCooldown == 0) return 0;
+	new elapsed = gettime() - CambioPJLastUse[playerid];
+	return (elapsed < CambioPJCooldown) ? (CambioPJCooldown - elapsed) : 0;
+}
+
+hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+	if (dialogid == CAMBIOPJ_DLG_COOLDOWN)
+	{
+		if (!response) return 1;
+		switch (listitem)
+		{
+			case 0: { CambioPJCooldown = 0;   CambioPJDisabled = false; SendClientMessageToAll(COLOR_INFO, "[INFO] El administrador desactivo el cooldown de cambio de personaje. Sin limite de tiempo."); }
+			case 1: { CambioPJCooldown = 30;  CambioPJDisabled = false; SendClientMessageToAll(COLOR_INFO, "[INFO] El administrador cambio el cooldown de cambio de personaje a 30 segundos."); }
+			case 2: { CambioPJCooldown = 60;  CambioPJDisabled = false; SendClientMessageToAll(COLOR_INFO, "[INFO] El administrador cambio el cooldown de cambio de personaje a 1 minuto."); }
+			case 3: { CambioPJCooldown = 180; CambioPJDisabled = false; SendClientMessageToAll(COLOR_INFO, "[INFO] El administrador cambio el cooldown de cambio de personaje a 3 minutos."); }
+			case 4: { CambioPJCooldown = 300; CambioPJDisabled = false; SendClientMessageToAll(COLOR_INFO, "[INFO] El administrador cambio el cooldown de cambio de personaje a 5 minutos."); }
+			case 5: { CambioPJCooldown = 600; CambioPJDisabled = false; SendClientMessageToAll(COLOR_INFO, "[INFO] El administrador cambio el cooldown de cambio de personaje a 10 minutos."); }
+			case 6: { CambioPJDisabled = true; SendClientMessageToAll(COLOR_INFO, "[INFO] Un administrador ha deshabilitado el cambio de personaje temporalmente."); }
+		}
+		return 1;
+	}
+	return 0;
+}
+
+CMD:cooldowncambiopj(playerid, params[])
+{
+	if (PlayerInfo[playerid][pAdmin] < 16)
+		return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"No puedes usar este comando.");
+
+	new title[128];
+	format(title, sizeof(title), "Cambio PJ - Cooldown: %ds | Estado: %s", CambioPJCooldown, CambioPJDisabled ? "DESHABILITADO" : "Activo");
+	ShowPlayerDialog(playerid, CAMBIOPJ_DLG_COOLDOWN, DIALOG_STYLE_LIST, title,
+		"Sin cooldown\n30 segundos\n1 minuto\n3 minutos\n5 minutos\n10 minutos\nDeshabilitar cambio de personaje",
+		"Aplicar", "Cancelar");
+	return 1;
+}
