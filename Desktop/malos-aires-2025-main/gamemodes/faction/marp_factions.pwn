@@ -71,13 +71,13 @@ CMD:fdepositar(playerid,params[])
 	new string[128], amount;
 	
 	if(!IsPlayerInRangeOfPoint(playerid, 5.0, POS_BANK_X, POS_BANK_Y, POS_BANK_Z) && !IsAtATM(playerid))
-	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�Debes estar en un banco o cajero autom�tico!");
+	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?Debes estar en un banco o cajero autom?tico!");
     if(!PlayerInfo[playerid][pFaction])
-        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�No perteneces a una facci�n!");
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?No perteneces a una facci?n!");
  	if(sscanf(params, "d", amount))
   		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/fdepositar [cantidad]");
  	if(GetPlayerCash(playerid) < amount || amount < 1)
- 	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�Cantidad de dinero inv�lida!");
+ 	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?Cantidad de dinero inv?lida!");
  	    
 	GivePlayerCash(playerid, -amount);
 	Faction_GiveMoney(PlayerInfo[playerid][pFaction], amount);
@@ -94,15 +94,15 @@ CMD:fretirar(playerid,params[])
 	new string[128], amount;
 
 	if(!IsPlayerInRangeOfPoint(playerid, 5.0, POS_BANK_X, POS_BANK_Y, POS_BANK_Z) && !IsAtATM(playerid))
-	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�Debes estar en un banco o cajero autom�tico!");
+	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?Debes estar en un banco o cajero autom?tico!");
  	if(!PlayerInfo[playerid][pFaction])
-        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�No perteneces a una facci�n!");
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?No perteneces a una facci?n!");
  	if(sscanf(params, "d", amount))
   		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/fretirar [cantidad]");
     if(PlayerInfo[playerid][pRank] != 1)
-        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�No tienes el rango suficiente!");
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?No tienes el rango suficiente!");
  	if(Faction_GetBank(PlayerInfo[playerid][pFaction]) < amount || amount < 1)
- 	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�Cantidad de dinero inv�lida!");
+ 	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?Cantidad de dinero inv?lida!");
  	    
 	GivePlayerCash(playerid, amount);
 	Faction_GiveMoney(PlayerInfo[playerid][pFaction], -amount);
@@ -117,11 +117,11 @@ CMD:fretirar(playerid,params[])
 CMD:fverbalance(playerid,params[])
 {
 	if(!IsPlayerInRangeOfPoint(playerid, 5.0, POS_BANK_X, POS_BANK_Y, POS_BANK_Z) && !IsAtATM(playerid))
-	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�Debes estar en un banco o cajero autom�tico!");
+	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?Debes estar en un banco o cajero autom?tico!");
     if(!PlayerInfo[playerid][pFaction])
-        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�No perteneces a una facci�n!");
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?No perteneces a una facci?n!");
     if(PlayerInfo[playerid][pRank] != 1)
-        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�No tienes el rango suficiente!");
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?No tienes el rango suficiente!");
 
 	SendFMessage(playerid, COLOR_WHITE, "El balance actual de la cuenta compartida es de $%d.", Faction_GetBank(PlayerInfo[playerid][pFaction]));
 	PlayerActionMessage(playerid, 15.0, "recibe un papel con el estado de su cuenta bancaria.");
@@ -154,7 +154,7 @@ CMD:faccion(playerid, params[])
 
 	if(!strcmp(subcmd, "abandonar", true))
 	{
-		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Has abandonado tu facci�n.");
+		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Has abandonado tu facci?n.");
 		Faction_SetPlayer(playerid, 0, 0);
 	}
 	else if(!strcmp(subcmd, "conectados", true))
@@ -183,14 +183,14 @@ CMD:faccion(playerid, params[])
 		if(FactionChannel[factionid])
 		{
 			FactionChannel[factionid] = 0;
-			SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Abriste el canal /f de la facci�n. Ahora todos los miembros podr�n utilizarlo.");
-			SendFactionMessage(PlayerInfo[playerid][pFaction], COLOR_FACTIONCHAT, "[Facci�n] El canal /f fue abierto por el l�der.");
+			SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Abriste el canal /f de la facci?n. Ahora todos los miembros podr?n utilizarlo.");
+			SendFactionMessage(PlayerInfo[playerid][pFaction], COLOR_FACTIONCHAT, "[Facci?n] El canal /f fue abierto por el l?der.");
 		}
 		else
 		{
 			FactionChannel[factionid] = 1;
-			SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Cerraste el canal /f de la facci�n. �nicamente el l�der podr� utilizarlo.");
-			SendFactionMessage(PlayerInfo[playerid][pFaction], COLOR_FACTIONCHAT, "[Facci�n] El canal /f fue cerrado por el l�der.");
+			SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Cerraste el canal /f de la facci?n. ?nicamente el l?der podr? utilizarlo.");
+			SendFactionMessage(PlayerInfo[playerid][pFaction], COLOR_FACTIONCHAT, "[Facci?n] El canal /f fue cerrado por el l?der.");
 		}
 	}
 	else if(!strcmp(subcmd, "invitar", true))
@@ -200,15 +200,15 @@ CMD:faccion(playerid, params[])
 		if(sscanf(params, "s[16]u", subcmd, targetid))
 			return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/fac invitar [ID/Jugador]");
 		if(!IsPlayerLogged(targetid) || playerid == targetid)
-			return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID/Jugador inv�lido.");
+			return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID/Jugador inv?lido.");
 		if(PlayerInfo[targetid][pFaction] != 0)
-		    return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "El jugador ya tiene una facci�n.");
+		    return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "El jugador ya tiene una facci?n.");
         if(FactionInfo[factionid][fJoinRank] == 0)
             return SendClientMessage(playerid, COLOR_ERROR,"[ERROR] "COLOR_EMB_GREY" Rango de ingreso mal configurado. Contacte con un administrador.");
 
 		FactionRequest[targetid] = factionid;
-		SendFMessage(targetid, COLOR_LIGHTBLUE, "Has sido invitado a la facci�n %s por %s. (/aceptar faccion - para ingresar).",FactionInfo[factionid][fName],GetPlayerCleanName(playerid));
-		SendFMessage(playerid, COLOR_LIGHTBLUE, "Has invitado a %s a la facci�n %s.", GetPlayerCleanName(targetid),FactionInfo[factionid][fName]);
+		SendFMessage(targetid, COLOR_LIGHTBLUE, "Has sido invitado a la facci?n %s por %s. (/aceptar faccion - para ingresar).",FactionInfo[factionid][fName],GetPlayerCleanName(playerid));
+		SendFMessage(playerid, COLOR_LIGHTBLUE, "Has invitado a %s a la facci?n %s.", GetPlayerCleanName(targetid),FactionInfo[factionid][fName]);
 		return 1;
 	}
 	else if(!strcmp(subcmd, "expulsar", true))
@@ -218,13 +218,13 @@ CMD:faccion(playerid, params[])
 		if(sscanf(params, "s[16]u", subcmd, targetid))
 			return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/fac expulsar [ID/Jugador]");
 		if(!IsPlayerLogged(targetid) || playerid == targetid)
-			return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID/Jugador inv�lido.");
+			return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID/Jugador inv?lido.");
 		if(PlayerInfo[targetid][pFaction] != factionid)
-			return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "El jugador no pertenece a tu facci�n.");
+			return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "El jugador no pertenece a tu facci?n.");
 
 		Faction_SetPlayer(targetid, 0, 0);
-		SendFMessage(targetid, COLOR_LIGHTBLUE, "Has sido expulsado de la facci�n %s por %s.", FactionInfo[factionid][fName], GetPlayerCleanName(playerid));
-		SendFMessage(playerid, COLOR_LIGHTBLUE, "Has expulsado a %s de la facci�n %s.", GetPlayerCleanName(targetid), FactionInfo[factionid][fName]);
+		SendFMessage(targetid, COLOR_LIGHTBLUE, "Has sido expulsado de la facci?n %s por %s.", FactionInfo[factionid][fName], GetPlayerCleanName(playerid));
+		SendFMessage(playerid, COLOR_LIGHTBLUE, "Has expulsado a %s de la facci?n %s.", GetPlayerCleanName(targetid), FactionInfo[factionid][fName]);
 		return 1;
 	}
 	else if(!strcmp(subcmd, "rango", true))
@@ -234,9 +234,9 @@ CMD:faccion(playerid, params[])
 		if(sscanf(params, "s[16]ui", subcmd, targetid, rank))
 			return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/fac rango [ID/Jugador] [nro rango]");
 		if(!IsPlayerLogged(targetid) || playerid == targetid)
-			return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID/Jugador inv�lido.");
+			return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID/Jugador inv?lido.");
 		if(PlayerInfo[targetid][pFaction] != factionid)
-			return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "El jugador no pertenece a tu facci�n.");
+			return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "El jugador no pertenece a tu facci?n.");
 		if(rank < 2 || rank > FactionInfo[factionid][fRankAmount]) {
 			SendFMessage(playerid, COLOR_LIGHTYELLOW2, "El rango no debe ser menor a 2 o mayor que %d.", FactionInfo[factionid][fRankAmount]);
 			return 1;
@@ -246,7 +246,7 @@ CMD:faccion(playerid, params[])
 		SendFMessage(targetid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"tu rango ha sido cambiado por %s, ahora eres %s.", GetPlayerCleanName(playerid), Faction_GetRankName(factionid, rank));
 		SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"le has cambiado el rango de %s a %s.", GetPlayerCleanName(targetid), Faction_GetRankName(factionid, rank));
 		new string[128];
-		format(string, sizeof(string), "[Facci�n] %s es ahora %s.", GetPlayerCleanName(targetid), Faction_GetRankName(factionid, rank));
+		format(string, sizeof(string), "[Facci?n] %s es ahora %s.", GetPlayerCleanName(targetid), Faction_GetRankName(factionid, rank));
 		SendFactionMessage(PlayerInfo[playerid][pFaction], COLOR_FACTIONCHAT, string);
 		return 1;
 	} else {
@@ -263,13 +263,13 @@ hook function OnPlayerCmdAccept(playerid, const subcmd[])
 	new factionid = FactionRequest[playerid], string[128];
 
 	if(factionid == 0)
-		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2,"Nadie te ha invitado a una facci�n.");
+		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2,"Nadie te ha invitado a una facci?n.");
 	if(PlayerInfo[playerid][pFaction] != 0)
-		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2,"�Ya te encuentras en una facci�n!");
+		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2,"?Ya te encuentras en una facci?n!");
 
-	format(string, sizeof(string), "[Facci�n] %s ha ingresado a la facci�n.",GetPlayerCleanName(playerid));
+	format(string, sizeof(string), "[Facci?n] %s ha ingresado a la facci?n.",GetPlayerCleanName(playerid));
 	SendFactionMessage(factionid, COLOR_FACTIONCHAT, string);
-	SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"�Felicitaciones! ahora eres miembro de la facci�n: %s.", Faction_GetName(factionid));
+	SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"?Felicitaciones! ahora eres miembro de la facci?n: %s.", Faction_GetName(factionid));
 	Faction_SetPlayer(playerid, factionid, FactionInfo[factionid][fJoinRank]);
 	FactionRequest[playerid] = 0;
 	return 1;
@@ -284,13 +284,13 @@ CMD:f(playerid, params[])
 	if(sscanf(params, "s[256]", text))
 		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/f [texto]");
 	if(IsPlayerMuted(playerid))
-		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "�Te encuentras silenciado!");
+		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "?Te encuentras silenciado!");
 	if(FactionChannel[faction] == 1 && rank != 1)
-	    return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "El canal /f de tu facci�n se encuentra cerrado por el l�der.");
+	    return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "El canal /f de tu facci?n se encuentra cerrado por el l?der.");
 	if(PlayerInfo[playerid][pFaction] == 0)
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No perteneces a ninguna facci�n.");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No perteneces a ninguna facci?n.");
 	if(!BitFlag_Get(p_toggle[playerid], FLAG_TOGGLE_FAC))
-        return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Tienes desactivado el chat OOC de la facci�n.");
+        return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Tienes desactivado el chat OOC de la facci?n.");
 
 	format(text, sizeof(text), "(( [%s] %s %s (ID %d): %s ))", FactionInfo[faction][fName], Faction_GetRankName(faction, rank), GetPlayerCleanName(playerid), playerid, text);
 	foreach(new i : Player)
@@ -333,7 +333,7 @@ CMD:r(playerid, params[])
 	if(factionID == 0 || (PlayerInfo[playerid][pFaction] == FAC_PMA && PlayerInfo[playerid][pRank] == 10))
 	    return 1;
 	if(IsPlayerCracked(playerid))
-		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "�No puedes hacerlo en este momento!");
+		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "?No puedes hacerlo en este momento!");
 	if(sscanf(params, "s[256]", text))
 		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"(/r)adio [mensaje]");
 	if(!PlayerHasRadio(playerid))
@@ -341,7 +341,7 @@ CMD:r(playerid, params[])
 	if(!BitFlag_Get(p_toggle[playerid], FLAG_TOGGLE_RADIO))
 	    return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "Tienes tu radio apagada.");
 	if(IsPlayerMuted(playerid))
-		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "�no puedes usar la radio, te encuentras silenciado!");
+		return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "?no puedes usar la radio, te encuentras silenciado!");
 
 	PlayerCmeMessage(playerid, 15.0, 4000, "Toma una radio de su bolsillo y habla por ella.");
 	format(string, sizeof(string), "%s dice por radio: %s", GetPlayerChatName(playerid), text);
@@ -369,7 +369,7 @@ CMD:departamento(playerid, params[])
 	if(faction_id == 0 || (PlayerInfo[playerid][pFaction] == FAC_PMA && PlayerInfo[playerid][pRank] == 10))
 	    return 1;
 	if(IsPlayerCracked(playerid))
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"�No puedes hacerlo en este momento!");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"?No puedes hacerlo en este momento!");
 	if(!Faction_HasTag(PlayerInfo[playerid][pFaction], FAC_TAG_GOB_TYPE))
         return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tienes permiso para hablar por esta frecuencia.");
 	if(sscanf(params, "s[256]", text))

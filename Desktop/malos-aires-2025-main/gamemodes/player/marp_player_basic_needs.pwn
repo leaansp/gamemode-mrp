@@ -14,6 +14,7 @@
 #define BN_COLOR_ALERT 		(0xF04A17FF)
 
 static playerBasicNeedsTimer[MAX_PLAYERS];
+static bool:BasicNeedsDisabled = true;
 
 static PlayerBar:PTD_foodBar[MAX_PLAYERS];
 static PlayerBar:PTD_drinkBar[MAX_PLAYERS];
@@ -165,6 +166,8 @@ BN_PlayerRefill(playerid) {
 
 forward OnPlayerBasicNeedsUpdate(playerid);
 public OnPlayerBasicNeedsUpdate(playerid) {
+	if(BasicNeedsDisabled) return false;
+
     if(IsPlayerAFK(playerid) || PlayerInfo[playerid][pJailed] == JAIL_OOC || AdminDuty[playerid])
     	return false;
 
@@ -210,4 +213,30 @@ public OnPlayerBasicNeedsUpdate(playerid) {
 		SendClientMessage(playerid, COLOR_RED, "No has comido en mucho tiempo, come algo urgente o morirás de hambre.");
 	}
 	return true;
+}
+
+// ================================================================
+// TOGGLE SISTEMA
+// ================================================================
+
+CMD:necesidadesdesactivar(playerid, params[])
+{
+	if(AccountInfo[playerid][accAdminLevel] < 14)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tienes permiso para usar este comando.");
+	if(BasicNeedsDisabled)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El sistema de necesidades ya esta desactivado.");
+	BasicNeedsDisabled = true;
+	SendClientMessageToAll(COLOR_INFO, "[INFO] "COLOR_EMB_GREY"El sistema de hambre y sed ha sido desactivado por un administrador.");
+	return 1;
+}
+
+CMD:necesidadesactivar(playerid, params[])
+{
+	if(AccountInfo[playerid][accAdminLevel] < 14)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tienes permiso para usar este comando.");
+	if(!BasicNeedsDisabled)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El sistema de necesidades ya esta activo.");
+	BasicNeedsDisabled = false;
+	SendClientMessageToAll(COLOR_INFO, "[INFO] "COLOR_EMB_GREY"El sistema de hambre y sed ha sido reactivado por un administrador.");
+	return 1;
 }

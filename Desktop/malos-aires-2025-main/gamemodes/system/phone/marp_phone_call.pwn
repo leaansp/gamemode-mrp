@@ -29,9 +29,9 @@ enum e_PhoneCallErrors {
 }
 
 static const PhoneCallErrors[][40] = {
-	"Telefono de origen inv�lido.",
-	"n�mero inv�lido.",
-	"n�mero inexistente.",
+	"Telefono de origen inv?lido.",
+	"n?mero inv?lido.",
+	"n?mero inexistente.",
 	"Linea ocupada.",
 	"No se pudo conectar, intente mas tarde."
 };
@@ -90,9 +90,9 @@ PhoneCall:PhoneCall_New(PHONE_HANDLE:from_phone, to_number, &error)
 {
 	new PHONE_HANDLE:to_phone = Phone_GetNumberHandle(to_number);
 
-	if(!to_phone) // No existe un tel�fono creado con ese n�mero
+	if(!to_phone) // No existe un tel?fono creado con ese n?mero
 	{
-		if(!Phone_IsValidPersonalNumber(to_number)) { // No intent� llamar a un n�mero de persona f�sica
+		if(!Phone_IsValidPersonalNumber(to_number)) { // No intent? llamar a un n?mero de persona f?sica
 			error = PHONECALL_ERROR_3;
 		} else {
 			error = PHONECALL_ERROR_5;
@@ -233,7 +233,7 @@ PhoneCall_OnStarted(PHONE_HANDLE:from_phone, PHONE_HANDLE:to_phone)
 
 	if(IsPlayerConnected(from_playerid))
 	{
-		PlayerActionMessage(from_playerid, 15.0, "toma su tel�fono celular y marca un n�mero.");
+		PlayerActionMessage(from_playerid, 15.0, "toma su tel?fono celular y marca un n?mero.");
 		if(!IsPlayerInAnyVehicle(from_playerid) && GetPlayerSpecialAction(from_playerid) == SPECIAL_ACTION_NONE) {
 			SetPlayerSpecialAction(from_playerid, SPECIAL_ACTION_USECELLPHONE);
 		}
@@ -247,8 +247,8 @@ PhoneCall_OnReceived(PHONE_HANDLE:from_phone, PHONE_HANDLE:to_phone)
 
 	if(IsPlayerLogged(to_playerid))
 	{
-		PlayerDoMessage(to_playerid, 15.0, "Un tel�fono est� comenzando a sonar");
-		SendClientMessage(to_playerid, COLOR_WHITE, "est�s recibiendo una llamada. Puedes ver el telefono y atenderla usando el comando (/tel)efono.");
+		PlayerDoMessage(to_playerid, 15.0, "Un tel?fono est? comenzando a sonar");
+		SendClientMessage(to_playerid, COLOR_WHITE, "est?s recibiendo una llamada. Puedes ver el telefono y atenderla usando el comando (/tel)efono.");
 	}
 	return (1 || from_phone || to_phone);
 }
@@ -292,7 +292,7 @@ PhoneCall_OnMessageReceived(PHONE_HANDLE:from_phone, PHONE_HANDLE:to_phone, cons
 	new to_playerid = Phone_GetPlayerid(to_phone);
 
 	if(IsPlayerLogged(to_playerid)) {
-		new str[180] = "[Voz al tel�fono] dice: ";
+		new str[180] = "[Voz al tel?fono] dice: ";
 		strcat(str, message, sizeof(str));
 		SendClientMessage(to_playerid, COLOR_YELLOW2, str);
 	}

@@ -40,11 +40,20 @@
 #define HOLSTER_DEFAULT_SY  (0.8)
 #define HOLSTER_DEFAULT_SZ  (0.8)
 
+#define HOLSTER_SPINE_X     (0.0)
+#define HOLSTER_SPINE_Y     (-0.10)
+#define HOLSTER_SPINE_Z     (0.05)
+#define HOLSTER_SPINE_RX    (0.0)
+#define HOLSTER_SPINE_RY    (0.0)
+#define HOLSTER_SPINE_RZ    (90.0)
+#define HOLSTER_DLG_CONFIG  9700
+
 static HolsterItem[MAX_PLAYERS];           // itemid en la funda (0 = vacia)
 static HolsterParam[MAX_PLAYERS];          // municion/param del arma en funda
 static Float:HolsterPos[MAX_PLAYERS][6];   // x, y, z, rx, ry, rz
 static Float:HolsterScale[MAX_PLAYERS][3]; // sx, sy, sz
 static bool:HolsterEditing[MAX_PLAYERS];   // jugador en modo edicion
+static HolsterMode[MAX_PLAYERS];           // 0 = muslo derecho, 1 = columna (pecho)
 
 // ?????????????????????????????????????????????????????????????????
 // CICLO DE VIDA
@@ -55,6 +64,19 @@ hook OnPlayerDisconnect(playerid, reason)
 	HolsterItem[playerid]    = 0;
 	HolsterParam[playerid]   = 0;
 	HolsterEditing[playerid] = false;
+	HolsterMode[playerid]    = 0;
+	return 1;
+}
+
+hook OnPlayerCharSwitch(playerid)
+{
+	if(HolsterItem[playerid] != 0)
+		Holster_SaveItemToDB(playerid);
+	Holster_Detach(playerid);
+	HolsterItem[playerid]    = 0;
+	HolsterParam[playerid]   = 0;
+	HolsterEditing[playerid] = false;
+	HolsterMode[playerid]    = 0;
 	return 1;
 }
 
@@ -69,7 +91,7 @@ hook LoadAccountDataEnded(playerid)
 {
 	new query[256];
 	mysql_format(MYSQL_HANDLE, query, sizeof(query),
-		"SELECT `itemid`,`param`,`pos_x`,`pos_y`,`pos_z`,`rot_x`,`rot_y`,`rot_z`,`sc_x`,`sc_y`,`sc_z` \
+		"SELECT `itemid`,`param`,`pos_x`,`pos_y`,`pos_z`,`rot_x`,`rot_y`,`rot_z`,`sc_x`,`sc_y`,`sc_z`,`mode` \
 		FROM `holster` WHERE `playerid`=%i LIMIT 1",
 		PlayerInfo[playerid][pID]);
 	mysql_tquery(MYSQL_HANDLE, query, "Holster_OnLoad", "i", playerid);
@@ -95,6 +117,7 @@ public Holster_OnLoad(playerid)
 	cache_get_value_index_float(0, 8, HolsterScale[playerid][0]);
 	cache_get_value_index_float(0, 9, HolsterScale[playerid][1]);
 	cache_get_value_index_float(0, 10, HolsterScale[playerid][2]);
+	cache_get_value_index_int(0, 11, HolsterMode[playerid]);
 	return 1;
 }
 
@@ -165,8 +188,9 @@ static Holster_Attach(playerid)
 	new itemid = HolsterItem[playerid];
 	if(!ItemModel_IsValidId(itemid) || !ItemModel_GetObjectModel(itemid))
 		return;
+	new holsterBone = (HolsterMode[playerid] == 1) ? ATTACH_BONE_ID_SPINE : HOLSTER_BONE;
 	SetPlayerAttachedObject(playerid, ATTACH_INDEX_ID_HOLSTER,
-		ItemModel_GetObjectModel(itemid), HOLSTER_BONE,
+		ItemModel_GetObjectModel(itemid), holsterBone,
 		HolsterPos[playerid][0], HolsterPos[playerid][1], HolsterPos[playerid][2],
 		HolsterPos[playerid][3], HolsterPos[playerid][4], HolsterPos[playerid][5],
 		HolsterScale[playerid][0], HolsterScale[playerid][1], HolsterScale[playerid][2]);
@@ -241,6 +265,62 @@ stock Holster_ClearWeapon(playerid)
 	Holster_SaveItemToDB(playerid);
 }
 
+static Holster_SaveModeToDB(playerid)
+{
+	new query[512];
+	mysql_format(MYSQL_HANDLE, query, sizeof(query),
+		"INSERT INTO `holster` \
+		(`playerid`,`itemid`,`param`,`pos_x`,`pos_y`,`pos_z`,`rot_x`,`rot_y`,`rot_z`,`sc_x`,`sc_y`,`sc_z`,`mode`) \
+		VALUES (%i,%i,%i,%f,%f,%f,%f,%f,%f,%f,%f,%f,%i) \
+		ON DUPLICATE KEY UPDATE \
+		`mode`=%i,`pos_x`=%f,`pos_y`=%f,`pos_z`=%f,`rot_x`=%f,`rot_y`=%f,`rot_z`=%f,`sc_x`=%f,`sc_y`=%f,`sc_z`=%f",
+		PlayerInfo[playerid][pID],
+		HolsterItem[playerid], HolsterParam[playerid],
+		HolsterPos[playerid][0], HolsterPos[playerid][1], HolsterPos[playerid][2],
+		HolsterPos[playerid][3], HolsterPos[playerid][4], HolsterPos[playerid][5],
+		HolsterScale[playerid][0], HolsterScale[playerid][1], HolsterScale[playerid][2],
+		HolsterMode[playerid],
+		HolsterMode[playerid],
+		HolsterPos[playerid][0], HolsterPos[playerid][1], HolsterPos[playerid][2],
+		HolsterPos[playerid][3], HolsterPos[playerid][4], HolsterPos[playerid][5],
+		HolsterScale[playerid][0], HolsterScale[playerid][1], HolsterScale[playerid][2]);
+	mysql_tquery(MYSQL_HANDLE, query);
+}
+
+hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+	if (dialogid != HOLSTER_DLG_CONFIG) return 0;
+	if (!response) return 1;
+	switch (listitem)
+	{
+		case 0:
+		{
+			HolsterMode[playerid] = 0;
+			Holster_SetDefaultPos(playerid);
+			if (HolsterItem[playerid] != 0) { Holster_Detach(playerid); Holster_Attach(playerid); }
+			Holster_SaveModeToDB(playerid);
+			SendClientMessage(playerid, COLOR_INFO, "[CADERA] "COLOR_EMB_GREY"Modo cambiado: con movimiento. Usa /cadera editar para ajustar.");
+		}
+		case 1:
+		{
+			HolsterMode[playerid] = 1;
+			HolsterPos[playerid][0] = HOLSTER_SPINE_X;
+			HolsterPos[playerid][1] = HOLSTER_SPINE_Y;
+			HolsterPos[playerid][2] = HOLSTER_SPINE_Z;
+			HolsterPos[playerid][3] = HOLSTER_SPINE_RX;
+			HolsterPos[playerid][4] = HOLSTER_SPINE_RY;
+			HolsterPos[playerid][5] = HOLSTER_SPINE_RZ;
+			HolsterScale[playerid][0] = HOLSTER_DEFAULT_SX;
+			HolsterScale[playerid][1] = HOLSTER_DEFAULT_SY;
+			HolsterScale[playerid][2] = HOLSTER_DEFAULT_SZ;
+			if (HolsterItem[playerid] != 0) { Holster_Detach(playerid); Holster_Attach(playerid); }
+			Holster_SaveModeToDB(playerid);
+			SendClientMessage(playerid, COLOR_INFO, "[CADERA] "COLOR_EMB_GREY"Modo cambiado: sin movimiento. Usa /cadera editar para ajustar.");
+		}
+	}
+	return 1;
+}
+
 // ?????????????????????????????????????????????????????????????????
 // COMANDO /cadera
 // ?????????????????????????????????????????????????????????????????
@@ -275,7 +355,15 @@ CMD:cadera(playerid, params[])
 			return 1;
 		}
 
-		SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/cadera [editar | guardar]");
+		if(!strcmp(subcmd, "configuracion", true))
+		{
+			ShowPlayerDialog(playerid, HOLSTER_DLG_CONFIG, DIALOG_STYLE_LIST, "Cadera - Configuracion",
+				"Con movimiento (recomendada para la pierna)\nSin movimiento (recomendado: cintura/pecho)",
+				"Seleccionar", "Cancelar");
+			return 1;
+		}
+
+		SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/cadera [configuracion | editar | guardar]");
 		return 1;
 	}
 
@@ -327,5 +415,7 @@ CMD:cadera(playerid, params[])
 	new str[64];
 	format(str, sizeof(str), "Guarda %s en la cadera.", ItemModel_GetName(itemid));
 	PlayerCmeMessage(playerid, 15.0, 3500, str);
+	SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Recuerda que cada vez que pongas el arma en tu cintura, debes realizar una interpretación acorde al entorno.");
+	SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Evita sanciones y el mal uso del /cadera, esforcemosnos por interpretar correctamente.");
 	return 1;
 }

@@ -111,6 +111,11 @@ forward PP_main();
 forward Indirection_OnGameModeInit();
 forward isPlayerCopOnDuty(playerid);
 forward isPlayerSideOnDuty(playerid);
+forward OnPlayerCharSwitch(playerid);
+
+// Declared here so included files can reference them
+new gPlayerLogged[MAX_PLAYERS];
+new pLoginTransitionTimer[MAX_PLAYERS];
 
 #define HP_GAIN           		2         	                                	// Vida que ganas por segundo al estar hospitalizado.
 #define GAS_UPDATE_TIME         36000                                           // Tiempo de actualizacion de la gasolina.
@@ -300,6 +305,7 @@ new socialPay;
 #include "system\tuning\marp_tuning_gui.pwn"
 #include "garage\marp_garages.pwn"
 #include "system/marp_firstlogin_test.pwn"
+#include "player/marp_cambiarpersonaje.pwn"
 #include "system/marp_multichar.pwn"
 // #include "system/marp_login_audio.pwn" // Deshabilitado: solo diálogos
 #include "job/marp_elecjob.pwn"
@@ -308,6 +314,7 @@ new socialPay;
 #include "system/marp_anticheat_core.pwn"
 #include "system/marp_asador.pwn"				//Sistema de asador (choripanes)
 #include "system/marp_vehicle_wear.pwn"		//Desgaste de vehiculos
+#include "system/marp_twitter.pwn"			//Sistema de Twitter
 
 
 new timersID[24];
@@ -315,9 +322,7 @@ new timersID[24];
 
 
 new	LastDeath[MAX_PLAYERS],
-	DeathSpam[MAX_PLAYERS char],
-	gPlayerLogged[MAX_PLAYERS],
-	pLoginTransitionTimer[MAX_PLAYERS];
+	DeathSpam[MAX_PLAYERS char];
 
 IsPlayerMuted(playerid) {
 	return Muted[playerid];
@@ -1093,6 +1098,10 @@ public OnContinueCharacterLoad(playerid)
 
 	if(GetPlayerState(playerid) == PLAYER_STATE_SPECTATING) {
 		TogglePlayerSpectating(playerid, false);
+	} else if(GetPVarInt(playerid, "CSwitchSpawn")) {
+		DeletePVar(playerid, "CSwitchSpawn");
+		SpawnPlayer(playerid);
+		CharSwitch_FreezeOnSpawn(playerid);
 	} else {
 		SpawnPlayer(playerid);
 	}

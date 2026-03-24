@@ -50,6 +50,19 @@ hook OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
+hook OnPlayerCharSwitch(playerid)
+{
+	ToyDataPlayerSpawned[playerid] = 0;
+
+	if(Iter_Count(ToyData[playerid]))
+	{
+		Toy_HideAllGraphicObjects(playerid);
+		Toy_DisconnectionUnload(playerid);
+		Iter_Clear(ToyData[playerid]);
+	}
+	return 1;
+}
+
 hook OnPlayerSpawn(playerid)
 {
 	ToyDataPlayerSpawned[playerid] = 1;

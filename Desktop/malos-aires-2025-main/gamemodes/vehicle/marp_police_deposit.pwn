@@ -200,9 +200,9 @@ stock Depo_ShowVehicles(playerid)
         }		
     }
     if(count == 0)
-        return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"No hay veh�culos en el incautados.");
+        return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"No hay veh?culos en el incautados.");
 
-    Dialog_Show(playerid, DLG_DEPO_SHOW, DIALOG_STYLE_TABLIST_HEADERS, "Lista de veh�culos incautados", Depo_InfoStr, "Seleccionar", "Cerrar");
+    Dialog_Show(playerid, DLG_DEPO_SHOW, DIALOG_STYLE_TABLIST_HEADERS, "Lista de veh?culos incautados", Depo_InfoStr, "Seleccionar", "Cerrar");
     return 1;
 }
 
@@ -218,9 +218,9 @@ Dialog:DLG_DEPO_SHOW(playerid, response, listitem, inputtext[])
 
     new str[256], title[32];
 
-    format(title, sizeof(title), "Informacion de veh�culo ID: %i", vehicleid);
+    format(title, sizeof(title), "Informacion de veh?culo ID: %i", vehicleid);
 
-    format(str, sizeof(str), "Modelo: %s\nPatente: %s\ndue�o: %s\nraz�n de ingreso: %s\nIngresado por: %s\nFecha de ingreso: %s", 
+    format(str, sizeof(str), "Modelo: %s\nPatente: %s\ndue?o: %s\nraz?n de ingreso: %s\nIngresado por: %s\nFecha de ingreso: %s", 
         Veh_GetName(vehicleid),
         VehicleInfo[vehicleid][VehPlate], 
         VehicleInfo[vehicleid][VehOwnerName],
@@ -245,7 +245,7 @@ CMD:deposito(playerid, params[])
     if(PlayerInfo[playerid][pFaction] != FAC_PMA || PlayerInfo[playerid][pRank] == 10)
 	  	return 1;
 	if(CopDuty[playerid] == 0)
-	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �Debes estar en servicio como oficial de polic�a!");
+	    return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Debes estar en servicio como oficial de polic?a!");
     
     new subcmd[18], subdata[MAX_DEPO_REASON_LENGTH], vehicleid;
 	if(sscanf(params, "s[18]S(" ")[128]", subcmd, subdata)) {
@@ -257,45 +257,45 @@ CMD:deposito(playerid, params[])
         if(!strcmp(subcmd, "ingresar", true)) {
             new reason[128];
             if(sscanf(subdata, "s[128]", reason))
-                return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/deposito ingresar [raz�n]");
+                return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/deposito ingresar [raz?n]");
             if(!IsPlayerInDynamicArea(playerid, Depo_Area))
-                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �Debes estar en la zona del deposito!");
+                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Debes estar en la zona del deposito!");
 
             vehicleid = GetPlayerVehicleID(playerid);
             if(!Veh_IsValidId(vehicleid))
-                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �Debes estar dentro de un veh�culo!");
+                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Debes estar dentro de un veh?culo!");
             if(Depo_EnterVehicle(playerid, vehicleid, reason)) {
                 ServerLog(LOG_TYPE_ID_VEHICLES, .id=vehicleid, .entry="/deposito", .playerid=playerid, .params="ingresar");
-                SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Ingresaste el veh�culo id: %d por %s al deposito.", vehicleid, reason);
+                SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Ingresaste el veh?culo id: %d por %s al deposito.", vehicleid, reason);
             }
         } 
         else if(!strcmp(subcmd, "sacar", true)) {
             if(sscanf(subdata, "i", vehicleid))
                 return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/deposito sacar [idvehiculo]");
             if(!Veh_IsValidId(vehicleid))
-                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �ID invalida!");
+                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?ID invalida!");
             if(PlayerInfo[playerid][pRank] > 3)
-                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �Tu rango no tiene acceso a este comando!");
+                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Tu rango no tiene acceso a este comando!");
             if(Depo_RemoveVehicle(vehicleid)) {
                 ServerLog(LOG_TYPE_ID_VEHICLES, .id=vehicleid, .entry="/deposito", .playerid=playerid, .params="sacar");
-                SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Sacaste el veh�culo id: %d del deposito.", vehicleid);
+                SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Sacaste el veh?culo id: %d del deposito.", vehicleid);
             } else {
-                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �Ese veh�culo no se encuentra en el deposito!");
+                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Ese veh?culo no se encuentra en el deposito!");
             }
         }
         else if(!strcmp(subcmd, "permitirretirar", true)) {
             if(sscanf(subdata, "i", vehicleid))
-                return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/deposito permitirretirar [idveh�culo]");
+                return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/deposito permitirretirar [idveh?culo]");
             if(!Veh_IsValidId(vehicleid))
-                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �ID invalida!");
+                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?ID invalida!");
             if(!Depo_IsVehicle(vehicleid))
-                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �Ese veh�culo no se encuentra en el deposito!");
+                return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Ese veh?culo no se encuentra en el deposito!");
             if(Depo_Info[vehicleid][depoCanRemove]) {
                 Depo_Info[vehicleid][depoCanRemove] = 0;
-                SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"El veh�culo id: %d no podra ser retirado del deposito por su due�o.", vehicleid);
+                SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"El veh?culo id: %d no podra ser retirado del deposito por su due?o.", vehicleid);
             } else {
                 Depo_Info[vehicleid][depoCanRemove] = 1;
-                SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"El veh�culo id: %d podra ser retirado del deposito por su due�o.", vehicleid);
+                SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"El veh?culo id: %d podra ser retirado del deposito por su due?o.", vehicleid);
             }
             Depo_UpdateVehicle(vehicleid, DEPO_UPDATE);
             return 1;
@@ -310,7 +310,7 @@ CMD:deposito(playerid, params[])
 Depo_InformOfficers(playerid, vehicleid)
 {
     new string[128];
-    format(string, sizeof(string), "[CENTRAL] El sujeto %s quiere retirar el veh�culo n�mero ((ID)) %i del dep�sito.", GetPlayerCleanName(playerid), vehicleid);
+    format(string, sizeof(string), "[CENTRAL] El sujeto %s quiere retirar el veh?culo n?mero ((ID)) %i del dep?sito.", GetPlayerCleanName(playerid), vehicleid);
     SendFactionRadioMessage(FAC_PMA, COLOR_PMA, string);
     SendFactionRadioMessage(FAC_SIDE, COLOR_PMA, string);
 }
@@ -318,17 +318,17 @@ Depo_InformOfficers(playerid, vehicleid)
 CMD:sacarvehiculo(playerid, params[])
 {
     if(!IsPlayerInRangeOfPoint(playerid, 4.0, DEPOSIT_USE_X, DEPOSIT_USE_Y, DEPOSIT_USE_Z))
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �Debes estar en el mostrador de la comisaria!");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Debes estar en el mostrador de la comisaria!");
 
     new vehicleid;
     if(sscanf(params, "i", vehicleid))
         return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/sacarvehiculo [idvehiculo]");
     if(!Veh_IsValidId(vehicleid))
-        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �ID invalida!");
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?ID invalida!");
     if(!Veh_IsPlayerOwner(vehicleid, playerid) && (Veh_GetSystemType(vehicleid) != VEH_FACTION && PlayerInfo[playerid][pFaction] != VehicleInfo[vehicleid][VehFaction]))
-        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �Este veh�culo no te pertenece o no es de tu faccion!");
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Este veh?culo no te pertenece o no es de tu faccion!");
     if(!Depo_IsVehicle(vehicleid))
-        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �Ese veh�culo no se encuentra en el deposito!");
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Ese veh?culo no se encuentra en el deposito!");
     if(!Depo_Info[vehicleid][depoCanRemove]){
         PlayerDoMessage(playerid, 15.0, "El oficial de recepcion habla por su radio pidiendo a un superior.");
         Depo_InformOfficers(playerid, vehicleid);
@@ -347,8 +347,8 @@ Dialog:DLG_DEPO_REMOVE(playerid, response, listitem, inputtext[])
     {
 		if(GetPlayerCash(playerid) < Depo_PlayerPrice[playerid])
 		{
-			SendClientMessage(TicketOffer[playerid], COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El sujeto decidi� pagar en efectivo, pero no tiene el dinero suficiente.");
-			SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �No tienes el dinero en efectivo suficiente!");
+			SendClientMessage(TicketOffer[playerid], COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El sujeto decidi? pagar en efectivo, pero no tiene el dinero suficiente.");
+			SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes el dinero en efectivo suficiente!");
 			return 1;
 		}
 		GivePlayerCash(playerid, -Depo_PlayerPrice[playerid]);
@@ -357,15 +357,15 @@ Dialog:DLG_DEPO_REMOVE(playerid, response, listitem, inputtext[])
 	{
 		if(PlayerInfo[playerid][pBank] < Depo_PlayerPrice[playerid])
 		{
-			SendClientMessage(TicketOffer[playerid], COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El sujeto decidi� pagar por transferencia bancaria, pero no tiene dinero suficiente en su cuenta.");
-			SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �No tienes el dinero suficiente en tu cuenta bancaria!");
+			SendClientMessage(TicketOffer[playerid], COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El sujeto decidi? pagar por transferencia bancaria, pero no tiene dinero suficiente en su cuenta.");
+			SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes el dinero suficiente en tu cuenta bancaria!");
 			return 1;
 		}
 		PlayerInfo[playerid][pBank] -= Depo_PlayerPrice[playerid];
 	}
 
 	SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Vehiculo retirado - costo: $%d.", Depo_PlayerPrice[playerid]);
-    SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Tu veh�culo esta estacionado detras de comisaria. Recuarda usar /vehestacionar luego de retirarlo.");
+    SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Tu veh?culo esta estacionado detras de comisaria. Recuarda usar /vehestacionar luego de retirarlo.");
 	Faction_GiveMoney(FAC_PMA, Depo_PlayerPrice[playerid]);
     ServerLog(LOG_TYPE_ID_VEHICLES, .id=Depo_PlayerCar[playerid], .entry="/sacarvehiculo", .playerid=playerid);
     Depo_RemoveVehicle(Depo_PlayerCar[playerid]);

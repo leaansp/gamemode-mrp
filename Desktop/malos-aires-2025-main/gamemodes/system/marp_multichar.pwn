@@ -219,6 +219,11 @@ stock MultiChar_GetCharacterSlot(playerid)
 	return PlayerInfo[playerid][pCharacterSlot];
 }
 
+stock MultiChar_GetCharacterSlots(playerid)
+{
+	return g_CharacterSlots[playerid];
+}
+
 stock MultiChar_HandlePostRegFlow(playerid)
 {
 	if(GetPVarInt(playerid, "NewRegistration") == 1)
@@ -402,10 +407,50 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		case DLG_CHAR_SELECT:
 		{
 			if(!response)
+			{
+				if(CharSwitch_IsSwitching(playerid))
+				{
+					CharSwitch_Reset(playerid);
+					return SendClientMessage(playerid, COLOR_INFO, "[INFO] Cambio de personaje cancelado.");
+				}
 				return KickPlayer(playerid, "el sistema", "salir de selección");
+			}
 			
 			// Ocultar textdraws de login cuando selecciona personaje
 			// LoginTD_Hide(playerid); // Deshabilitado: solo diálogos
+			
+			if(CharSwitch_IsSwitching(playerid))
+			{
+				if(listitem >= g_CharacterSlots[playerid])
+				{
+					CharSwitch_Reset(playerid);
+					return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] Seleccion invalida.");
+				}
+				if(g_CharacterIds[playerid][listitem] == PlayerInfo[playerid][pID])
+				{
+					CharSwitch_Reset(playerid);
+					return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] Ya estas jugando con ese personaje.");
+				}
+				if(IsCharacterConnected(g_CharacterIds[playerid][listitem], playerid))
+				{
+					CharSwitch_Reset(playerid);
+					SendClientMessage(playerid, COLOR_RED, "Este personaje ya está conectado al servidor.");
+					return SendClientMessage(playerid, COLOR_RED, "Por seguridad, no puedes conectarte dos veces con el mismo personaje.");
+				}
+				CharSwitch_DoCleanup(playerid);
+				PlayerInfo[playerid][pMasterAccountId] = g_MasterAccountId[playerid];
+				PlayerInfo[playerid][pCharacterSlot] = listitem + 1;
+				format(PlayerInfo[playerid][pName], MAX_PLAYER_NAME, "%s", g_CharacterList[playerid][listitem]);
+				SetPlayerName(playerid, g_CharacterList[playerid][listitem]);
+				SetPlayerCleanName(playerid, g_CharacterList[playerid][listitem]);
+				SetPlayerChatName(playerid, g_CharacterList[playerid][listitem]);
+				new query_cs[512];
+				mysql_format(MYSQL_HANDLE, query_cs, sizeof(query_cs),
+					"SELECT * FROM accounts WHERE Id=%d LIMIT 1",
+					g_CharacterIds[playerid][listitem]);
+				mysql_tquery(MYSQL_HANDLE, query_cs, "OnPlayerAccountDataLoad", "i", playerid);
+				return 1;
+			}
 			
 			if(listitem >= g_CharacterSlots[playerid])
 			{
@@ -1057,3 +1102,33 @@ public OnCheckMasterIPLimit_RegDir(playerid)
 	return 1;
 }
 
+
+CMD:cp(playerid, params[])
+{
+	return cmd_cambiarpersonaje(playerid, params);
+}
+
+CMD:cambiarpersonaje(playerid, params[])
+{
+	if(!gPlayerLogged[playerid])
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No estas logueado.");
+
+	if(g_CharacterSlots[playerid] < 2)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Solo tienes un personaje. Crea otro desde la pantalla de seleccion de personaje.");
+
+	if(CharSwitch_IsSwitching(playerid))
+		return 1;
+
+	if(PlayerInfo[playerid][pDisabled] != DISABLE_NONE)
+		return SendClientMessage(playerid, COLOR_YELLOW2, "No puedes cambiar de personaje estando incapacitado/congelado.");
+
+	if(PlayerInfo[playerid][pJailed])
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No puedes cambiar de personaje estando preso.");
+
+	if(PlayerInfo[playerid][pHospitalized])
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No puedes cambiar de personaje estando hospitalizado.");
+
+	CharSwitch_Begin(playerid);
+	MultiChar_ShowCharSelect(playerid);
+	return 1;
+}

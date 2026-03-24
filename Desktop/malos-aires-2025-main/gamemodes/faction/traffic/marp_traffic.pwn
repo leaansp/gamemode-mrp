@@ -200,7 +200,7 @@ Traffic_ShowItems(playerid, e_TRAFFIC_TYPE:traffic_type)
         return 1;
     
     new title[32] = "Trafico de ";
-	new line[64], string[sizeof(Traffic_WeaponsIds) * ITEM_MODEL_MAX_NAME_LEN] = "C�digo\tObjeto\n";
+	new line[64], string[sizeof(Traffic_WeaponsIds) * ITEM_MODEL_MAX_NAME_LEN] = "C?digo\tObjeto\n";
 
     switch(traffic_type)
     {
@@ -290,9 +290,9 @@ Dialog:DLG_TRAFFIC_AMOUNT(playerid, response, listitem, inputtext[])
     }
 
     new str[128];
-    format(str, sizeof(str), "[Al tel�fono] %s dice: Necesito un cargamento de %s, hoy.", GetPlayerChatName(playerid), ItemModel_GetName(Traffic_Data[factionid][trafItemid]));
+    format(str, sizeof(str), "[Al tel?fono] %s dice: Necesito un cargamento de %s, hoy.", GetPlayerChatName(playerid), ItemModel_GetName(Traffic_Data[factionid][trafItemid]));
     SendPlayerMessageInRange(15.0, playerid, str, COLOR_FADE1, COLOR_FADE2, COLOR_FADE3, COLOR_FADE4, COLOR_FADE5);
-    SendClientMessage(playerid, COLOR_YELLOW2, "[Voz al tel�fono] dice: Dame un rato, te aviso el lugar.");
+    SendClientMessage(playerid, COLOR_YELLOW2, "[Voz al tel?fono] dice: Dame un rato, te aviso el lugar.");
 
     if(!Traffic_Create(PlayerInfo[playerid][pFaction], posindex)) {
         SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Ocurrio un error inesperado al crear el trafico.");
@@ -321,7 +321,7 @@ Traffic_Create(factionid, posindex)
         new trafficlocation[MAX_ZONE_NAME];
 
         GetCoords2DZone(Traffic_FirstPos[posindex][traffX], Traffic_FirstPos[posindex][traffY], trafficlocation, MAX_ZONE_NAME);
-        format(str, sizeof(str), "[911] Se recibi� una denuncia an�nima sobre actividad sospechosa en la zona %s.", trafficlocation);
+        format(str, sizeof(str), "[911] Se recibi? una denuncia an?nima sobre actividad sospechosa en la zona %s.", trafficlocation);
         SendFactionRadioMessage(FAC_PMA, COLOR_CENTRALRED, str);
         SendFactionRadioMessage(FAC_SIDE, COLOR_CENTRALRED, str);
     }
@@ -415,7 +415,7 @@ hook OnPlayerEnterCheckpoint(playerid)
         case TRAFFIC_STAGE_STARTED: {
             if(!Traffic_EnterAnyCP[factionid])
             {
-                PlayerDoMessage(playerid, 15.0, "NPC:  �Vamos a hacer negocios o qu�?  �Trajiste la plata?");
+                PlayerDoMessage(playerid, 15.0, "NPC:  ?Vamos a hacer negocios o qu??  ?Trajiste la plata?");
                 Traffic_EnterAnyCP[factionid] = true;
             }
             SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Utiliza '/pagartrafico' para pagar.");
@@ -424,12 +424,12 @@ hook OnPlayerEnterCheckpoint(playerid)
             if(!IsPlayerInAnyVehicle(playerid) || Veh_GetTrunkSpace(GetPlayerVehicleID(playerid)) == 0 || !Traffic_CheckTrunkSpace(factionid, GetPlayerVehicleID(playerid))) 
             {
                 SetTimerEx("Traffic_RestartCheckPoint", 1005, false, "i", playerid);
-                SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Debes estar en un veh�culo y que este tenga maletero con el espacio suficiente disponible.");
+                SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Debes estar en un veh?culo y que este tenga maletero con el espacio suficiente disponible.");
                 return 1;
             }
             else 
             {
-                PlayerDoMessage(playerid, 15.0, "NPC: Ah� est� todo, cargalo y tomatelas r�pido de ac�.");
+                PlayerDoMessage(playerid, 15.0, "NPC: Ah? est? todo, cargalo y tomatelas r?pido de ac?.");
                 KillTimer(Traffic_Data[factionid][trafEndTimer]);
                 Traffic_Data[factionid][trafStage] = TRAFFIC_STAGE_END;
                 GameTextForPlayer(playerid, "Cargando los objetos en el maletero.", 30000, 3);
@@ -510,7 +510,7 @@ hook LoadAccountDataEnded(playerid)
         }
         case TRAFFIC_STAGE_PAY: {
             SetPlayerCheckpoint(playerid, Traffic_SecondPos[posindex][trafsX], Traffic_SecondPos[posindex][trafsY], Traffic_SecondPos[posindex][trafsZ], 4.5);
-            SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Tu faccion se encuentra en un trafico de drogas. Debes colocar un veh�culo en el punto marcado en el mapa.");
+            SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Tu faccion se encuentra en un trafico de drogas. Debes colocar un veh?culo en el punto marcado en el mapa.");
         }
     }
     return 1;
@@ -525,9 +525,9 @@ CMD:traficar(playerid, params[])
     if(PlayerInfo[playerid][pRank] > 2)
         return 1;
     if(Traffic_Data[factionid][trafType] != TRAFFIC_TYPE_NULL)
-        return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, " �Tu faccion ya se encuentra en un trafico!");
+        return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, " ?Tu faccion ya se encuentra en un trafico!");
     if(GetHandItem(playerid, HAND_RIGHT) != ITEM_ID_TELEFONO_CELULAR && GetHandItem(playerid, HAND_LEFT) != ITEM_ID_TELEFONO_CELULAR)
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" �No tienes un tel�fono celular en tu mano!");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un tel?fono celular en tu mano!");
     
     if(sscanf(params, "s[16]", typestr))
         return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/traficar [droga-armas-cargadores]");
@@ -570,9 +570,9 @@ CMD:pagartrafico(playerid, params[])
 {
     new factionid = PlayerInfo[playerid][pFaction];
     if(Traffic_Data[factionid][trafType] == TRAFFIC_TYPE_NULL)
-        return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, " �No estas traficando!");
+        return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, " ?No estas traficando!");
     if(Traffic_Data[factionid][trafStage] != TRAFFIC_STAGE_STARTED)
-        return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, " �No estas en la etapa de pago!");
+        return SendClientMessage(playerid, COLOR_LIGHTYELLOW2, " ?No estas en la etapa de pago!");
     
     new playermoney = GetPlayerCash(playerid);
     new price = Traffic_GetPrice(factionid);
@@ -587,7 +587,7 @@ CMD:pagartrafico(playerid, params[])
     } 
     else 
     {
-        PlayerDoMessage(playerid, 15.0, "NPC: Perfecto, pone el auto por ah� que cargamos las cosas.");
+        PlayerDoMessage(playerid, 15.0, "NPC: Perfecto, pone el auto por ah? que cargamos las cosas.");
         GivePlayerCash(playerid, - price);
         Traffic_Data[factionid][trafStage] = TRAFFIC_STAGE_PAY;
 
@@ -612,7 +612,7 @@ CMD:atrafficdebug(playerid, params[])
     if(sscanf(params, "i", factionid))
         return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/atrafficdebug [id de faccion]");
     if(!Faction_IsValidId(factionid))
-        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID de facci�n incorrecta.");
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID de facci?n incorrecta.");
     
     new string[512], e_TRAFFIC_TYPE:traffictype = Traffic_Data[factionid][trafType];
 

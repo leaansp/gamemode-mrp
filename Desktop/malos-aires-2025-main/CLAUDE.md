@@ -96,3 +96,54 @@ mysql_f_tquery(MYSQL_HANDLE, 256, "OnCargarJugador", "SELECT * FROM accounts WHE
 - `dependencies/omp-stdlib/` debe estar **vacía** (conflicto conocido entre OMP y SAMP stdlib)
 - Los modelos custom se registran con `AddSimpleModel` en `OnGameModeInit`
 - El servidor corre en puerto **7779** en modo test
+
+## CRITICO: Encoding de archivos .pwn
+
+**Los archivos `.pwn` de este proyecto están en Windows-1252, NO en UTF-8.**
+SA-MP trata los strings como bytes crudos y el cliente GTA:SA espera Windows-1252.
+Si un archivo se guarda en UTF-8, los caracteres especiales del español (tildes, ñ, ¡, ¿) aparecen como símbolos raros en el juego.
+
+### Regla absoluta para Claude Code
+
+**NUNCA usar los tools `Edit` o `Write` para modificar archivos `.pwn` o `.inc` del proyecto.**
+Ambos tools reescriben el archivo como texto y corrompen los bytes Windows-1252.
+
+**SIEMPRE usar scripts Python con modo binario (`'rb'`/`'wb'`)** para cualquier modificación:
+
+```python
+# Leer
+with open('archivo.pwn', 'rb') as f:
+    data = f.read()
+
+# Modificar (todo nuevo codigo en ASCII puro — sin tildes ni caracteres especiales)
+old = b'texto a reemplazar en bytes exactos'
+new = b'texto nuevo en ASCII puro'
+data = data.replace(old, new, 1)
+
+# Guardar
+with open('archivo.pwn', 'wb') as f:
+    f.write(data)
+```
+
+### Workflow correcto para editar .pwn
+
+1. Escribir el script Python en un archivo `.py` temporal con el tool `Write` (solo para `.py`, está bien)
+2. Ejecutar con `python archivo.py` via Bash tool
+3. Eliminar el script temporal
+4. Correr `sampctl build` para verificar
+
+### Verificar si un archivo está corrupto
+
+```python
+with open('archivo.pwn', 'rb') as f:
+    data = f.read()
+# Si hay muchos \xef\xbf\xbd (char de reemplazo) o muchos \xc2/\xc3 -> corrupto
+count = data.count(b'\xef\xbf\xbd') + data.count(b'\xc2') + data.count(b'\xc3')
+print(count)  # Debe ser 0 o muy bajo
+```
+
+### Si un archivo se corrompió
+
+Restaurar desde `C:\Users\Admin\Desktop\gitlab_clean\` (versiones limpias en Windows-1252)
+o desde `git show HEAD:ruta/al/archivo.pwn` si el commit de HEAD está limpio,
+y re-aplicar los cambios con Python binario.

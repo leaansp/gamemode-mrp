@@ -130,6 +130,12 @@ stock ShowModerationCommands(playerid) {
 		hasCommands = true;
 	}
 	
+	if(level >= 3) {
+		if(!hasCommands) SendClientMessage(playerid, COLOR_INFO, "==============[Ayuda Staff - Moderación]==============");
+		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/cooldowntwitter");
+		hasCommands = true;
+	}
+	
 	if(level >= 6) {
 		if(!hasCommands) SendClientMessage(playerid, COLOR_INFO, "==============[Ayuda Staff - Moderación]==============");
 		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/quitarpuntoderol, /aquitarlicencia, /adarlicencia");
@@ -231,6 +237,7 @@ stock ShowAdvancedCommands(playerid) {
 		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/addequip, /listequip, /delequip");
 		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/order, /ordershow, /orderrandom, /orderdelete");
 		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/aitemdar, /aitemquitar");
+		SendClientMessage(playerid, COLOR_WHITE, "{C8C8C8}/necesidadesdesactivar, /necesidadesactivar");
 		hasCommands = true;
 	}
 	

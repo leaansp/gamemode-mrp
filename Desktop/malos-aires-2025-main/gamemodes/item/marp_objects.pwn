@@ -137,7 +137,7 @@ stock QuickDropObject(playerid, playerhand, bool:running)
 	SetHandItemAndParam(playerid, playerhand, 0, 0);
 	ServerObject[j][sRealObject] = CreateDynamicObject(ItemModel_GetObjectModel(ServerObject[j][sItemID]), ServerObject[j][sX], ServerObject[j][sY], ServerObject[j][sZ], 0.0, 0.0, 0.0, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid));
 	ServerObject[j][sTimeLeft] = SERVER_OBJECT_LIFETIME;
-	SendFMessage(playerid, COLOR_ADVERTISMENT, "Descartaste %s!", ItemModel_GetName(ServerObject[j][sItemID]));
+	SendFMessage(playerid, COLOR_ADVERTISMENT, "Acabas de descartar %s.", ItemModel_GetName(ServerObject[j][sItemID]));
 
 	if(ItemModel_GetType(ServerObject[j][sItemID]) == ITEM_WEAPON) {
 		ServerFormattedLog(LOG_TYPE_ID_WEAPONS, .entry="/tirar_rapido", .playerid=playerid, .params=<"%i %s", ServerObject[j][sAmount], ItemModel_GetName(ServerObject[j][sItemID])>);
