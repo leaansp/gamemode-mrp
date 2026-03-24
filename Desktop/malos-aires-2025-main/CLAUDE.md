@@ -89,6 +89,53 @@ mysql_f_tquery(MYSQL_HANDLE, 256, "OnCargarJugador", "SELECT * FROM accounts WHE
 3. Login/Registro → carga de datos desde tabla `accounts`
 4. Admin level leído desde `master_accounts.admin_level`
 
+## Repositorios y deploy
+
+### Repositorios
+- **GitHub personal** (desarrollo local): `https://github.com/leaansp/gamemode-mrp.git` — remote `origin`
+- **GitLab oficial** (VPS): `https://gitlab.com/malosaires2324/malos-aires-2025.git` — remote `gitlab`
+  - Branch test server: `Test`
+  - Branch producción: `main`
+
+### Flujo de deploy al servidor de test
+
+**IMPORTANTE: No pushear al GitLab sin confirmación explícita del usuario.**
+
+1. Commitear y pushear al GitHub personal (origin) — esto se puede hacer libremente
+2. Cuando el usuario confirme, agregar el remote de GitLab si no existe y pushear:
+   ```bash
+   git remote add gitlab https://gitlab.com/malosaires2324/malos-aires-2025.git
+   git push gitlab feature/hotkeys:Test
+   ```
+3. El usuario se conecta al VPS via Putty (IP: 51.222.86.176, puerto 22)
+4. En el VPS:
+   ```bash
+   cd malosaires-test/malos-aires-2025
+   sudo git pull
+   sudo sampctl build
+   sudo systemctl restart samp-test
+   ```
+
+### Revertir en el VPS
+```bash
+git log --oneline          # ver historial de commits
+git checkout <hash> -- .   # restaurar archivos a un commit anterior
+sudo sampctl build
+sudo systemctl restart samp-test
+```
+
+### SQL pendiente antes de cada deploy
+Ver `informes/sql_pendiente.md` — ejecutar los ALTER/CREATE en la DB del VPS
+antes de reiniciar el servidor con código nuevo que los requiera.
+
+### Servicios SAMP en el VPS
+```bash
+# Test
+sudo systemctl start|stop|restart samp-test
+# Producción
+sudo systemctl start|stop|restart samp-prod
+```
+
 ## Notas importantes
 
 - **El .sql del repo puede estar desactualizado** — la DB en producción puede tener tablas/columnas extra
