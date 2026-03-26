@@ -101,14 +101,14 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*412*/	{
 	/*mName*/ "Voodoo",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 18000,
+	/*mPrice*/ 28000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 2
 	},
 /*413*/	{
 	/*mName*/ "Pony",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 40000,
+	/*mPrice*/ 20000,
 	/*mTrunkSpace*/ 300,
 	/*mSeats*/ 4
 	},
@@ -185,7 +185,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*424*/	{
 	/*mName*/ "BF Injection",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 35000,
+	/*mPrice*/ 150000,
 	/*mTrunkSpace*/ 0,
 	/*mSeats*/ 2
 	},
@@ -199,7 +199,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*426*/	{
 	/*mName*/ "Premier",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 25000,
+	/*mPrice*/ 45000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -332,7 +332,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*445*/	{
 	/*mName*/ "Admiral",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 22000,
+	/*mPrice*/ 27000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -542,7 +542,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*475*/	{
 	/*mName*/ "Sabre",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 35000,
+	/*mPrice*/ 43000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -591,7 +591,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*482*/	{
 	/*mName*/ "Burrito",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 40000,
+	/*mPrice*/ 35000,
 	/*mTrunkSpace*/ 300,
 	/*mSeats*/ 4
 	},
@@ -829,7 +829,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*516*/	{
 	/*mName*/ "Nebula",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 16000,
+	/*mPrice*/ 23000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -948,7 +948,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*533*/	{
 	/*mName*/ "Feltzer",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 45000,
+	/*mPrice*/ 110000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -1067,7 +1067,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*550*/	{
 	/*mName*/ "Sunrise",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 18000,
+	/*mPrice*/ 25000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -1123,7 +1123,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*558*/	{
 	/*mName*/ "Uranus",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 28000,
+	/*mPrice*/ 90000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
@@ -1186,7 +1186,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*567*/	{
 	/*mName*/ "Savanna",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 22000,
+	/*mPrice*/ 47000,
 	/*mTrunkSpace*/ 200,
 	/*mSeats*/ 4
 	},
@@ -1340,7 +1340,7 @@ static const CarModels[][e_VEH_MODEL_DATA] = {
 /*589*/	{
 	/*mName*/ "Club",
 	/*mType*/ VTYPE_CAR,
-	/*mPrice*/ 40000,
+	/*mPrice*/ 60000,
 	/*mTrunkSpace*/ 100,
 	/*mSeats*/ 2
 	},
