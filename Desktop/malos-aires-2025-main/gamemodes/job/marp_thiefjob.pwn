@@ -1104,14 +1104,14 @@ CMD:robarcables(playerid, params[])
         return 1;
 
 	new hand = SearchFreeHand(playerid);
-    // Requiere tener un tel?fono
+    // Requiere tener un teléfono
 	if(!PlayerInfo[playerid][pPhoneNumber])
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un tel?fono celular! consigue uno en un 24/7.");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un teléfono celular! consigue uno en un 24/7.");
 
 	
 	if(hand == -1)
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Tienes ambas manos ocupadas!");
-    PlayerActionMessage(playerid, 15.0, "toma su tel?fono celular del bolsillo.");
+    PlayerActionMessage(playerid, 15.0, "toma su teléfono celular del bolsillo.");
 	SetHandItemAndParam(playerid, hand, ITEM_ID_TELEFONO_CELULAR, 1);
     TogglePlayerControllable(playerid, false);
 	ApplyAnimationEx(playerid, "PED", "phone_in", 4.0, 0, 0, 0, 0, 0, .forcesync = 1, .autofinish = true);

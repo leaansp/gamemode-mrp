@@ -42,7 +42,7 @@ OnSMSSent(PHONE_HANDLE:phone, to_number, const message[])
 	if(fromPlayerid != INVALID_PLAYER_ID)
 	{
 		new str[180];
-		format(str, sizeof(str), "[SMS] %s (ID %i) a n?mero %i: %s", GetPlayerCleanName(fromPlayerid), fromPlayerid, to_number, message);
+		format(str, sizeof(str), "[SMS] %s (ID %i) a número %i: %s", GetPlayerCleanName(fromPlayerid), fromPlayerid, to_number, message);
 		foreach(new i : Player)
 		{
 			if(AdminSMSEnabled[i]) {
@@ -58,9 +58,9 @@ CMD:llamar(playerid, params[])
 	new number;
 
 	if(GetHandItem(playerid, HAND_RIGHT) != ITEM_ID_TELEFONO_CELULAR && GetHandItem(playerid, HAND_LEFT) != ITEM_ID_TELEFONO_CELULAR)
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un tel?fono celular en tu mano!");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un teléfono celular en tu mano!");
     if(sscanf(params, "i", number))
-		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/llamar [n?mero de tel?fono]");
+		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/llamar [número de teléfono]");
 
 	Phone_PlayerCallNumber(playerid, number);
 	return 1;
@@ -73,7 +73,7 @@ CMD:tel(playerid, params[]) {
 CMD:telefono(playerid, params[])
 {
 	if(!PlayerInfo[playerid][pPhoneNumber])
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un tel?fono celular! consigue uno en un 24/7.");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un teléfono celular! consigue uno en un 24/7.");
 
 	new hand = SearchHandsForItem(playerid, ITEM_ID_TELEFONO_CELULAR);
 	if(hand != -1 )
@@ -81,7 +81,7 @@ CMD:telefono(playerid, params[])
 		if(Phone_IsOnCall(Phone_id[playerid])) {
 			return SendClientMessage(playerid, COLOR_YELLOW2, "est?s en una llamada en curso, cuelga primero con /colgar.");
 		}
-		PlayerActionMessage(playerid, 15.0, "guarda su tel?fono celular en el bolsillo.");
+		PlayerActionMessage(playerid, 15.0, "guarda su teléfono celular en el bolsillo.");
 		SetHandItemAndParam(playerid, hand, 0, 0);
 		PhoneGUI_Close(playerid);
 		return 1;
@@ -91,7 +91,7 @@ CMD:telefono(playerid, params[])
 	if(hand == -1)
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?Tienes ambas manos ocupadas!");
 
-	PlayerActionMessage(playerid, 15.0, "toma su tel?fono celular del bolsillo.");
+	PlayerActionMessage(playerid, 15.0, "toma su teléfono celular del bolsillo.");
 	SendClientMessage(playerid, -1, "Usa /tel para guardarlo y /t para hablar en una llamada. Usa ESC o click en (X) para poder moverte. Con 'N' reestableces el foco.");
 	SetHandItemAndParam(playerid, hand, ITEM_ID_TELEFONO_CELULAR, 1);
 	PhoneGUI_Open(playerid);
@@ -108,14 +108,14 @@ Dialog:DLG_CALL_911(playerid, response, listitem, inputtext[])
 		case 0:
 		{
 			new string[80];
-			format(string, sizeof(string), "[Al tel?fono] %s dice: hola, con la polic?a por favor.", GetPlayerChatName(playerid));
+			format(string, sizeof(string), "[Al teléfono] %s dice: hola, con la polic?a por favor.", GetPlayerChatName(playerid));
 			SendPlayerMessageInRange(15.0, playerid, string, COLOR_FADE1, COLOR_FADE2, COLOR_FADE3, COLOR_FADE4, COLOR_FADE5);
 			Dialog_Show(playerid, DLG_CALL_911_POLICE, DIALOG_STYLE_INPUT, "[911] Polic?a Federal", "Operadora: Polic?a Federal, por favor de un breve informe de lo ocurrido.", "Continuar", "Cerrar"); 
 		}
 		case 1:
 		{
 			new string[80];
-			format(string, sizeof(string), "[Al tel?fono] %s dice: hola, con emergencias m?dicas por favor.", GetPlayerChatName(playerid));
+			format(string, sizeof(string), "[Al teléfono] %s dice: hola, con emergencias m?dicas por favor.", GetPlayerChatName(playerid));
 			SendPlayerMessageInRange(15.0, playerid, string, COLOR_FADE1, COLOR_FADE2, COLOR_FADE3, COLOR_FADE4, COLOR_FADE5);
 			Dialog_Show(playerid, DLG_CALL_911_PARAMEDIC, DIALOG_STYLE_INPUT, "[911] Servicios m?dicos de Emergencia", "Operadora: departamento de emergencias m?dicas, por favor de un breve informe de lo ocurrido.", "Continuar", "Cerrar");
 		}
@@ -129,7 +129,7 @@ Dialog:DLG_CALL_911_POLICE(playerid, response, listitem, inputtext[])
 		return 1;
 
 	new string[180];
-	format(string, sizeof(string), "[Al tel?fono] %s dice: %s", GetPlayerChatName(playerid), inputtext);
+	format(string, sizeof(string), "[Al teléfono] %s dice: %s", GetPlayerChatName(playerid), inputtext);
 	SendPlayerMessageInRange(15.0, playerid, string, COLOR_FADE1, COLOR_FADE2, COLOR_FADE3, COLOR_FADE4, COLOR_FADE5);
 
 	Dialog_Show(playerid, DLG_CALL_911_END, DIALOG_STYLE_MSGBOX, "[911] Polic?a", "Operadora dice: gracias, hemos alertado a todas las unidades, mantenga la calma y espere en el lugar.", "Cerrar", "");
@@ -177,7 +177,7 @@ Dialog:DLG_CALL_911_PARAMEDIC(playerid, response, listitem, inputtext[])
 		return 1;
 
 	new string[180];
-	format(string, sizeof(string), "[Al tel?fono] %s dice: %s", GetPlayerChatName(playerid), inputtext);
+	format(string, sizeof(string), "[Al teléfono] %s dice: %s", GetPlayerChatName(playerid), inputtext);
 	SendPlayerMessageInRange(15.0, playerid, string, COLOR_FADE1, COLOR_FADE2, COLOR_FADE3, COLOR_FADE4, COLOR_FADE5);
 
 	Dialog_Show(playerid, DLG_CALL_911_END, DIALOG_STYLE_MSGBOX, "[911] Servicio de Atenci?n M?dica de Emergencia", "Operadora dice: gracias, hemos alertado a todas las unidades, mantenga la calma y espere en el lugar.", "Cerrar", ""); 
@@ -221,7 +221,7 @@ Dialog:DLG_CALL_911_PARAMEDIC(playerid, response, listitem, inputtext[])
 CMD:atender(playerid, params[])
 {
 	if(GetHandItem(playerid, HAND_RIGHT) != ITEM_ID_TELEFONO_CELULAR && GetHandItem(playerid, HAND_LEFT) != ITEM_ID_TELEFONO_CELULAR)
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un tel?fono celular en tu mano!");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un teléfono celular en tu mano!");
 
 	if(Phone_IsOnCall(Phone_id[playerid])) {
 		PhoneCall_Answer(Phone_GetCurrentCall(Phone_id[playerid]), Phone_id[playerid]);
@@ -232,11 +232,11 @@ CMD:atender(playerid, params[])
 CMD:t(playerid, params[])
 {
 	if(GetHandItem(playerid, HAND_RIGHT) != ITEM_ID_TELEFONO_CELULAR && GetHandItem(playerid, HAND_LEFT) != ITEM_ID_TELEFONO_CELULAR)
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un tel?fono celular en tu mano!");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un teléfono celular en tu mano!");
 
 	if(Phone_IsOnCall(Phone_id[playerid])) {
 		new string[180];
-		format(string, sizeof(string), "[Al tel?fono] %s dice: %s", GetPlayerChatName(playerid), params);
+		format(string, sizeof(string), "[Al teléfono] %s dice: %s", GetPlayerChatName(playerid), params);
 		SendPlayerMessageInRange(15.0, playerid, string, COLOR_FADE1, COLOR_FADE2, COLOR_FADE3, COLOR_FADE4, COLOR_FADE5);
 		PhoneCall_NewMessage(Phone_GetCurrentCall(Phone_id[playerid]), Phone_id[playerid], params);
 	}
@@ -246,7 +246,7 @@ CMD:t(playerid, params[])
 CMD:colgar(playerid, params[])
 {
 	if(GetHandItem(playerid, HAND_RIGHT) != ITEM_ID_TELEFONO_CELULAR && GetHandItem(playerid, HAND_LEFT) != ITEM_ID_TELEFONO_CELULAR)
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un tel?fono celular en tu mano!");
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY" ?No tienes un teléfono celular en tu mano!");
 
 	if(Phone_IsOnCall(Phone_id[playerid])) {
 		PhoneCall_Hang(Phone_GetCurrentCall(Phone_id[playerid]), Phone_id[playerid]);
