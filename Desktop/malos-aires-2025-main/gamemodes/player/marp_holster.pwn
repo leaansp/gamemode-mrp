@@ -265,6 +265,20 @@ stock Holster_ClearWeapon(playerid)
 	Holster_SaveItemToDB(playerid);
 }
 
+stock Holster_PrintForPlayer(playerid, targetid)
+{
+	SendClientMessage(targetid, COLOR_WHITE, "_____________________[ CADERA ]_____________________");
+	if(HolsterItem[playerid] > 0) {
+		new param_display[32];
+		Backpack_FormatParamDisplay(HolsterItem[playerid], HolsterParam[playerid], param_display, sizeof(param_display));
+		SendFMessage(targetid, COLOR_INFO, "[Cadera] "COLOR_EMB_WHITE" %s - %s: %s", ItemModel_GetName(HolsterItem[playerid]), ItemModel_GetParamName(HolsterItem[playerid]), param_display);
+	} else {
+		SendClientMessage(targetid, COLOR_INFO, "[Cadera] "COLOR_EMB_WHITE" Nada");
+	}
+	SendClientMessage(targetid, COLOR_WHITE, "_____________________________________________________");
+	return 1;
+}
+
 static Holster_SaveModeToDB(playerid)
 {
 	new query[512];
@@ -417,5 +431,12 @@ CMD:cadera(playerid, params[])
 	PlayerCmeMessage(playerid, 15.0, 3500, str);
 	SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Recuerda que cada vez que pongas el arma en tu cintura, debes realizar una interpretación acorde al entorno.");
 	SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Evita sanciones y el mal uso del /cadera, esforcemosnos por interpretar correctamente.");
+	if(HolsterScale[playerid][0] == 0.0 && HolsterScale[playerid][1] == 0.0 && HolsterScale[playerid][2] == 0.0)
+	{
+		SendClientMessage(playerid, COLOR_INFO, "{FF0000}[CADERA] "COLOR_EMB_GREY"Es la primera vez que usas /cadera.");
+		SendClientMessage(playerid, COLOR_INFO, "{FF0000}[CADERA] "COLOR_EMB_GREY"El arma guardada puede aparecer invisible hasta que configures la funda.");
+		SendClientMessage(playerid, COLOR_INFO, "{FF0000}[CADERA] "COLOR_EMB_GREY"Usa /cadera configuracion y elige una de las dos opciones.");
+		SendClientMessage(playerid, COLOR_INFO, "{FF0000}[CADERA] "COLOR_EMB_GREY"Luego podes ajustar la posicion con /cadera editar.");
+	}
 	return 1;
 }

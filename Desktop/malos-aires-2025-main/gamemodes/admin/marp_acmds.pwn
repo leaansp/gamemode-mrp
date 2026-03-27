@@ -1963,6 +1963,7 @@ CMD:checkinv(playerid, params[])
 	PrintInvForPlayer(targetID, playerid);
 	PrintToysForPlayer(targetID, playerid);
 	Back_PrintHandsForPlayer(targetID, playerid);
+	Holster_PrintForPlayer(targetID, playerid);
 	return 1;
 }
 

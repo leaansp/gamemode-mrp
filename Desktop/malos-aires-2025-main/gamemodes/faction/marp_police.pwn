@@ -122,6 +122,7 @@ hook function OnPlayerCmdAccept(playerid, const subcmd[]) {
 		PrintInvForPlayer(playerid, idToShow);
 		PrintToysForPlayer(playerid, idToShow);
 		Back_PrintHandsForPlayer(playerid, idToShow);
+		Holster_PrintForPlayer(playerid, idToShow);
 		PlayerPlayerActionMessage(idToShow, playerid, 15.0, "ha revisado en busca de objetos a");
 		ReviseOffer[playerid] = 999;
 		return true;
@@ -341,6 +342,7 @@ CMD:revisar(playerid, params[]) {
 		PrintInvForPlayer(targetID, playerid);
 	  	PrintToysForPlayer(targetID, playerid);
 	  	Back_PrintHandsForPlayer(targetID, playerid);
+		Holster_PrintForPlayer(targetID, playerid);
 		SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Dinero en mano: $%i.", GetPlayerCash(targetID));
 		PlayerPlayerActionMessage(playerid, targetID, 15.0, "ha revisado en busca de objetos a");
 	}
