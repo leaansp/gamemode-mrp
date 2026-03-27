@@ -19,7 +19,7 @@
 #define COLOR_CENTRALRED		0x910606AA
 
 #define COLOR_GLOBALOOC         0x87CEFAFF
-#define COLOR_AOOC              0x804343FF
+#define COLOR_AOOC              0xE8A87CFF
 #define COLOR_MP                0x5F9EA0FF
 #define COLOR_BDUTY				0xF3280084
 
