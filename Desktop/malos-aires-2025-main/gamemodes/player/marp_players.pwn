@@ -75,6 +75,8 @@ enum pInfo {
 	pHunger,
 	
 	pRolePoints,
+	pElogios,
+	pElogiosPendientes,
 	
 	pContainerSQLID,
 	pContainerID,

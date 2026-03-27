@@ -52,7 +52,8 @@ enum sInfo {
 	sVehiclePricePercent,
 	sPlayersRecord,
 	svLevelExp,
-	sDrugRawMats
+	sDrugRawMats,
+	sElogiosPorPDR
 };
 new ServerInfo[sInfo];
 

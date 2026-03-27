@@ -260,6 +260,7 @@ new socialPay;
 #include "job/ewires.pwn"
 #include "util/marp_cronometro.pwn"   
 #include "system/marp_rolepoints.pwn"
+#include "system/marp_elogios.pwn"			//Sistema de elogios
 #include "system\marp_warnings.pwn"
 #include "system\marp_football.pwn"
 #include "system/marp_time_and_weather.pwn"
@@ -977,6 +978,8 @@ public OnContinueCharacterLoad(playerid)
 	cache_get_value_name_int(0, "Rank", PlayerInfo[playerid][pRank]);
 	cache_get_value_name_int(0, "HouseKey", PlayerInfo[playerid][pHouseKey]);
 	cache_get_value_name_int(0, "pRolePoints", PlayerInfo[playerid][pRolePoints]);
+	cache_get_value_name_int(0, "pElogios", PlayerInfo[playerid][pElogios]);
+	cache_get_value_name_int(0, "pElogiosPendientes", PlayerInfo[playerid][pElogiosPendientes]);
 	cache_get_value_name_int(0, "Warnings", PlayerInfo[playerid][pWarnings]);
 	cache_get_value_name_int(0, "CarLic", PlayerInfo[playerid][pCarLic]);
 	cache_get_value_name_int(0, "FlyLic", PlayerInfo[playerid][pFlyLic]);
@@ -1631,6 +1634,8 @@ public SaveAccount(playerid)
 			`pRentCarRID`=%i,\
 			`pFightStyle`=%i,\
 			`pRolePoints`=%i,\
+			`pElogios`=%i,\
+			`pElogiosPendientes`=%i,\
 			`pContainerSQLID`=%i,\
 			`pBeltSQLID`=%i,\
 			`CarLic`=%i,\
@@ -1689,6 +1694,8 @@ public SaveAccount(playerid)
 			PlayerInfo[playerid][pRentCarRID],
 			PlayerInfo[playerid][pFightStyle],
 			PlayerInfo[playerid][pRolePoints],
+			PlayerInfo[playerid][pElogios],
+			PlayerInfo[playerid][pElogiosPendientes],
 			PlayerInfo[playerid][pContainerSQLID],
 			PlayerInfo[playerid][pBeltSQLID],
 			PlayerInfo[playerid][pCarLic],
@@ -2067,6 +2074,7 @@ public OnServerDataLoad()
 	{
 		cache_get_value_name_int(0, "sVehiclePricePercent", ServerInfo[sVehiclePricePercent]);
 		cache_get_value_name_int(0, "sPlayersRecord", ServerInfo[sPlayersRecord]);
+		cache_get_value_name_int(0, "sElogiosPorPDR", ServerInfo[sElogiosPorPDR]);
 		cache_get_value_name_int(0, "svLevelExp", ServerInfo[svLevelExp]);
 		cache_get_value_name_int(0, "sDrugRawMats", ServerInfo[sDrugRawMats]);
 		cache_get_value_name_float(0, "biz_tax_percent", Server_BizTaxPercent);
@@ -2082,7 +2090,7 @@ SaveServerInfo()
 {	
     new query[256];
     mysql_format(MYSQL_HANDLE, query, sizeof(query),
-        "UPDATE `server` SET `sVehiclePricePercent`=%i,`sPlayersRecord`=%i,`svLevelExp`=%i,`sDrugRawMats`=%i,`biz_tax_percent`=%f,`veh_tax_percent`=%f,`payday_bonus`=%i WHERE `ID`=1;",
+        "UPDATE `server` SET `sVehiclePricePercent`=%i,`sPlayersRecord`=%i,`svLevelExp`=%i,`sDrugRawMats`=%i,`biz_tax_percent`=%f,`veh_tax_percent`=%f,`payday_bonus`=%i,`sElogiosPorPDR`=%i WHERE `ID`=1;",
         ServerInfo[sVehiclePricePercent],
         ServerInfo[sPlayersRecord],
         ServerInfo[svLevelExp],
