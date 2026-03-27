@@ -2075,6 +2075,7 @@ public OnServerDataLoad()
 		cache_get_value_name_int(0, "sVehiclePricePercent", ServerInfo[sVehiclePricePercent]);
 		cache_get_value_name_int(0, "sPlayersRecord", ServerInfo[sPlayersRecord]);
 		cache_get_value_name_int(0, "sElogiosPorPDR", ServerInfo[sElogiosPorPDR]);
+		if(ServerInfo[sElogiosPorPDR] < 0) ServerInfo[sElogiosPorPDR] = 35;
 		cache_get_value_name_int(0, "svLevelExp", ServerInfo[svLevelExp]);
 		cache_get_value_name_int(0, "sDrugRawMats", ServerInfo[sDrugRawMats]);
 		cache_get_value_name_float(0, "biz_tax_percent", Server_BizTaxPercent);
@@ -2097,7 +2098,8 @@ SaveServerInfo()
         ServerInfo[sDrugRawMats],
         Server_BizTaxPercent,
         Server_VehTaxPercent,
-        socialPay
+        socialPay,
+        ServerInfo[sElogiosPorPDR]
     );
     mysql_tquery(MYSQL_HANDLE, query);
 
