@@ -2820,6 +2820,62 @@ CMD:muteb(playerid, params[])
 	return 1;
 }
 
+
+CMD:muteartw(playerid, params[])
+{
+	if(AccountInfo[playerid][accAdminLevel] < 3)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tenes permiso para usar este comando.");
+
+	new targetid, minutes, motivo[80];
+	if(sscanf(params, "uis[80]", targetid, minutes, motivo))
+		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/muteartw [ID] [minutos (0=indefinido)] [motivo]");
+	if(!IsPlayerConnected(targetid) || targetid == INVALID_PLAYER_ID)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID invalida.");
+	if(minutes < 0)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Los minutos no pueden ser negativos.");
+
+	PlayerInfo[targetid][pMuteTW] = (minutes == 0) ? -1 : (minutes * 60);
+	PlayerInfo[targetid][pMuteTWReason][0] = EOS;
+	strcat(PlayerInfo[targetid][pMuteTWReason], motivo, 80);
+
+	new string[256];
+	if(minutes == 0)
+	{
+		SendFMessage(targetid, COLOR_ERROR, "[MUTE] Fuiste muteado de Twitter indefinidamente. Motivo: %s", motivo);
+		format(string, sizeof(string), "[STAFF] %s muteo de Twitter a %s indefinidamente. Motivo: %s", GetPlayerCleanName(playerid), GetPlayerCleanName(targetid), motivo);
+	}
+	else
+	{
+		SendFMessage(targetid, COLOR_ERROR, "[MUTE] Fuiste muteado de Twitter por %d minuto(s). Motivo: %s", minutes, motivo);
+		format(string, sizeof(string), "[STAFF] %s muteo de Twitter a %s por %d minutos. Motivo: %s", GetPlayerCleanName(playerid), GetPlayerCleanName(targetid), minutes, motivo);
+	}
+	AdministratorMessage(COLOR_ADMINCMD, string, 3);
+	return 1;
+}
+
+CMD:desmuteartw(playerid, params[])
+{
+	if(AccountInfo[playerid][accAdminLevel] < 3)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tenes permiso para usar este comando.");
+
+	new targetid;
+	if(sscanf(params, "u", targetid))
+		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/desmuteartw [ID]");
+	if(!IsPlayerConnected(targetid) || targetid == INVALID_PLAYER_ID)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID invalida.");
+	if(PlayerInfo[targetid][pMuteTW] == 0)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El jugador no esta muteado de Twitter.");
+
+	PlayerInfo[targetid][pMuteTW] = 0;
+	PlayerInfo[targetid][pMuteTWReason][0] = EOS;
+
+	SendClientMessage(targetid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Tu mute de Twitter fue levantado.");
+
+	new string[128];
+	format(string, sizeof(string), "[STAFF] %s desmuteo de Twitter a %s.", GetPlayerCleanName(playerid), GetPlayerCleanName(targetid));
+	AdministratorMessage(COLOR_ADMINCMD, string, 3);
+	return 1;
+}
 CMD:setplayerlic(playerid, params[])
 {
 	new string[128],

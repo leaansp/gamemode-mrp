@@ -87,6 +87,24 @@ Los grafitis existentes quedaran con `rot_x=0, rot_y=0` (default correcto para g
 
 ---
 
+## 5. Columnas `pMuteTW` y `pMuteTWReason` en tabla `accounts`
+
+> **La tabla `accounts` ya existe. Solo agregar las columnas.**
+
+```sql
+ALTER TABLE `accounts` ADD COLUMN `pMuteTW` INT NOT NULL DEFAULT 0;
+ALTER TABLE `accounts` ADD COLUMN `pMuteTWReason` VARCHAR(80) NOT NULL DEFAULT '';
+```
+
+- `pMuteTW = 0` → no muteado
+- `pMuteTW = -1` → muteado indefinidamente
+- `pMuteTW = N` → segundos restantes de mute
+
+Sistema: `/muteartw` y `/desmuteartw` (admin nivel 3+). Bloquea el uso de `/tw`.
+Sin estas columnas el servidor crashea al intentar cargar/guardar la cuenta.
+
+---
+
 ## Resumen
 
 | # | Accion | Archivo |
@@ -95,5 +113,6 @@ Los grafitis existentes quedaran con `rot_x=0, rot_y=0` (default correcto para g
 | 2 | ALTER TABLE holster ADD COLUMN mode | `database/holster_mode.sql` |
 | 3 | CREATE TABLE twitter | `database/twitter.sql` |
 | 4 | ALTER TABLE graffiti ADD COLUMN rot_x, rot_y | — (ejecutar directo) |
+| 5 | ALTER TABLE accounts ADD COLUMN pMuteTW, pMuteTWReason | — (ejecutar directo) |
 
 Los tres primeros usan `IF NOT EXISTS` o `DEFAULT` seguros — no rompen datos existentes si se ejecutan dos veces (excepto los ALTER, que darian error si la columna ya existe, pero no perderian datos).

@@ -38,6 +38,8 @@ public OnPlayerGlobalUpdate(playerid)
 		
 		if(PlayerInfo[playerid][pMuteB] > 0)
 		    PlayerInfo[playerid][pMuteB]--;
+		if(PlayerInfo[playerid][pMuteTW] > 0)
+		    PlayerInfo[playerid][pMuteTW]--;
 	}
 
 	if(PlayerInfo[playerid][pHospitalized] >= 2)

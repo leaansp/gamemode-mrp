@@ -994,6 +994,8 @@ public OnContinueCharacterLoad(playerid)
 	cache_get_value_name_int(0, "pWantedLevel", PlayerInfo[playerid][pWantedLevel]);
 	cache_get_value_name_int(0, "pCantWork", PlayerInfo[playerid][pCantWork]);
 	cache_get_value_name_int(0, "pMuteB", PlayerInfo[playerid][pMuteB]);
+	cache_get_value_name_int(0, "pMuteTW", PlayerInfo[playerid][pMuteTW]);
+	cache_get_value_name(0, "pMuteTWReason", PlayerInfo[playerid][pMuteTWReason], 80);
 	cache_get_value_name_int(0, "pRentCarID", PlayerInfo[playerid][pRentCarID]);
 	cache_get_value_name_int(0, "pRentCarRID", PlayerInfo[playerid][pRentCarRID]);
 	cache_get_value_name_int(0, "pFightStyle", PlayerInfo[playerid][pFightStyle]);
@@ -1220,6 +1222,8 @@ OnPlayerResetStats(playerid)
 	
 	PlayerInfo[playerid][pFightStyle] = 0;
 	PlayerInfo[playerid][pMuteB] = 0;
+	PlayerInfo[playerid][pMuteTW] = 0;
+	PlayerInfo[playerid][pMuteTWReason][0] = EOS;
 
 	PlayerInfo[playerid][pID] = 0;
 	PlayerInfo[playerid][pCantWork] = 0;
@@ -1669,6 +1673,8 @@ public SaveAccount(playerid)
 			`back_carry`=%i,\
 			`back_item`=%i,\
 			`back_param`=%i,\
+			`pMuteTW`=%i,\
+			`pMuteTWReason`='%e',\
 			`pDescription`='%e' WHERE `Id`=%i;",
 			PlayerInfo[playerid][pIP],
 			PlayerInfo[playerid][pName],
@@ -1728,6 +1734,8 @@ public SaveAccount(playerid)
 			BackInfo[playerid][backCarryType],
 			BackInfo[playerid][backItem],
 			BackInfo[playerid][backAmount],
+			PlayerInfo[playerid][pMuteTW],
+			PlayerInfo[playerid][pMuteTWReason],
 			PlayerInfo[playerid][pDescription],
 			PlayerInfo[playerid][pID]
 	);

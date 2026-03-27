@@ -218,6 +218,18 @@ CMD:tw(playerid, params[])
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Activa Twitter primero con /activartwitter.");
 	if (TwitterDisabled)
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Twitter esta deshabilitado por un administrador.");
+	if (PlayerInfo[playerid][pMuteTW] != 0)
+	{
+		new muteTWMsg[160];
+		if(PlayerInfo[playerid][pMuteTW] == -1)
+		{
+			format(muteTWMsg, sizeof(muteTWMsg), "[ERROR] "COLOR_EMB_GREY"Estas muteado de Twitter indefinidamente. Motivo: %s", PlayerInfo[playerid][pMuteTWReason]);
+			return SendClientMessage(playerid, COLOR_ERROR, muteTWMsg);
+		}
+		new mins = (PlayerInfo[playerid][pMuteTW] / 60) + 1;
+		format(muteTWMsg, sizeof(muteTWMsg), "[ERROR] "COLOR_EMB_GREY"Estas muteado de Twitter por %d minuto(s). Motivo: %s", mins, PlayerInfo[playerid][pMuteTWReason]);
+		return SendClientMessage(playerid, COLOR_ERROR, muteTWMsg);
+	}
 	if (isnull(params))
 		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/tw [mensaje]");
 	if (strlen(params) > TWITTER_MSG_LEN)

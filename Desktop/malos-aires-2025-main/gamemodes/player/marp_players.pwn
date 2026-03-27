@@ -83,6 +83,8 @@ enum pInfo {
 	pBeltSQLID,
 	pBeltID,
 	
+	pMuteTW,
+	pMuteTWReason[80],
 	pDescription[70],
 };
 
