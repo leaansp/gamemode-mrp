@@ -229,6 +229,7 @@ new socialPay;
 #include "job/marp_jobs.pwn" 					//Definiciones y funciones para los JOBS
 #include "player\marp_player_guide.pwn"
 #include "house\marp_armarios.pwn" 				//Sistema de armarios en las casas
+#include "house\marp_ropero.pwn" 				//Sistema de ropero en las casas
 #include "job/marp_thiefjob.pwn"
 #include "util/marp_animations.pwn" 			//Sistema de animaciones
 #include "system/marp_licenses.pwn"
