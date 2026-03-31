@@ -411,7 +411,7 @@ Toy_TakeItem(playerid, playerhand, toyid)
 	new itemid, param;
 
 	if(!Toy_Remove(playerid, toyid, itemid, param))
-		return SendClientMessage(playerid, COLOR_YELLOW2, "número de toy inválido o no puedes quitártelo en este momento.");
+		return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Número de toy inválido o no puedes quitártelo en este momento.");
 
 	new str[128];
 	format(str, sizeof(str), "Se quita %s.", ItemModel_GetName(itemid));
@@ -441,7 +441,7 @@ CMD:toy(playerid, params[])
 	else if(!strcmp(subcmd, "editar", true))
 	{
 		if(!Toy_Edit(playerid, toyid))
-			return SendClientMessage(playerid, COLOR_YELLOW2, "número de toy inválido.");
+			return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Número de toy inválido.");
 	}
 	return 1;
 }
