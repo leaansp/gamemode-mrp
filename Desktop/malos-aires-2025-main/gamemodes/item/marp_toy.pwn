@@ -67,7 +67,7 @@ hook OnPlayerSpawn(playerid)
 {
 	ToyDataPlayerSpawned[playerid] = 1;
 
-	// Si todavï¿½a no devolviï¿½ la query de carga inicial, el iterador estarï¿½ vacï¿½o y no efectuarï¿½ ninguna carga
+	// Si todav?a no devolvi? la query de carga inicial, el iterador estar? vac?o y no efectuar? ninguna carga
 	Toy_AttachAllGraphicObjects(playerid);
 	return 1;
 }
@@ -103,7 +103,7 @@ public Toy_OnDataLoad(playerid)
 		Iter_Add(ToyData[playerid], toyid);
 		Toy_OnLoaded(playerid, ToyData[playerid][toyid][tItemId], ToyData[playerid][toyid][tParam]);
 
-		// Si el cliente ya hizo el spawn inicial antes de la obtenciï¿½n de las posiciones y no pudo cargar los toys, los cargamos acï¿½
+		// Si el cliente ya hizo el spawn inicial antes de la obtenci?n de las posiciones y no pudo cargar los toys, los cargamos ac?
 		if(ToyDataPlayerSpawned[playerid]) {
 			Toy_AttachGraphicObject(playerid, toyid, .useCachePos = true);
 		}
@@ -411,7 +411,7 @@ Toy_TakeItem(playerid, playerhand, toyid)
 	new itemid, param;
 
 	if(!Toy_Remove(playerid, toyid, itemid, param))
-		return SendClientMessage(playerid, COLOR_YELLOW2, "nï¿½mero de toy invï¿½lido o no puedes quitï¿½rtelo en este momento.");
+		return SendClientMessage(playerid, COLOR_YELLOW2, "número de toy inválido o no puedes quitártelo en este momento.");
 
 	new str[128];
 	format(str, sizeof(str), "Se quita %s.", ItemModel_GetName(itemid));
@@ -441,7 +441,7 @@ CMD:toy(playerid, params[])
 	else if(!strcmp(subcmd, "editar", true))
 	{
 		if(!Toy_Edit(playerid, toyid))
-			return SendClientMessage(playerid, COLOR_YELLOW2, "nï¿½mero de toy invï¿½lido.");
+			return SendClientMessage(playerid, COLOR_YELLOW2, "número de toy inválido.");
 	}
 	return 1;
 }
