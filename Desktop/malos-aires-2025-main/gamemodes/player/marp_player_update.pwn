@@ -9,6 +9,8 @@ static playerGlobalUpdateTimer[MAX_PLAYERS];
 
 hook LoginCamera_OnEnd(playerid)
 {
+	if(playerGlobalUpdateTimer[playerid])
+		KillTimer(playerGlobalUpdateTimer[playerid]);
 	playerGlobalUpdateTimer[playerid] = SetTimerEx("OnPlayerGlobalUpdate", 997, true, "i", playerid);
 	return 1;
 }

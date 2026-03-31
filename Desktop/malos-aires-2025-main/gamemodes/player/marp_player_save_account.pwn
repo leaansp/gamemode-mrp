@@ -9,6 +9,8 @@ static playerSaveAccountTimer[MAX_PLAYERS];
 
 hook LoginCamera_OnEnd(playerid)
 {
+	if(playerSaveAccountTimer[playerid])
+		KillTimer(playerSaveAccountTimer[playerid]);
 	playerSaveAccountTimer[playerid] = SetTimerEx("SaveAccount", 1200000, true, "i", playerid);
 	return 1;
 }
