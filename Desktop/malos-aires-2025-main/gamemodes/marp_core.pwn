@@ -1391,6 +1391,8 @@ public OnPlayerSpawn(playerid)
 	}  else {
 		SetPlayerColor(playerid, 0xFFFFFF00);
 	}
+	ReaplicarRefuerzo(playerid);
+	ReaplicarBP(playerid);
 
 	if(PlayerInfo[playerid][pJailed])
 	{
@@ -3177,6 +3179,7 @@ Help_ShowFactions(playerid) {
         strcat(str, "/quitaresposas, /revisar, /camaras, /quitar, /multar, /premolcar, /arrastrar, /central\n");
         strcat(str, "/refuerzos, /ult, /vercargos, /buscados, /localizar, /pipeta, /deposito, /verantecedentes\n");
         strcat(str, "/geof, /verregistros, /comprarinsumos, /guardarinsumos, /verinsumos, /pautorizar, /computador, /callsign\n");
+        strcat(str, "/(bp)botonpanico [accionarlo], /noref [cancelar ref], /finalizarbp [cancelar bp]\n");
         Dialog_Open(playerid, "DLG_NO_RESPONSE", DIALOG_STYLE_MSGBOX, "Panel de ayuda", str, "Cerrar", "");
         return true;
     }
@@ -3190,6 +3193,7 @@ Help_ShowFactions(playerid) {
         strcat(str, "/quitaresposas, /revisar, /quitar, /multar, /premolcar, /arrastrar, /gcentral\n");
         strcat(str, "/(ref)uerzos, /ult, /vercargos, /buscados, /localizar, /pipeta, /deposito, /verantecedentes\n");
         strcat(str, "/alacran, /verregistros, /comprarinsumos, /guardarinsumos, /verinsumos, /pautorizar, /callsign\n");
+        strcat(str, "/(bp)botonpanico [accionarlo], /noref [cancelar ref], /finalizarbp [cancelar bp]\n");
         Dialog_Open(playerid, "DLG_NO_RESPONSE", DIALOG_STYLE_MSGBOX, "Panel de ayuda", str, "Cerrar", "");
         return true;
     }
@@ -3199,7 +3203,9 @@ Help_ShowFactions(playerid) {
 
         strcat(str, "Comandos disponibles:\n\n");
         strcat(str, "/fac, /fverbalance, /fdepositar, /fretirar, /f, /r, /comprarinsumos, /guardarinsumos, /verinsumos\n");
-        strcat(str, "/mservicio, /gobierno, (/d)epartamento, (/ult)imallamada, /curar, /callsign, LÍDER: /verregcurar, /verregistros");
+        strcat(str, "/mservicio, /gobierno, (/d)epartamento, (/ult)imallamada, /curar, /callsign, LÍDER: /verregcurar, /verregistros\n");
+        strcat(str, "/(ref)uerzos [1=GNA 2=PMA 3=SAME 4=GNA+PMA], /noref [cancelar]\n");
+        strcat(str, "/(bp)botonpanico [accionarlo], /finalizarbp [cancelar bp]\n");
         Dialog_Open(playerid, "DLG_NO_RESPONSE", DIALOG_STYLE_MSGBOX, "Panel de ayuda", str, "Cerrar", "");
         return true;
     }

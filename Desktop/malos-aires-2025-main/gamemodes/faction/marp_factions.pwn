@@ -14,6 +14,17 @@ new MedDuty[MAX_PLAYERS],
 	SIDEDuty[MAX_PLAYERS],
 	PlayerCuffed[MAX_PLAYERS];
 
+new bool:g_RefuerzoActivo[MAX_PLAYERS];
+new g_RefuerzoTipo[MAX_PLAYERS];
+new g_RefuerzoTimer[MAX_PLAYERS] = {-1, ...};
+new g_RefuerzoReminderTick[MAX_PLAYERS];
+
+new bool:g_BPActivo[MAX_PLAYERS];
+new g_BPTimer[MAX_PLAYERS] = {-1, ...};
+new g_BPSoundTimer[MAX_PLAYERS] = {-1, ...};
+new g_BPSoundStep[MAX_PLAYERS];
+new g_BPReminderTick[MAX_PLAYERS];
+
 new FactionChannel[MAX_FACTIONS];
 new FactionRequest[MAX_PLAYERS];
 
