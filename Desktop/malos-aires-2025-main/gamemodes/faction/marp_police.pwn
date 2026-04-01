@@ -872,23 +872,18 @@ CMD:refuerzos(playerid, params[])
 			}
 		}
 	}
-	new bool:iconAplica;
 	foreach(new ii : Player)
 	{
-		iconAplica = false;
+		new bool:sonido = false;
 		switch(type)
 		{
-			case 1: if(PlayerInfo[ii][pFaction] == FAC_SIDE && SIDEDuty[ii]) iconAplica = true;
-			case 2: if(PlayerInfo[ii][pFaction] == FAC_PMA && CopDuty[ii]) iconAplica = true;
-			case 3: if(PlayerInfo[ii][pFaction] == FAC_HOSP && MedDuty[ii]) iconAplica = true;
-			case 4: if((PlayerInfo[ii][pFaction] == FAC_PMA && CopDuty[ii]) || (PlayerInfo[ii][pFaction] == FAC_SIDE && SIDEDuty[ii])) iconAplica = true;
+			case 1: if(PlayerInfo[ii][pFaction] == FAC_SIDE && SIDEDuty[ii]) sonido = true;
+			case 2: if(PlayerInfo[ii][pFaction] == FAC_PMA && CopDuty[ii]) sonido = true;
+			case 3: if(PlayerInfo[ii][pFaction] == FAC_HOSP && MedDuty[ii]) sonido = true;
+			case 4: if((PlayerInfo[ii][pFaction] == FAC_PMA && CopDuty[ii]) || (PlayerInfo[ii][pFaction] == FAC_SIDE && SIDEDuty[ii])) sonido = true;
 		}
-		if(iconAplica) {
-			SetPlayerMapIcon(ii, 50, x, y, z, 0, COLOR_BACKUP, MAPICON_GLOBAL);
-			PlayerPlaySound(ii, 21000, 0.0, 0.0, 0.0);
-		}
+		if(sonido) PlayerPlaySound(ii, 21000, 0.0, 0.0, 0.0);
 	}
-	SetPlayerMapIcon(playerid, 50, x, y, z, 0, COLOR_BACKUP, MAPICON_GLOBAL);
 	PlayerPlaySound(playerid, 1057, 0.0, 0.0, 0.0);
 	g_RefuerzoActivo[playerid] = true;
 	g_RefuerzoTipo[playerid] = type;
@@ -916,7 +911,6 @@ CMD:noref(playerid, params[]) {
 		if(notificar) {
 			SendFMessage(i, COLOR_PMA, "[CENTRAL] %s ha cancelado la solicitud de refuerzos.", GetPlayerCleanName(playerid));
 			SetPlayerMarkerForPlayer(i, playerid, 0xFFFFFF00);
-			RemovePlayerMapIcon(i, 50);
 		}
 	}
 	if(g_RefuerzoTimer[playerid] != -1) {
@@ -926,7 +920,6 @@ CMD:noref(playerid, params[]) {
 	g_RefuerzoActivo[playerid] = false;
 	g_RefuerzoTipo[playerid] = 0;
 	g_RefuerzoReminderTick[playerid] = 0;
-	RemovePlayerMapIcon(playerid, 50);
 	SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Su solicitud de refuerzos ha sido eliminada.");
 	return true;
 }
@@ -2002,9 +1995,7 @@ stock CancelarBP(playerid)
 	foreach(new i : Player)
 	{
 		SetPlayerMarkerForPlayer(i, playerid, 0xFFFFFF00);
-		RemovePlayerMapIcon(i, 51);
 	}
-	RemovePlayerMapIcon(playerid, 51);
 	if(g_BPTimer[playerid] != -1) { KillTimer(g_BPTimer[playerid]); g_BPTimer[playerid] = -1; }
 	if(g_BPSoundTimer[playerid] != -1) { KillTimer(g_BPSoundTimer[playerid]); g_BPSoundTimer[playerid] = -1; }
 	g_BPActivo[playerid] = false;
@@ -2024,10 +2015,8 @@ stock ReaplicarBP(playerid)
 		   (PlayerInfo[i][pFaction] == FAC_HOSP && MedDuty[i]))
 		{
 			SetPlayerMarkerForPlayer(i, playerid, COLOR_BACKUP);
-			SetPlayerMapIcon(i, 51, rx, ry, rz, 0, COLOR_RED,    MAPICON_GLOBAL);
 		}
 	}
-	SetPlayerMapIcon(playerid, 51, rx, ry, rz, 0, COLOR_RED,    MAPICON_GLOBAL);
 }
 
 CMD:botonpanico(playerid, params[]) { return cmd_bp(playerid, params); }
@@ -2052,7 +2041,6 @@ CMD:bp(playerid, params[])
 		     (PlayerInfo[i][pFaction] == FAC_SIDE && SIDEDuty[i]) ||
 		     (PlayerInfo[i][pFaction] == FAC_HOSP && MedDuty[i]))) continue;
 		SetPlayerMarkerForPlayer(i, playerid, COLOR_RED);
-		SetPlayerMapIcon(i, 51, x, y, z, 0, COLOR_RED,    MAPICON_GLOBAL);
 		PlayerPlaySound(i, 21001, 0.0, 0.0, 0.0);
 		SendFMessage(i, 0xFF0000FF, "[BOTÓN DE PÁNICO] {FFFF00}¡Un funcionario de %s ha accionado el botón de pánico!", FactionInfo[PlayerInfo[playerid][pFaction]][fName]);
 		SendClientMessage(i, 0xFF0000FF, "[BOTÓN DE PÁNICO] {FFFF00}Se ha marcado por GPS la posición del funcionario.");
@@ -2064,7 +2052,6 @@ CMD:bp(playerid, params[])
 			SendClientMessage(i, 0xFF0000FF, "[BOTÓN DE PÁNICO] ¡Valorá la vida de tu personaje, sos personal de salud!");
 		}
 	}
-	SetPlayerMapIcon(playerid, 51, x, y, z, 0, COLOR_RED,    MAPICON_GLOBAL);
 	PlayerPlaySound(playerid, 1057, 0.0, 0.0, 0.0);
 	SendClientMessage(playerid, 0xFF0000FF, "[BOTÓN DE PÁNICO] {FFFF00}¡HAS ACCIONADO EL BOTÓN DE PÁNICO!");
 	SendClientMessage(playerid, 0xFF0000FF, "[BOTÓN DE PÁNICO] {FFFF00}¡Ponete a cubierto y espera a los refuerzos! ¡Acabas de movilizar a todo el aparato estatal!");
@@ -2106,20 +2093,8 @@ public BPUpdate(playerid)
 		g_BPTimer[playerid] = -1;
 		return;
 	}
-	new Float:rx, Float:ry, Float:rz;
-	GetPlayerPos(playerid, rx, ry, rz);
-	foreach(new i : Player)
-	{
-		if((PlayerInfo[i][pFaction] == FAC_PMA && CopDuty[i]) ||
-		   (PlayerInfo[i][pFaction] == FAC_SIDE && SIDEDuty[i]) ||
-		   (PlayerInfo[i][pFaction] == FAC_HOSP && MedDuty[i]))
-		{
-			SetPlayerMapIcon(i, 51, rx, ry, rz, 0, COLOR_RED,    MAPICON_GLOBAL);
-		}
-	}
-	SetPlayerMapIcon(playerid, 51, rx, ry, rz, 0, COLOR_RED,    MAPICON_GLOBAL);
 	g_BPReminderTick[playerid]++;
-	if(g_BPReminderTick[playerid] >= 600)
+	if(g_BPReminderTick[playerid] >= 360)
 	{
 		g_BPReminderTick[playerid] = 0;
 		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Recordá que tenés el botón de pánico activo. Usa /finalizarbp para desactivarlo.");
@@ -2166,10 +2141,7 @@ stock ReaplicarRefuerzo(playerid)
 			case 3: if(PlayerInfo[i][pFaction] == FAC_HOSP && MedDuty[i]) aplica = true;
 			case 4: if((PlayerInfo[i][pFaction] == FAC_PMA && CopDuty[i]) || (PlayerInfo[i][pFaction] == FAC_SIDE && SIDEDuty[i])) aplica = true;
 		}
-		if(aplica) {
-			SetPlayerMarkerForPlayer(i, playerid, COLOR_BACKUP);
-			SetPlayerMapIcon(i, 50, rx, ry, rz, 0, COLOR_BACKUP, MAPICON_GLOBAL);
-		}
+		if(aplica) SetPlayerMarkerForPlayer(i, playerid, COLOR_BACKUP);
 	}
 }
 
@@ -2179,13 +2151,11 @@ stock CancelarRefuerzo(playerid)
 	foreach(new i : Player)
 	{
 		SetPlayerMarkerForPlayer(i, playerid, 0xFFFFFF00);
-		RemovePlayerMapIcon(i, 50);
 	}
 	if(g_RefuerzoTimer[playerid] != -1) {
 		KillTimer(g_RefuerzoTimer[playerid]);
 		g_RefuerzoTimer[playerid] = -1;
 	}
-	RemovePlayerMapIcon(playerid, 50);
 	g_RefuerzoActivo[playerid] = false;
 	g_RefuerzoTipo[playerid] = 0;
 	g_RefuerzoReminderTick[playerid] = 0;
@@ -2198,24 +2168,8 @@ public RefuerzoUpdate(playerid)
 		g_RefuerzoTimer[playerid] = -1;
 		return;
 	}
-	new Float:rx, Float:ry, Float:rz;
-	GetPlayerPos(playerid, rx, ry, rz);
-	new bool:aplica;
-	foreach(new i : Player)
-	{
-		aplica = false;
-		switch(g_RefuerzoTipo[playerid])
-		{
-			case 1: if(PlayerInfo[i][pFaction] == FAC_SIDE && SIDEDuty[i]) aplica = true;
-			case 2: if(PlayerInfo[i][pFaction] == FAC_PMA && CopDuty[i]) aplica = true;
-			case 3: if(PlayerInfo[i][pFaction] == FAC_HOSP && MedDuty[i]) aplica = true;
-			case 4: if((PlayerInfo[i][pFaction] == FAC_PMA && CopDuty[i]) || (PlayerInfo[i][pFaction] == FAC_SIDE && SIDEDuty[i])) aplica = true;
-		}
-		if(aplica) SetPlayerMapIcon(i, 50, rx, ry, rz, 0, COLOR_BACKUP, MAPICON_GLOBAL);
-	}
-	SetPlayerMapIcon(playerid, 50, rx, ry, rz, 0, COLOR_BACKUP, MAPICON_GLOBAL);
 	g_RefuerzoReminderTick[playerid]++;
-	if(g_RefuerzoReminderTick[playerid] >= 600)
+	if(g_RefuerzoReminderTick[playerid] >= 360)
 	{
 		g_RefuerzoReminderTick[playerid] = 0;
 		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Recorda que tenes el /ref activo. Usa /noref para desactivarlo.");
