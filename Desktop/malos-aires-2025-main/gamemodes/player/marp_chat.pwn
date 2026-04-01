@@ -330,17 +330,44 @@ CMD:limpiarchat(playerid, params[]) {
 
 CMD:solidchat(playerid, params[])
 {
+	new color;
+	if(!strlen(params))
+	{
+		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Elegi que color queres de fondo para tu chat.");
+		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Pone /solidchat negro, verde, azul, violeta, gris, blanco, amarillo o apagar.");
+		return 1;
+	}
+	if(!strcmp(params, "apagar", true))
+	{
+		if(SolidChat_PTD[playerid] != INVALID_PLAYER_TEXT_DRAW)
+		{
+			PlayerTextDrawDestroy(playerid, SolidChat_PTD[playerid]);
+			SolidChat_PTD[playerid] = INVALID_PLAYER_TEXT_DRAW;
+			Noti_Create(playerid, 2000, "Has desactivado el fondo de tu chat.");
+		}
+		return 1;
+	}
+	if(!strcmp(params, "negro",   true)) color = 0x000000FF;
+	else if(!strcmp(params, "verde",   true)) color = 0x003300FF;
+	else if(!strcmp(params, "azul",    true)) color = 0x000033FF;
+	else if(!strcmp(params, "violeta", true)) color = 0x1A0033FF;
+	else if(!strcmp(params, "gris",    true)) color = 0x2A2A2AFF;
+	else if(!strcmp(params, "blanco",  true)) color = 0xEEEEEEFF;
+	else if(!strcmp(params, "amarillo",true)) color = 0x333300FF;
+	else
+	{
+		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Elegi que color queres de fondo para tu chat.");
+		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Pone /solidchat negro, verde, azul, violeta, gris, blanco, amarillo o apagar.");
+		return 1;
+	}
 	if(SolidChat_PTD[playerid] != INVALID_PLAYER_TEXT_DRAW)
 	{
 		PlayerTextDrawDestroy(playerid, SolidChat_PTD[playerid]);
 		SolidChat_PTD[playerid] = INVALID_PLAYER_TEXT_DRAW;
-		Noti_Create(playerid, 2000, "Has desactivado el fondo de tu chat");
 	}
-	else
-	{
-		SolidChat_PTD[playerid] = CreateScreenPTD(playerid);
-		PlayerTextDrawShow(playerid, SolidChat_PTD[playerid]);
-		Noti_Create(playerid, 2000, "Fondo de chat activado, desactívalo usando '/solidchat' nuevamente");
-	}
+	SolidChat_PTD[playerid] = CreateScreenPTD(playerid, color);
+	PlayerTextDrawShow(playerid, SolidChat_PTD[playerid]);
+	Noti_Create(playerid, 2000, "Fondo de chat activado.");
+	SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Para desactivarlo, usa /solidchat apagar.");
 	return 1;
 }

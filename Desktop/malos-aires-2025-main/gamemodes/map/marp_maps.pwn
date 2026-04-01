@@ -78,6 +78,7 @@ hook RemoveMapsBuildings(playerid) {
 
 	RemoveBuildingForPlayer(playerid, 5043, 1843.3672, -1856.3203, 13.8750, 0.25);
 
+
 	return true;
 }
 
@@ -181,6 +182,7 @@ hook LoadMaps() {
 	CreateDynamicObject(8674, 1401.76355, -1450.53418, 14.10530,   0.00000, 0.00000, 0.00000);
 	CreateDynamicObject(8674, 1368.08850, -1573.83899, 14.15828,   0.00000, 0.00000, -16.20000);
 	CreateDynamicObject(8674, 1362.92053, -1592.47131, 14.25727,   0.00000, 0.00000, -16.20000);
+
 		
 	return true;
 }
