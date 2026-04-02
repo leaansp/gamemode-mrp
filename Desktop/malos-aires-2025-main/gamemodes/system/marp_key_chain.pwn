@@ -73,6 +73,12 @@ hook OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
+hook OnPlayerCharSwitch(playerid)
+{
+	Iter_Clear(KeyChainData[playerid]);
+	return 1;
+}
+
 hook LoadAccountDataEnded(playerid)
 {
 	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "KeyChain_OnKeysLoaded", "i", playerid @Format: "SELECT `keyid`,`type`,`extraid`,`owner`,`label` FROM `player_key` WHERE `playerid`=%i LIMIT %i;", PlayerInfo[playerid][pID], KEY_CHAIN_MAX_KEY_AMOUNT);
