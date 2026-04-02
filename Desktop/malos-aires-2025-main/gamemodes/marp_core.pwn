@@ -1464,8 +1464,6 @@ public OnPlayerDeath(playerid, killerid, reason) {
 
 	if(PlayerInfo[playerid][pJailed] == JAIL_NONE) {
 		if (PlayerInfo[playerid][pHospitalized] >= 1) {
-		} else if (PlayerInfo[playerid][pCrack]) {
-			InitiateHospital(playerid);
 		} else {
 			Damage_ApplyDeathEffect(playerid);
 		}

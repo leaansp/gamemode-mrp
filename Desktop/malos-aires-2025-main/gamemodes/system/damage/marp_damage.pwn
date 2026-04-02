@@ -22,7 +22,7 @@ new AdminHealSuppressUntil[MAX_PLAYERS];
 forward Damage_SuppressCrack(playerid, duration_ms);
 public Damage_SuppressCrack(playerid, duration_ms)
 {
-	AdminHealSuppressUntil[playerid] = gettime() + duration_ms;
+	AdminHealSuppressUntil[playerid] = gettime() + (duration_ms / 1000);
 	return 1;
 }
 
@@ -132,11 +132,7 @@ public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
 	{
 		PlayerInfo[damagedid][pHealth] -= amount;
 		if (PlayerInfo[damagedid][pHealth] <= 0.0) {
-			if (PlayerInfo[damagedid][pCrack]) {
-				InitiateHospital(damagedid);
-			} else {
-				Damage_ApplyDeathEffect(damagedid);
-			}
+			Damage_ApplyDeathEffect(damagedid);
 			return true;
 		} else if (PlayerInfo[damagedid][pHealth] <= DAMAGE_CRACK_HP && !PlayerInfo[damagedid][pCrack]) {
 			Damage_ApplyCrackEffect(damagedid);
@@ -332,6 +328,7 @@ hook function SetPlayerHealthEx(playerid, Float:health)
 
 Damage_ApplyDeathEffect(playerid)
 {
+	PlayerInfo[playerid][pCrack] = 0;
 	TogglePlayerControllable(playerid, false);
 	ClearAnimations(playerid, 1);
 	ApplyAnimationEx(playerid, "PED", "FLOOR_hit_f", 4.0, 0, 0, 0, 1, 0, .forcesync = 1, .autofinish = true, .finishAnimId = 0);
