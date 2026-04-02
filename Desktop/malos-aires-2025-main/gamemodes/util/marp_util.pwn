@@ -227,7 +227,7 @@ stock GetPlayerIpAddress(playerid)
 }
 
 IsValidSkin(skin) {
-	return (((1 <= skin <= 311) && skin != 74) || (20001 <= skin <= 20070));
+	return (((1 <= skin <= 311) && skin != 74) || (20001 <= skin <= 20092));
 }
 
 IsNameRoleplayValid(const name[])

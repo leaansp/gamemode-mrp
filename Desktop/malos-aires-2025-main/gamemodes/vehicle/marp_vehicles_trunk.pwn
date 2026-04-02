@@ -103,12 +103,15 @@ VehTrunk_Delete(vehicleid)
 
 VehTrunk_Reload(vehicleid)
 {
-	if(IsValidDynamicArea(VehicleInfo[vehicleid][VehTrunkArea])) // Solo re cargamos si previamente se creo el area dinamica.
+	if(IsValidDynamicArea(VehicleInfo[vehicleid][VehTrunkArea]))
 	{
 		DestroyDynamicArea(VehicleInfo[vehicleid][VehTrunkArea]);
 		VehicleInfo[vehicleid][VehTrunkArea] = STREAMER_TAG_AREA:0;
+	}
+	if(Veh_GetTrunkSpace(vehicleid) > 0 && VehicleInfo[vehicleid][VehType] != VEH_NONE)
+	{
 		VehTrunk_CreateDynamicArea(vehicleid);
-	}	
+	}
 }
 
 static VehTrunk_CreateDynamicArea(vehicleid)

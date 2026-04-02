@@ -958,6 +958,7 @@ Veh_RecreateWithUpdatedParams(vehicleid)
 	Veh_UpdateTuning(vehicleid);
 
 	Veh_SetInteriorAndVWorld(vehicleid, VehicleInfo[vehicleid][VehParkInt], VehicleInfo[vehicleid][VehParkVW], .updateinfo = true, .reload = true);
+	VehTrunk_Reload(vehicleid);
 	return 1;
 }
 

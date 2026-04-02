@@ -835,8 +835,8 @@ CMD:avgoto(playerid, params[])
 }
 
 // Callback para verificar modelo desde BD
-forward Veh_OnCheckModelFromDB(vehicleid);
-public Veh_OnCheckModelFromDB(vehicleid)
+forward Veh_OnCheckModelFromDB(vehicleid, adminid);
+public Veh_OnCheckModelFromDB(vehicleid, adminid)
 {
 	if(!cache_num_rows())
 	{
@@ -849,44 +849,61 @@ public Veh_OnCheckModelFromDB(vehicleid)
 	cache_get_value_name_int(0, "VehSQLID", db_sqlid);
 
 	new current_model = VehicleInfo[vehicleid][VehModel];
-	
-	if(db_model != current_model)
+	new samp_model = GetVehicleModel(vehicleid);
+
+	// Check 1: desync entre slot SA-MP y VehicleInfo
+	if(samp_model != current_model)
 	{
-		printf("[FIX] Vehículo slot %i (VehSQLID=%i): Modelo en BD=%i, Modelo en juego=%i. Corrigiendo...", 
-			vehicleid, db_sqlid, db_model, current_model);
-		
-		// Corregir el modelo
-		VehicleInfo[vehicleid][VehModel] = db_model;
-		
-		// Guardar posición actual
 		new Float:x, Float:y, Float:z, Float:angle;
 		GetVehiclePos(vehicleid, x, y, z);
 		GetVehicleZAngle(vehicleid, angle);
-		//d
-		// Recrear vehículo con modelo correcto
+
 		Veh_RecreateWithUpdatedParams(vehicleid);
 		SetVehiclePos(vehicleid, x, y, z);
 		SetVehicleZAngle(vehicleid, angle);
-		
-		// Notificar a jugadores cercanos
-		new notify_str[144];
-		foreach(new p : Player)
-		{
-			if(IsPlayerInRangeOfPoint(p, 50.0, x, y, z) && GetPlayerVirtualWorld(p) == VehicleInfo[vehicleid][VehVW])
-			{
-				format(notify_str, sizeof(notify_str), "[INFO] Vehículo ID %i corregido: %s (estaba mostrando %s)", 
-					vehicleid, Veh_GetName(vehicleid), Veh_GetModelName(current_model));
-				SendClientMessage(p, COLOR_YELLOW, notify_str);
-			}
-		}
-		
+		SaveVehicle(vehicleid);
+
+		new msg[192];
+
+		format(msg, sizeof(msg), "[INFO] "COLOR_EMB_GREY"Este auto es un %s, no es un %s. Vehiculo recreado.",
+			Veh_GetModelName(current_model), Veh_GetModelName(samp_model));
+		SendClientMessage(adminid, COLOR_WHITE, msg);
+		format(msg, sizeof(msg), "[INFO] "COLOR_EMB_GREY"Revisa el maletero del vehiculo %i.", vehicleid);
+		SendClientMessage(adminid, COLOR_WHITE, msg);
+		SendClientMessage(adminid, COLOR_WHITE, "[INFO] "COLOR_EMB_GREY"Recordale al usuario que utilice /avestacionar para fijar la posicion actual y evitar que vuelva a pasar al reiniciar.");
+		printf("[FIX DESYNC] Veh slot %i (SQLID=%i): slot=%i(%s) esperado=%i(%s) - recreado",
+			vehicleid, db_sqlid, samp_model, Veh_GetModelName(samp_model), current_model, Veh_GetModelName(current_model));
 		return 1;
 	}
-	else
+
+	// Check 2: modelo en VehicleInfo distinto al de la DB
+	if(db_model != current_model)
 	{
-		printf("[OK] Vehículo slot %i (VehSQLID=%i): Modelo correcto (%i).", vehicleid, db_sqlid, db_model);
+		printf("[FIX DB] Vehículo slot %i (VehSQLID=%i): Modelo en BD=%i, Modelo en juego=%i. Corrigiendo...",
+			vehicleid, db_sqlid, db_model, current_model);
+
+		VehicleInfo[vehicleid][VehModel] = db_model;
+
+		new Float:x, Float:y, Float:z, Float:angle;
+		GetVehiclePos(vehicleid, x, y, z);
+		GetVehicleZAngle(vehicleid, angle);
+
+		Veh_RecreateWithUpdatedParams(vehicleid);
+		SetVehiclePos(vehicleid, x, y, z);
+		SetVehicleZAngle(vehicleid, angle);
+
+		new notify_str[192];
+		format(notify_str, sizeof(notify_str), "[INFO] "COLOR_EMB_GREY"Este auto es un %s, no es un %s. Vehiculo recreado.",
+			Veh_GetModelName(db_model), Veh_GetModelName(current_model));
+		SendClientMessage(adminid, COLOR_WHITE, notify_str);
+		format(notify_str, sizeof(notify_str), "[INFO] "COLOR_EMB_GREY"Revisa el maletero del vehiculo %i.", vehicleid);
+		SendClientMessage(adminid, COLOR_WHITE, notify_str);
+		SendClientMessage(adminid, COLOR_WHITE, "[INFO] "COLOR_EMB_GREY"Recordale al usuario que utilice /avestacionar para fijar la posicion actual y evitar que vuelva a pasar al reiniciar.");
+		return 1;
 	}
-	
+
+	// Todo correcto
+	printf("[OK] Vehículo slot %i (VehSQLID=%i): Modelo correcto (%i).", vehicleid, db_sqlid, db_model);
 	return 1;
 }
 
@@ -914,7 +931,7 @@ CMD:avfixmodel(playerid, params[])
 	mysql_format(MYSQL_HANDLE, query, sizeof(query), 
 		"SELECT `VehSQLID`, `VehModel` FROM `vehicles` WHERE `VehSQLID`=%i LIMIT 1;", 
 		VehicleInfo[vehicleid][VehSQLID]);
-	mysql_tquery(MYSQL_HANDLE, query, "Veh_OnCheckModelFromDB", "i", vehicleid);
+	mysql_tquery(MYSQL_HANDLE, query, "Veh_OnCheckModelFromDB", "ii", vehicleid, playerid);
 	
 	new msg[128];
 	format(msg, sizeof(msg), "[INFO] "COLOR_EMB_GREY"Verificando vehículo ID %i (VehSQLID=%i) en la base de datos...", 
@@ -941,10 +958,22 @@ CMD:avfixallmodels(playerid, params[])
 		
 		count++;
 		
-		// Consultar modelo desde BD de forma síncrona (no ideal pero funcional para comando admin)
+		// Check 1: desync entre slot SA-MP y VehicleInfo (VehicleInfo es la fuente de verdad)
+		new samp_model = GetVehicleModel(vehicleid);
+		if(samp_model != VehicleInfo[vehicleid][VehModel])
+		{
+			Veh_RecreateWithUpdatedParams(vehicleid);
+			SaveVehicle(vehicleid);
+			fixed++;
+			printf("[FIX DESYNC] Veh ID %i (SQLID=%i): slot=%i esperado=%i - recreado",
+				vehicleid, VehicleInfo[vehicleid][VehSQLID], samp_model, VehicleInfo[vehicleid][VehModel]);
+			continue;
+		}
+		
+		// Check 2: modelo en VehicleInfo distinto al de la DB (corrupcion en memoria)
 		new query[256];
-		mysql_format(MYSQL_HANDLE, query, sizeof(query), 
-			"SELECT `VehModel` FROM `vehicles` WHERE `VehSQLID`=%i LIMIT 1;", 
+		mysql_format(MYSQL_HANDLE, query, sizeof(query),
+			"SELECT `VehModel` FROM `vehicles` WHERE `VehSQLID`=%i LIMIT 1;",
 			VehicleInfo[vehicleid][VehSQLID]);
 		
 		new Cache:result = mysql_query(MYSQL_HANDLE, query);
@@ -956,7 +985,6 @@ CMD:avfixallmodels(playerid, params[])
 			
 			if(db_model != VehicleInfo[vehicleid][VehModel])
 			{
-				// Modelo corrupto encontrado
 				new Float:x, Float:y, Float:z, Float:angle;
 				GetVehiclePos(vehicleid, x, y, z);
 				GetVehicleZAngle(vehicleid, angle);
@@ -967,7 +995,7 @@ CMD:avfixallmodels(playerid, params[])
 				SetVehicleZAngle(vehicleid, angle);
 				
 				fixed++;
-				printf("[FIX] Vehículo ID %i (VehSQLID=%i) corregido a modelo %i", 
+				printf("[FIX DB] Veh ID %i (SQLID=%i) corregido a modelo %i",
 					vehicleid, VehicleInfo[vehicleid][VehSQLID], db_model);
 			}
 		}
@@ -982,5 +1010,78 @@ CMD:avfixallmodels(playerid, params[])
 	
 	format(log_params, sizeof(log_params), "%i corregidos", fixed);
 	ServerLog(LOG_TYPE_ID_VEHICLES, .entry="/avfixallmodels", .playerid=playerid, .params=log_params);
+	return 1;
+}
+// ======= AUTO SCAN AL ARRANCAR =======
+
+hook Veh_OnAllDataLoaded()
+{
+	SetTimer("Veh_AutoScanTimer", 60000, false);
+	return 1;
+}
+
+forward Veh_AutoScanTimer();
+public Veh_AutoScanTimer()
+{
+	SendClientMessageToAll(COLOR_WHITE, "[INFO] "COLOR_EMB_GREY"El sistema esta verificando los vehiculos. Puede existir un leve lag grafico por 1 o 2 segundos. Gracias por tu paciencia!");
+
+	new count = 0, fixed = 0;
+
+	for(new vehicleid = 1; vehicleid < MAX_VEH; vehicleid++)
+	{
+		if(!Veh_IsValidId(vehicleid) || VehicleInfo[vehicleid][VehSQLID] == 0)
+			continue;
+
+		count++;
+
+		// Check 1: desync SA-MP slot vs VehicleInfo
+		new samp_model = GetVehicleModel(vehicleid);
+		if(samp_model != VehicleInfo[vehicleid][VehModel])
+		{
+			Veh_RecreateWithUpdatedParams(vehicleid);
+			SaveVehicle(vehicleid);
+			fixed++;
+			printf("[AUTO SCAN] Veh ID %i (SQLID=%i): slot=%i esperado=%i - recreado",
+				vehicleid, VehicleInfo[vehicleid][VehSQLID], samp_model, VehicleInfo[vehicleid][VehModel]);
+			continue;
+		}
+
+		// Check 2: VehicleInfo vs DB
+		new query[256];
+		mysql_format(MYSQL_HANDLE, query, sizeof(query),
+			"SELECT `VehModel` FROM `vehicles` WHERE `VehSQLID`=%i LIMIT 1;",
+			VehicleInfo[vehicleid][VehSQLID]);
+
+		new Cache:result = mysql_query(MYSQL_HANDLE, query);
+
+		if(cache_num_rows() > 0)
+		{
+			new db_model;
+			cache_get_value_name_int(0, "VehModel", db_model);
+
+			if(db_model != VehicleInfo[vehicleid][VehModel])
+			{
+				new Float:x, Float:y, Float:z, Float:angle;
+				GetVehiclePos(vehicleid, x, y, z);
+				GetVehicleZAngle(vehicleid, angle);
+
+				VehicleInfo[vehicleid][VehModel] = db_model;
+				Veh_RecreateWithUpdatedParams(vehicleid);
+				SetVehiclePos(vehicleid, x, y, z);
+				SetVehicleZAngle(vehicleid, angle);
+
+				fixed++;
+				printf("[AUTO SCAN DB] Veh ID %i (SQLID=%i) corregido a modelo %i",
+					vehicleid, VehicleInfo[vehicleid][VehSQLID], db_model);
+			}
+		}
+
+		cache_delete(result);
+	}
+
+	new msg[128];
+	format(msg, sizeof(msg), "[INFO] "COLOR_EMB_GREY"Verificacion de vehiculos completada. %i veh%s corregidos.", fixed, (fixed == 1) ? ("iculo") : ("iculos"));
+	SendClientMessageToAll(COLOR_WHITE, msg);
+	printf("[AUTO SCAN] %i vehiculos revisados, %i corregidos.", count, fixed);
 	return 1;
 }

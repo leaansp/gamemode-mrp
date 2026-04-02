@@ -930,6 +930,8 @@ public OnContinueCharacterLoad(playerid)
 {
 	if(!IsPlayerConnected(playerid))
 		return 1;
+	if(gPlayerLogged[playerid])
+		return 1;
 	if(!cache_num_rows())
 		return KickPlayer(playerid, "el sistema", "cuenta no encontrada en la base de datos.");
 	
