@@ -105,6 +105,37 @@ Sin estas columnas el servidor crashea al intentar cargar/guardar la cuenta.
 
 ---
 
+---
+
+## 6. Sistema de negocios mejorado
+
+> **La tabla `business` ya existe. La tabla `biz_employees` ya existe. Crear tabla nueva `biz_reviews`.**
+
+```sql
+-- Descripcion en negocios
+ALTER TABLE `business` ADD COLUMN `bDescription` VARCHAR(128) NOT NULL DEFAULT '';
+
+-- Rangos y salario en empleados
+ALTER TABLE `biz_employees` ADD COLUMN `bizEmpRankName` VARCHAR(32) NOT NULL DEFAULT 'Empleado';
+ALTER TABLE `biz_employees` ADD COLUMN `bizEmpRankLevel` TINYINT NOT NULL DEFAULT 0;
+ALTER TABLE `biz_employees` ADD COLUMN `bizEmpSalary` INT NOT NULL DEFAULT 0;
+
+-- Tabla de reseñas (una por jugador por negocio)
+CREATE TABLE IF NOT EXISTS `biz_reviews` (
+  `bizid`  SMALLINT(6) NOT NULL,
+  `pID`    INT(11)     NOT NULL,
+  `rating` TINYINT(4)  NOT NULL DEFAULT 0,
+  PRIMARY KEY (`bizid`, `pID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+```
+
+**Importante:** Si se deploya el codigo antes de ejecutar estos ALTERs:
+- `bDescription` falla silenciosamente en el SELECT (columna desconocida)
+- Los rangos de empleados no se guardan/cargan correctamente
+- `/resena` falla al intentar insertar en `biz_reviews`
+
+---
+
 ## Resumen
 
 | # | Accion | Archivo |
@@ -114,5 +145,6 @@ Sin estas columnas el servidor crashea al intentar cargar/guardar la cuenta.
 | 3 | CREATE TABLE twitter | `database/twitter.sql` |
 | 4 | ALTER TABLE graffiti ADD COLUMN rot_x, rot_y | — (ejecutar directo) |
 | 5 | ALTER TABLE accounts ADD COLUMN pMuteTW, pMuteTWReason | — (ejecutar directo) |
+| 6 | Sistema negocios: ALTER business + biz_employees + CREATE biz_reviews | — (ejecutar directo) |
 
 Los tres primeros usan `IF NOT EXISTS` o `DEFAULT` seguros — no rompen datos existentes si se ejecutan dos veces (excepto los ALTER, que darian error si la columna ya existe, pero no perderian datos).

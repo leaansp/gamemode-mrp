@@ -55,7 +55,10 @@ enum e_BUSINESS_INFO {
 
 	Float:bDelX,
 	Float:bDelY,
-	Float:bDelZ
+	Float:bDelZ,
+
+	/* Description */
+	bDescription[128]
 }
 
 new Business[MAX_BUSINESS + 1][e_BUSINESS_INFO] = {
@@ -579,3 +582,5 @@ Biz_OnPlayerCharacterKill(bizid, playerid, notifyid)
 Biz_CanUse(playerid, bizid) {
 	return (BizEmp_IsEmployee(playerid, bizid) || KeyChain_Contains(playerid, KEY_TYPE_BUSINESS, bizid) || AdminDuty[playerid]);
 }
+// Offer system - employee who offered product to a buyer (set in marp_biz_offer.pwn)
+new BizOfferEmployee[MAX_PLAYERS] = {INVALID_PLAYER_ID, ...};

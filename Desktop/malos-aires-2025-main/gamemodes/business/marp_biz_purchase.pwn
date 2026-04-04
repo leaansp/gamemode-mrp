@@ -35,7 +35,10 @@ Biz_ShowItemShopMenu(playerid, bizid)
 
 	for(new i = 0, itemStr[PMM_MAX_DESC_LENGTH]; i < MAX_BIZ_LISTITEM && BusinessCatalog[bizid][i][bItemid]; i++)
 	{
-		format(itemStr, sizeof(itemStr), "%s $%i", ItemModel_GetTextDrawNameString(BusinessCatalog[bizid][i][bItemid]), BusinessCatalog[bizid][i][bPrice]);
+		new dispPrice = BusinessCatalog[bizid][i][bPrice];
+		new promoActive = (BizPromo[bizid] > 0 && GetTickCount() < BizPromoExpiry[bizid]);
+		if(promoActive) dispPrice = dispPrice - (dispPrice * BizPromo[bizid] / 100);
+		format(itemStr, sizeof(itemStr), "%s $%i%s", ItemModel_GetTextDrawNameString(BusinessCatalog[bizid][i][bItemid]), dispPrice, promoActive ? " [PROMO]" : "");
 		PMM_AddItem(list, ItemModel_GetObjectModel(BusinessCatalog[bizid][i][bItemid]), itemStr);
 	}
 
@@ -63,6 +66,8 @@ PMM_OnItemSelected:Biz_ShopMenu(playerid, listitem, extraid)
 	}
 
 	new purchasePrice = GetBizItemPrice(bizid, listitem) * amount;
+	if(BizPromo[bizid] > 0 && GetTickCount() < BizPromoExpiry[bizid])
+		purchasePrice = purchasePrice - (purchasePrice * BizPromo[bizid] / 100);
 
 	if(GetPlayerCash(playerid) < purchasePrice)
 	{
@@ -89,7 +94,51 @@ PMM_OnItemSelected:Biz_ShopMenu(playerid, listitem, extraid)
 	GivePlayerCash(playerid, -purchasePrice);
 	BusinessCatalog[bizid][listitem][bStock] -= amount;
 	Biz_AddTill(bizid, purchasePrice);
+	BizClientCount[bizid]++;
+	BizBonus_CheckThresholds(bizid);
 	Biz_UpdateSQLItemStock(bizid, listitem);
 	SendFMessage(playerid, COLOR_WHITE, "¡Has comprado [%s - %s: %i] por $%i!", ItemModel_GetName(item), ItemModel_GetParamName(item), (item == ITEM_ID_TELEFONO_CELULAR) ? (PlayerInfo[playerid][pPhoneNumber]) : (GetHandParam(playerid, freehand)), purchasePrice);
+
+	// Tip dialog if employee offered the product
+	if(BizOfferEmployee[playerid] != INVALID_PLAYER_ID)
+	{
+		Dialog_Open(playerid, "DLG_BizTip", DIALOG_STYLE_INPUT, "Propina", "iQueres dejarle propina al empleado?\nIngresa el monto (0 o cancelar para no dar):", "Enviar", "No");
+	}
+	else
+	{
+		BizOfferEmployee[playerid] = INVALID_PLAYER_ID;
+	}
+	return 1;
+}
+
+Dialog:DLG_BizTip(playerid, response, listitem, inputtext[])
+{
+	new empleadoid = BizOfferEmployee[playerid];
+	BizOfferEmployee[playerid] = INVALID_PLAYER_ID;
+
+	if(!response) return 1;
+
+	new amount = strval(inputtext);
+
+	if(amount <= 0) return 1;
+
+	if(GetPlayerCash(playerid) < amount)
+	{
+		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Intentaste darle propina, pero no tenias un peso. Quedaste un poco mal. El empleado se dio cuenta.");
+		if(IsPlayerConnected(empleadoid))
+		{
+			SendClientMessage(empleadoid, COLOR_LIGHTBLUE, "[NEGOCIO] "COLOR_EMB_GREY"El cliente te trato de dar propina, pero parece que amago. Evidentemente, quedo como un boludo.");
+			SendClientMessage(empleadoid, COLOR_LIGHTBLUE, "[NEGOCIO] "COLOR_EMB_GREY"Como reaccionas ante esto?");
+		}
+		return 1;
+	}
+
+	GivePlayerCash(playerid, -amount);
+	if(IsPlayerConnected(empleadoid))
+		GivePlayerCash(empleadoid, amount);
+
+	SendFMessage(playerid, COLOR_INFO, "[NEGOCIO] "COLOR_EMB_GREY"Le dejaste $%i de propina a %s.", amount, IsPlayerConnected(empleadoid) ? GetPlayerCleanName(empleadoid) : "el empleado");
+	if(IsPlayerConnected(empleadoid))
+		SendFMessage(empleadoid, COLOR_INFO, "[NEGOCIO] "COLOR_EMB_GREY"%s te dejo $%i de propina!", GetPlayerCleanName(playerid), amount);
 	return 1;
 }

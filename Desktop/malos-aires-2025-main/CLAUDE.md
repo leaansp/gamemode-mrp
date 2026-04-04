@@ -102,9 +102,8 @@ mysql_f_tquery(MYSQL_HANDLE, 256, "OnCargarJugador", "SELECT * FROM accounts WHE
 **IMPORTANTE: No pushear al GitLab sin confirmación explícita del usuario.**
 
 1. Commitear y pushear al GitHub personal (origin) — esto se puede hacer libremente
-2. Cuando el usuario confirme, agregar el remote de GitLab si no existe y pushear:
+2. Cuando el usuario confirme, pushear la rama local a GitLab rama Test:
    ```bash
-   git remote add gitlab https://gitlab.com/malosaires2324/malos-aires-2025.git
    git push gitlab feature/hotkeys:Test
    ```
 3. El usuario se conecta al VPS via Putty (IP: 51.222.86.176, puerto 22)
@@ -114,6 +113,48 @@ mysql_f_tquery(MYSQL_HANDLE, 256, "OnCargarJugador", "SELECT * FROM accounts WHE
    sudo git pull
    sudo sampctl build
    sudo systemctl restart samp-test
+   ```
+
+### Flujo de deploy a main (producción)
+
+**CRITICO: NUNCA hacer force push a main. NUNCA borrar commits del historial.**
+
+El repo local (`feature/hotkeys`) y `gitlab/main` tienen historiales divergidos — no se puede hacer push directo. El flujo correcto usa el worktree `deploy-test`:
+
+```
+Worktree deploy-test: C:/Users/Admin/Desktop/deploy-test
+```
+
+**Pasos:**
+
+1. Identificar qué commits de `feature/hotkeys` faltan en `deploy-test`:
+   ```bash
+   cd C:/Users/Admin/Desktop/deploy-test
+   git log --oneline feature/hotkeys --not HEAD
+   # Lista los commits a cherry-pickear (de más viejo a más nuevo)
+   ```
+
+2. Cherry-pickear en orden cronológico (más viejo primero):
+   ```bash
+   git cherry-pick <hash_viejo> ... <hash_nuevo>
+   ```
+
+3. Conflictos típicos que aparecen siempre — resolverlos así:
+   - `CLAUDE.md`: no existe en producción → `git cherry-pick --skip`
+   - Archivos en `informes/` o con prefijo `Desktop/malos-aires-2025-main/`: son docs → `git add <archivo>` y continuar
+   - `gamemodes/marp_core.amx`: binario → `git checkout --ours gamemodes/marp_core.amx && git add gamemodes/marp_core.amx`
+   - Archivos de `gamemodes/` con "file location" warning: → `git add <archivo>` y continuar
+
+4. Si `gitlab/main` tiene commits que deploy-test no tiene, hacer merge para preservar todo:
+   ```bash
+   git fetch gitlab
+   git merge gitlab/main --no-edit
+   # Resolver conflicto de .amx si aparece: usar --ours (nuestra versión es la más nueva)
+   ```
+
+5. Pushear:
+   ```bash
+   git push gitlab HEAD:main
    ```
 
 ### Revertir en el VPS

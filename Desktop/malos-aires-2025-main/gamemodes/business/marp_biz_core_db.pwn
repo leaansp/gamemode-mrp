@@ -30,6 +30,7 @@ public Biz_OnDataLoadAll()
 		cache_get_value_name_int(row, "bLocked", Business[bizid][bLocked]);
 		cache_get_value_name_int(row, "bType", Business[bizid][bType]);
 		cache_get_value_name_int(row, "bRadio", Business[bizid][bRadio]);
+		cache_get_value_name(row, "bDescription", Business[bizid][bDescription], 128);
 
 		cache_get_value_name_float(row, "bOutsideX", Business[bizid][bOutsideX]);
 		cache_get_value_name_float(row, "bOutsideY", Business[bizid][bOutsideY]);
@@ -77,6 +78,10 @@ public Biz_OnAllDataLoaded() {
 
 Biz_SQLSaveName(bizid) {
 	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `business` SET `bName`='%e' WHERE `bID`=%i;", Business[bizid][bName], bizid);
+}
+
+Biz_SQLSaveDescription(bizid) {
+	mysql_f_tquery(MYSQL_HANDLE, 256, @Callback: "" @Format: "UPDATE `business` SET `bDescription`='%e' WHERE `bID`=%i;", Business[bizid][bDescription], bizid);
 }
 
 Biz_SQLSaveDelCP(bizid) {

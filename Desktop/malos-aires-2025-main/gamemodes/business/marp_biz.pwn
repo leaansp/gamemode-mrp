@@ -7,10 +7,12 @@
 #include "business\marp_biz_core_coords.pwn"
 #include "business\marp_biz_core_db.pwn"
 #include "business\marp_biz_admin.pwn"
+#include "business\marp_biz_reviews.pwn"
 #include "business\marp_biz_user.pwn"
 #include "business\marp_biz_prods_manage.pwn"
 #include "business\marp_biz_prods_orders.pwn"
 #include "business\marp_biz_purchase.pwn"
+#include "business\marp_biz_offer.pwn"
 #include "business\types\marp_casino.pwn"
 #include "business\types\marp_clothes.pwn"
 #include "business\types\marp_biz_mechanic.pwn"
@@ -64,6 +66,7 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 			}
 
 			Biz_TpPlayerToInsideDoorId(playerid, bizid);
+			BizReview_OnPlayerEnter(playerid, bizid);
 			return 1;
 		}
 		else if(Biz_IsPlayerAtInsideDoorId(playerid, bizid))
