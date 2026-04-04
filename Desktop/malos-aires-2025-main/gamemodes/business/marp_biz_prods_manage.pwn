@@ -640,12 +640,24 @@ forward Biz_Payday(bizid, playerid);
 static const BizBonusThresholds[] = {5, 10, 15, 20, 25, 30, 40};
 static const BizBonusRewards[]    = {3000, 8000, 17000, 35000, 40000, 45000, 70000};
 
+stock Biz_CountPlayersInside(bizid)
+{
+	new count;
+	foreach(new id : Player)
+	{
+		if(Biz_IsPlayerInsideId(id, bizid))
+			count++;
+	}
+	return count;
+}
+
 stock BizBonus_CheckThresholds(bizid)
 {
 	if(!Biz_IsValidId(bizid)) return;
+	new concurrent = Biz_CountPlayersInside(bizid);
 	new level = BizBonusLevel[bizid];
 	new maxLevel = sizeof(BizBonusThresholds);
-	while(level < maxLevel && BizClientCount[bizid] >= BizBonusThresholds[level])
+	while(level < maxLevel && concurrent >= BizBonusThresholds[level])
 	{
 		new bonus = BizBonusRewards[level];
 		Biz_AddTill(bizid, bonus);
@@ -654,7 +666,7 @@ stock BizBonus_CheckThresholds(bizid)
 
 		// Notify all employees and owner via CN format
 		new msg[192];
-		format(msg, sizeof(msg), "{FFAA00}[NEGOCIO]{FFFFFF} ¡El negocio %s alcanzó %i clientes y recibió un bono de $%i!", Business[bizid][bName], BizBonusThresholds[level-1], bonus);
+		format(msg, sizeof(msg), "{FFAA00}[NEGOCIO]{FFFFFF} El negocio %s alcanzó %i jugadores al mismo tiempo y recibió un bono de $%i!", Business[bizid][bName], BizBonusThresholds[level-1], bonus);
 		foreach(new id : Player)
 		{
 			if(BizEmp_IsEmployee(id, bizid) || Biz_IsPlayerOwner(id, bizid))
@@ -680,7 +692,6 @@ public Biz_Payday(bizid, playerid)
 	if(Business[bizid][bLocked] == 0)
 	{
 		AutoSalesForBusiness(bizid);
-		BizBonus_CheckThresholds(bizid);
 		Biz_AddTill(bizid, BizPayCheck[bizid] - bizTax);
 		format(string, sizeof(string), " \n"COLOR_EMB_USAGE"[%s]\nVentas: $%i - Impuestos: $-%i - Clientes: %i (%i insatisfechos).\nCaja anterior: $%i - Caja actual: $%i.\n", Business[bizid][bName], BizPayCheck[bizid], bizTax, BizClientCount[bizid], BizUnhappyClients[bizid], Business[bizid][bTill] - BizPayCheck[bizid] + bizTax, Business[bizid][bTill]);
 		Payday_AddStatementDeferedInfo(playerid, string);

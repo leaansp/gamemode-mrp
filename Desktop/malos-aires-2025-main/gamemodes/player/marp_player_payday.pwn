@@ -33,6 +33,8 @@ Payday(playerid)
 	new bool:hasDoubleExp = (DoubleExpActive && PlayerHasDoubleExp[playerid]);
 	new expMultiplier = hasDoubleExp ? 2 : 1;
 
+	BizEmp_ProcessEmployeePayday(playerid);
+
 	//=============================EMPLEO===================================
 
 	if(PlayerInfo[playerid][pPayCheck])

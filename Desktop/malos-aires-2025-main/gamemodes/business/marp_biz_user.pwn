@@ -116,7 +116,7 @@ CMD:negociollave(playerid, params[])
 
 	if(!bizid)
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No te encuentras en la puerta de un negocio.");
-	if(!KeyChain_Contains(playerid, KEY_TYPE_BUSINESS, bizid) && !AdminDuty[playerid])
+	if(!KeyChain_Contains(playerid, KEY_TYPE_BUSINESS, bizid) && !BizEmp_IsEmployee(playerid, bizid) && !AdminDuty[playerid])
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tienes una llave de este negocio.");
 
 	Biz_ToggleLock(bizid);

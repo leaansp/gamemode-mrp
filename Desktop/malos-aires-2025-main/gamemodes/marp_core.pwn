@@ -3271,7 +3271,8 @@ Help_ShowBusiness(playerid) {
     strcat(str, "Comandos disponibles:\n\n");
     strcat(str, "/negociocomprar, /negociovender, /negociovendera, /negociogestionar, /negocionombre\n");
     strcat(str, "/negociocaja, /negociollave, /negocioradio, /negociocontratar, /negociodespedir\n");
-    strcat(str, "/negociorenunciar, /negociotrabajo (desde el interior)\n");
+    strcat(str, "/negociodarrango\n\n");
+    strcat(str, "[Empleado] /negociotrabajo, /renunciar, /cn (/chatn), /negocioconectados, /puntuar\n");
     
     Dialog_Open(playerid, "DLG_NO_RESPONSE", DIALOG_STYLE_MSGBOX, "Panel de ayuda", str, "Cerrar", "");
     return true;

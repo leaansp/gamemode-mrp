@@ -66,6 +66,7 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 			}
 
 			Biz_TpPlayerToInsideDoorId(playerid, bizid);
+			BizBonus_CheckThresholds(bizid);
 			BizReview_OnPlayerEnter(playerid, bizid);
 			return 1;
 		}
@@ -92,7 +93,8 @@ CMD:ayudanegocio(playerid, params[])
 	SendClientMessage(playerid, COLOR_WHITE, "_____________________________________[ NEGOCIO ]______________________________________");
 	SendClientMessage(playerid, COLOR_USAGE, "[COMANDOS] "COLOR_EMB_GREY" /negociocomprar - /negociovender - /negociogestionar - /negocionombre");
 	SendClientMessage(playerid, COLOR_USAGE, "[COMANDOS] "COLOR_EMB_GREY" /negociollave - /negociocaja - /negocioradio - /negociovendera");
-	SendClientMessage(playerid, COLOR_USAGE, "[COMANDOS] "COLOR_EMB_GREY" /negociocontratar - /negociodespedir - /negociorenunciar - /negociotrabajo");
+	SendClientMessage(playerid, COLOR_USAGE, "[COMANDOS] "COLOR_EMB_GREY" /negociocontratar - /negociodespedir - /negociodarrango");
+	SendClientMessage(playerid, COLOR_USAGE, "[EMPLEO]   "COLOR_EMB_GREY" /negociotrabajo - /renunciar - /cn - /negocioconectados - /puntuar");
 	SendClientMessage(playerid, COLOR_WHITE, "______________________________________________________________________________________");
 	return 1;
 }

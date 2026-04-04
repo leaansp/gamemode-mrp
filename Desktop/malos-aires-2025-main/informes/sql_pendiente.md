@@ -136,6 +136,24 @@ CREATE TABLE IF NOT EXISTS `biz_reviews` (
 
 ---
 
+## 7. Tabla `biz_rank_names` (nueva)
+
+> **Requiere que el sistema de negocios (paso 6) ya esté ejecutado.**
+
+```sql
+CREATE TABLE IF NOT EXISTS `biz_rank_names` (
+  `bizid`      SMALLINT(6) NOT NULL,
+  `rank_level` TINYINT     NOT NULL,
+  `rank_name`  VARCHAR(32) NOT NULL DEFAULT '',
+  PRIMARY KEY (`bizid`, `rank_level`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+```
+
+Sistema: `/modificarnombrerangos` — permite al dueño del negocio cambiar el nombre de cada rango (1-6).
+Sin esta tabla, el comando falla con error MySQL y los nombres custom no se persisten entre reinicios.
+
+---
+
 ## Resumen
 
 | # | Accion | Archivo |
@@ -146,5 +164,6 @@ CREATE TABLE IF NOT EXISTS `biz_reviews` (
 | 4 | ALTER TABLE graffiti ADD COLUMN rot_x, rot_y | — (ejecutar directo) |
 | 5 | ALTER TABLE accounts ADD COLUMN pMuteTW, pMuteTWReason | — (ejecutar directo) |
 | 6 | Sistema negocios: ALTER business + biz_employees + CREATE biz_reviews | — (ejecutar directo) |
+| 7 | CREATE TABLE biz_rank_names | — (ejecutar directo) |
 
 Los tres primeros usan `IF NOT EXISTS` o `DEFAULT` seguros — no rompen datos existentes si se ejecutan dos veces (excepto los ALTER, que darian error si la columna ya existe, pero no perderian datos).

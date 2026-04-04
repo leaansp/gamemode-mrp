@@ -95,7 +95,6 @@ PMM_OnItemSelected:Biz_ShopMenu(playerid, listitem, extraid)
 	BusinessCatalog[bizid][listitem][bStock] -= amount;
 	Biz_AddTill(bizid, purchasePrice);
 	BizClientCount[bizid]++;
-	BizBonus_CheckThresholds(bizid);
 	Biz_UpdateSQLItemStock(bizid, listitem);
 	SendFMessage(playerid, COLOR_WHITE, "¡Has comprado [%s - %s: %i] por $%i!", ItemModel_GetName(item), ItemModel_GetParamName(item), (item == ITEM_ID_TELEFONO_CELULAR) ? (PlayerInfo[playerid][pPhoneNumber]) : (GetHandParam(playerid, freehand)), purchasePrice);
 

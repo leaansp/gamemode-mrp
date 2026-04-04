@@ -17,6 +17,23 @@ static enum e_BIZ_EMP_INFO
 static BizEmployeeInfo[MAX_PLAYERS][e_BIZ_EMP_INFO] = {{0, 0, "Empleado", 0, 0}, ...};
 static BizEmployeeOffer[MAX_PLAYERS] = {0, ...};
 
+static const BizEmpRankNames[][32] = {"", "Ayudante de barra", "Mozo", "Bartender", "Encargado de turno", "Jefe de barra", "Dueno"};
+static const BizEmpRankSalary[]    = {0, 800, 1100, 1500, 2200, 3000};
+#define BIZ_EMP_MAX_RANK       5
+#define BIZ_EMP_MIN_DUTY_SECS  (20 * 60)
+
+static BizEmpDutyStart[MAX_PLAYERS] = {0, ...}; // tick al entrar en servicio (0=fuera)
+static BizEmpDutyAccum[MAX_PLAYERS] = {0, ...}; // segundos acumulados en servicio
+new BizRankNames[MAX_BUSINESS][7][32];            // nombres personalizados por negocio [bizid][rank 1-6]
+
+stock BizEmp_FillBizRankName(bizid, rank, out[], len = sizeof(out))
+{
+	if(rank >= 0 && rank < sizeof(BizRankNames[]) && BizRankNames[bizid][rank][0])
+		strcopy(out, BizRankNames[bizid][rank], len);
+	else if(rank >= 0 && rank < sizeof(BizEmpRankNames))
+		strcopy(out, BizEmpRankNames[rank], len);
+}
+
 hook LoadAccountDataEnded(playerid)
 {
 	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "BizEmp_OnInfoLoaded", "i", playerid @Format: "SELECT `bizEmpId`,`bizEmpDuty`,`bizEmpRankName`,`bizEmpRankLevel`,`bizEmpSalary` FROM `biz_employees` WHERE `pID`=%i LIMIT 1;", PlayerInfo[playerid][pID]);
@@ -28,6 +45,8 @@ hook OnPlayerDisconnect(playerid, reason)
 	BizEmployeeInfo[playerid][e_BIZ_EMP_ID] = 0;
 	BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY] = 0;
 	BizEmployeeOffer[playerid] = 0;
+	BizEmpDutyStart[playerid] = 0;
+	BizEmpDutyAccum[playerid] = 0;
 	return 1;
 }
 
@@ -177,10 +196,23 @@ CMD:negociorenunciar(playerid, params[])
 	BizEmployeeInfo[playerid][e_BIZ_EMP_ID] = 0;
 	BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY] = 0;
 	SendFMessage(playerid, COLOR_LIGHTBLUE, "Has renunciado como empleado del negocio %s.", Biz_GetName(bizid));
-	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpId`=%i AND `bizEmpDuty`=%i WHERE `pID`=%i;", BizEmployeeInfo[playerid][e_BIZ_EMP_ID], BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY], PlayerInfo[playerid][pID]);
+	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpId`=%i, `bizEmpDuty`=%i WHERE `pID`=%i;", BizEmployeeInfo[playerid][e_BIZ_EMP_ID], BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY], PlayerInfo[playerid][pID]);
 	return 1;
 }
 
+CMD:renunciar(playerid, params[])
+{
+	new bizid = BizEmp_GetBizId(playerid);
+
+	if(!bizid)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No eres empleado de ningun negocio.");
+
+	SendFMessage(playerid, COLOR_LIGHTBLUE, "Has renunciado como empleado del negocio %s.", Biz_GetName(bizid));
+	BizEmployeeInfo[playerid][e_BIZ_EMP_ID] = 0;
+	BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY] = 0;
+	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpId`=0, `bizEmpDuty`=0 WHERE `pID`=%i;", PlayerInfo[playerid][pID]);
+	return 1;
+}
 CMD:negociotrabajo(playerid, params[])
 {
 	new bizid = Biz_IsPlayerOutsideOrInsideAny(playerid);
@@ -191,6 +223,13 @@ CMD:negociotrabajo(playerid, params[])
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No eres empleado de este negocio.");
 
 	// Toggle duty
+	if(!BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY]) {
+		BizEmpDutyStart[playerid] = GetTickCount();
+	} else {
+		if(BizEmpDutyStart[playerid] != 0)
+			BizEmpDutyAccum[playerid] += (GetTickCount() - BizEmpDutyStart[playerid]) / 1000;
+		BizEmpDutyStart[playerid] = 0;
+	}
 	BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY] = !BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY];
 	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpDuty`=%i WHERE `pID`=%i;", BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY], PlayerInfo[playerid][pID]);
 
@@ -218,7 +257,7 @@ BizEmp_OnBizSell(bizid)
 		}
 	}
 
-	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpId`= 0 AND `bizEmpDuty`= 0 WHERE `bizEmpId`=%i;", bizid);
+	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpId`= 0, `bizEmpDuty`= 0 WHERE `bizEmpId`=%i;", bizid);
 }
 stock BizEmp_GetRankName(playerid)
 {
@@ -236,21 +275,24 @@ CMD:negociodarrango(playerid, params[])
 	if(!KeyChain_Contains(playerid, KEY_TYPE_BUSINESS, bizid))
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tienes una llave de este negocio.");
 
-	new targetid, rankName[32];
-	if(sscanf(params, "us[32]", targetid, rankName))
-		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/negociodarrango [ID/Jugador] [nombre del rango]");
+	new targetid, rankLevel;
+	if(sscanf(params, "ui", targetid, rankLevel))
+		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/negociodarrango [ID/Jugador] [nivel 1-5]");
 	if(!IsPlayerLogged(targetid) || targetid == playerid)
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID/Jugador invalido.");
+	if(rankLevel < 1 || rankLevel > BIZ_EMP_MAX_RANK)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Rango invalido. Niveles: 1=Ayudante de barra, 2=Mozo, 3=Bartender, 4=Encargado de turno, 5=Jefe de barra.");
 	if(BizEmployeeInfo[targetid][e_BIZ_EMP_ID] != bizid)
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Ese jugador no es empleado de tu negocio.");
-	if(Util_HasInvalidSQLCharacter(rankName))
-		return Util_PrintInvalidSQLCharacter(playerid);
 
-	strcopy(BizEmployeeInfo[targetid][e_BIZ_EMP_RANK_NAME], rankName, 32);
-	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpRankName`='%e' WHERE `pID`=%i;", rankName, PlayerInfo[targetid][pID]);
+	BizEmployeeInfo[targetid][e_BIZ_EMP_RANK_LEVEL] = rankLevel;
+	new rname[32];
+	BizEmp_FillBizRankName(bizid, rankLevel, rname);
+	strcopy(BizEmployeeInfo[targetid][e_BIZ_EMP_RANK_NAME], rname, 32);
+	mysql_f_tquery(MYSQL_HANDLE, 192, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpRankName`='%e', `bizEmpRankLevel`=%i WHERE `pID`=%i;", rname, rankLevel, PlayerInfo[targetid][pID]);
 
-	SendFMessage(playerid, COLOR_INFO, "[NEGOCIO] "COLOR_EMB_GREY"Le asignaste el rango '%s' a %s.", rankName, GetPlayerCleanName(targetid));
-	SendFMessage(targetid, COLOR_INFO, "[NEGOCIO] "COLOR_EMB_GREY"Te asignaron el rango '%s' en el negocio %s.", rankName, Biz_GetName(bizid));
+	SendFMessage(playerid, COLOR_INFO, "[NEGOCIO] "COLOR_EMB_GREY"Le asignaste el rango '%s' (nivel %i) a %s.", rname, rankLevel, GetPlayerCleanName(targetid));
+	SendFMessage(targetid, COLOR_INFO, "[NEGOCIO] "COLOR_EMB_GREY"Te asignaron el rango '%s' en el negocio %s.", rname, Biz_GetName(bizid));
 	return 1;
 }
 
@@ -333,3 +375,117 @@ CMD:negocioconectados(playerid, params[])
 }
 
 Dialog:DLG_NegocioConectados(playerid, response, listitem, inputtext[]) { return 1; }
+
+BizEmp_ProcessEmployeePayday(playerid)
+{
+	new bizid = BizEmp_GetBizId(playerid);
+	if(!bizid) return;
+
+	new rank = BizEmployeeInfo[playerid][e_BIZ_EMP_RANK_LEVEL];
+	if(rank < 1 || rank > BIZ_EMP_MAX_RANK) return;
+
+	// Segundos totales en servicio este ciclo
+	new totalSecs = BizEmpDutyAccum[playerid];
+	if(BizEmpDutyStart[playerid] != 0)
+		totalSecs += (GetTickCount() - BizEmpDutyStart[playerid]) / 1000;
+
+	// Resetear acumulador para el proximo ciclo
+	BizEmpDutyAccum[playerid] = 0;
+	if(BizEmpDutyStart[playerid] != 0)
+		BizEmpDutyStart[playerid] = GetTickCount();
+
+	if(totalSecs < BIZ_EMP_MIN_DUTY_SECS)
+	{
+		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"No trabajaste lo suficiente en el negocio y no cobraste tu salario.");
+		return;
+	}
+
+	new salary = BizEmpRankSalary[rank];
+	PlayerInfo[playerid][pPayCheck] += salary;
+	Biz_AddTill(bizid, -salary);
+	SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Has recibido el sueldo de $%i por trabajar en el negocio %s. Fue acreditado a tu cuenta.", salary, Biz_GetName(bizid));
+}
+
+// ==================== NOMBRES PERSONALIZADOS DE RANGOS ====================
+
+static BizModifyRankBizId[MAX_PLAYERS];
+static BizModifyRankLevel[MAX_PLAYERS];
+
+hook Biz_OnAllDataLoaded()
+{
+	mysql_f_tquery(MYSQL_HANDLE, 64, @Callback: "BizRankNames_OnLoad" @Format: "SELECT `bizid`,`rank_level`,`rank_name` FROM `biz_rank_names`;");
+	return 1;
+}
+
+CALLBACK:BizRankNames_OnLoad()
+{
+	new rows = cache_num_rows();
+	for(new row = 0; row < rows; row++)
+	{
+		new bizid, rank;
+		cache_get_value_name_int(row, "bizid", bizid);
+		cache_get_value_name_int(row, "rank_level", rank);
+		if(Biz_IsValidId(bizid) && rank >= 1 && rank <= 6)
+			cache_get_value_name(row, "rank_name", BizRankNames[bizid][rank], 32);
+	}
+	return 1;
+}
+
+CMD:modificarnombrerangos(playerid, params[])
+{
+	new bizid = Biz_IsPlayerOutsideOrInsideAny(playerid);
+	if(!bizid)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No te encontras en un negocio.");
+	if(!Biz_IsPlayerOwner(playerid, bizid))
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No eres el dueno de este negocio.");
+
+	BizModifyRankBizId[playerid] = bizid;
+
+	new str[320], rname[32];
+	for(new i = 1; i <= 6; i++)
+	{
+		BizEmp_FillBizRankName(bizid, i, rname);
+		format(str, sizeof(str), "%s%i. %s\n", str, i, rname);
+	}
+
+	new title[64];
+	format(title, sizeof(title), "Rangos de: %s", Biz_GetName(bizid));
+	Dialog_Open(playerid, "DLG_ModifyRankSelect", DIALOG_STYLE_LIST, title, str, "Editar", "Cerrar");
+	return 1;
+}
+
+Dialog:DLG_ModifyRankSelect(playerid, response, listitem, inputtext[])
+{
+	if(!response) return 1;
+
+	new rank = listitem + 1;
+	BizModifyRankLevel[playerid] = rank;
+
+	new rname[32];
+	BizEmp_FillBizRankName(BizModifyRankBizId[playerid], rank, rname);
+
+	new prompt[96];
+	format(prompt, sizeof(prompt), "Nombre actual: %s\n\nQue nombre deseas ponerle a este rango?", rname);
+	Dialog_Open(playerid, "DLG_ModifyRankInput", DIALOG_STYLE_INPUT, "Cambiar nombre de rango", prompt, "Guardar", "Cancelar");
+	return 1;
+}
+
+Dialog:DLG_ModifyRankInput(playerid, response, listitem, inputtext[])
+{
+	if(!response) return 1;
+
+	new bizid = BizModifyRankBizId[playerid];
+	new rank  = BizModifyRankLevel[playerid];
+
+	if(!Biz_IsValidId(bizid) || rank < 1 || rank > 6) return 1;
+	if(isnull(inputtext)) return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El nombre no puede estar vacio."), 1;
+	if(strlen(inputtext) > 31) return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"El nombre no puede superar los 31 caracteres."), 1;
+	if(Util_HasInvalidSQLCharacter(inputtext)) return Util_PrintInvalidSQLCharacter(playerid), 1;
+
+	strcopy(BizRankNames[bizid][rank], inputtext, 32);
+
+	mysql_f_tquery(MYSQL_HANDLE, 256, @Callback: "" @Format: "INSERT INTO `biz_rank_names` (`bizid`,`rank_level`,`rank_name`) VALUES (%i,%i,'%e') ON DUPLICATE KEY UPDATE `rank_name`='%e';", bizid, rank, inputtext, inputtext);
+
+	SendFMessage(playerid, COLOR_INFO, "[NEGOCIO] "COLOR_EMB_GREY"El rango %i ahora se llama '%s'.", rank, inputtext);
+	return 1;
+}
