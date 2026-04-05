@@ -91,6 +91,7 @@ public OnPlayerGlobalUpdate(playerid)
 		}
 	}
 
+	BizEmp_OnPlayerUpdate(playerid);
 	return 1;
 }
 

@@ -3273,6 +3273,7 @@ Help_ShowBusiness(playerid) {
     strcat(str, "/negociocaja, /negociollave, /negocioradio, /negociocontratar, /negociodespedir\n");
     strcat(str, "/negociodarrango\n\n");
     strcat(str, "[Empleado] /negociotrabajo, /renunciar, /cn (/chatn), /negocioconectados, /puntuar\n");
+    strcat(str, "[General]  /negociosactivos\n");
     
     Dialog_Open(playerid, "DLG_NO_RESPONSE", DIALOG_STYLE_MSGBOX, "Panel de ayuda", str, "Cerrar", "");
     return true;

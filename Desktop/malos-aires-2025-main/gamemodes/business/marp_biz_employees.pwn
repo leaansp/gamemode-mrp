@@ -22,8 +22,10 @@ static const BizEmpRankSalary[]    = {0, 800, 1100, 1500, 2200, 3000};
 #define BIZ_EMP_MAX_RANK       5
 #define BIZ_EMP_MIN_DUTY_SECS  (20 * 60)
 
-static BizEmpDutyStart[MAX_PLAYERS] = {0, ...}; // tick al entrar en servicio (0=fuera)
-static BizEmpDutyAccum[MAX_PLAYERS] = {0, ...}; // segundos acumulados en servicio
+static BizEmpDutyStart[MAX_PLAYERS]   = {0, ...}; // tick al entrar en servicio (0=fuera)
+static BizEmpDutyAccum[MAX_PLAYERS]   = {0, ...}; // segundos acumulados en servicio
+static BizEmpDutyBizId[MAX_PLAYERS]   = {0, ...}; // bizid activo al poner /negociotrabajo
+static BizEmpOutWarn[MAX_PLAYERS]     = {0, ...}; // 1 = ya se le aviso que salio del local
 new BizRankNames[MAX_BUSINESS][7][32];            // nombres personalizados por negocio [bizid][rank 1-6]
 
 stock BizEmp_FillBizRankName(bizid, rank, out[], len = sizeof(out))
@@ -47,6 +49,8 @@ hook OnPlayerDisconnect(playerid, reason)
 	BizEmployeeOffer[playerid] = 0;
 	BizEmpDutyStart[playerid] = 0;
 	BizEmpDutyAccum[playerid] = 0;
+	BizEmpDutyBizId[playerid] = 0;
+	BizEmpOutWarn[playerid]   = 0;
 	return 1;
 }
 
@@ -225,10 +229,14 @@ CMD:negociotrabajo(playerid, params[])
 	// Toggle duty
 	if(!BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY]) {
 		BizEmpDutyStart[playerid] = GetTickCount();
+		BizEmpDutyBizId[playerid] = bizid;
+		BizEmpOutWarn[playerid]   = 0;
 	} else {
 		if(BizEmpDutyStart[playerid] != 0)
 			BizEmpDutyAccum[playerid] += (GetTickCount() - BizEmpDutyStart[playerid]) / 1000;
 		BizEmpDutyStart[playerid] = 0;
+		BizEmpDutyBizId[playerid] = 0;
+		BizEmpOutWarn[playerid]   = 0;
 	}
 	BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY] = !BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY];
 	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpDuty`=%i WHERE `pID`=%i;", BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY], PlayerInfo[playerid][pID]);
@@ -487,5 +495,109 @@ Dialog:DLG_ModifyRankInput(playerid, response, listitem, inputtext[])
 	mysql_f_tquery(MYSQL_HANDLE, 256, @Callback: "" @Format: "INSERT INTO `biz_rank_names` (`bizid`,`rank_level`,`rank_name`) VALUES (%i,%i,'%e') ON DUPLICATE KEY UPDATE `rank_name`='%e';", bizid, rank, inputtext, inputtext);
 
 	SendFMessage(playerid, COLOR_INFO, "[NEGOCIO] "COLOR_EMB_GREY"El rango %i ahora se llama '%s'.", rank, inputtext);
+	return 1;
+}
+
+// ==================== CHEQUEO DE UBICACION EN SERVICIO ====================
+
+BizEmp_OnPlayerUpdate(playerid)
+{
+	if(!BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY])
+		return;
+
+	new bizid = BizEmpDutyBizId[playerid];
+	if(!bizid)
+		return;
+
+	// Adentro del local -> todo bien, resetear advertencia
+	if(Biz_IsPlayerInsideId(playerid, bizid))
+	{
+		BizEmpOutWarn[playerid] = 0;
+		return;
+	}
+
+	// Cerca de la puerta exterior (<= 20 unidades) -> advertir una sola vez
+	if(Biz_IsPlayerAtOutDoorRangeId(playerid, bizid, 40.0))
+	{
+		if(!BizEmpOutWarn[playerid])
+		{
+			BizEmpOutWarn[playerid] = 1;
+			SendClientMessage(playerid, COLOR_ERROR, "[NEGOCIO] "COLOR_EMB_GREY"Saliste de tu lugar de trabajo. Si te alejas mas de 20 metros se cancelara tu servicio.");
+		}
+		return;
+	}
+
+	// Se alejo mas de 20 unidades -> cancelar servicio
+	if(BizEmpDutyStart[playerid] != 0)
+		BizEmpDutyAccum[playerid] += (GetTickCount() - BizEmpDutyStart[playerid]) / 1000;
+	BizEmpDutyStart[playerid]              = 0;
+	BizEmpDutyBizId[playerid]              = 0;
+	BizEmpOutWarn[playerid]                = 0;
+	BizEmployeeInfo[playerid][e_BIZ_EMP_DUTY] = 0;
+	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpDuty`=0 WHERE `pID`=%i;", PlayerInfo[playerid][pID]);
+	SendClientMessage(playerid, COLOR_ERROR, "[NEGOCIO] "COLOR_EMB_GREY"Abandonaste tu puesto de trabajo y tu servicio fue cancelado automaticamente.");
+
+	// Notificar al dueno si esta conectado
+	foreach(new oid : Player)
+	{
+		if(Biz_IsPlayerOwner(oid, bizid))
+		{
+			SendFMessage(oid, COLOR_ERROR, "[NEGOCIO] "COLOR_EMB_GREY"%s abandono su puesto y su servicio fue cancelado.", GetPlayerCleanName(playerid));
+			break;
+		}
+	}
+}
+
+// ==================== /negociosactivos ====================
+
+static NegActBizList[MAX_PLAYERS][32]; // bizid por listitem del dialog
+
+CMD:negociosactivos(playerid, params[])
+{
+	// Contar empleados en servicio por negocio
+	new empCount[MAX_BUSINESS];
+	foreach(new id : Player)
+	{
+		if(BizEmployeeInfo[id][e_BIZ_EMP_DUTY])
+		{
+			new bid = BizEmpDutyBizId[id];
+			if(bid > 0 && bid < MAX_BUSINESS)
+				empCount[bid]++;
+		}
+	}
+
+	new str[2048], count;
+	for(new bizid = 1; bizid < MAX_BUSINESS && count < 32; bizid++)
+	{
+		if(!empCount[bizid] || !Biz_IsValidId(bizid)) continue;
+		NegActBizList[playerid][count] = bizid;
+		format(str, sizeof(str), "%s%s - {00AA00}Empleados en servicio: %i{AAAAAA} - {FF6666}/prop %i\n",
+			str, Biz_GetName(bizid), empCount[bizid], bizid);
+		count++;
+	}
+
+	if(!count)
+	{
+		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"En este pais son todos unos vagos. Nadie quiere laburar. No hay negocios activos en este momento!");
+		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"¿Qué estás esperando para abrir tu propio negocio?");
+		return 1;
+	}
+
+	Dialog_Open(playerid, "DLG_NegActivos", DIALOG_STYLE_LIST, "Negocios con empleados en servicio", str, "Marcar", "Cerrar");
+	return 1;
+}
+
+Dialog:DLG_NegActivos(playerid, response, listitem, inputtext[])
+{
+	if(!response) return 1;
+	if(listitem < 0 || listitem >= 32) return 1;
+
+	new bizid = NegActBizList[playerid][listitem];
+	if(!Biz_IsValidId(bizid)) return 1;
+
+	new Float:x, Float:y, Float:z;
+	Biz_GetOutDoorPos(bizid, x, y, z);
+	SetPlayerCheckpoint(playerid, x, y, z, 3.0);
+	SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"El negocio %s se ha marcado en el mapa.", Biz_GetName(bizid));
 	return 1;
 }
