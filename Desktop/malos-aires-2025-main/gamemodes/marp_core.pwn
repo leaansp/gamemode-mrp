@@ -317,6 +317,7 @@ new socialPay;
 #include "system/marp_asador.pwn"				//Sistema de asador (choripanes)
 #include "system/marp_vehicle_wear.pwn"		//Desgaste de vehiculos
 #include "system/marp_twitter.pwn"			//Sistema de Twitter
+#include "system/marp_consejos.pwn"		//Sistema de consejos
 
 
 new timersID[24];
@@ -3013,6 +3014,8 @@ Help_ShowGeneral(playerid) {
     strcat(str, "/tel(efono), /servicios\n\n");
     
     strcat(str, "/mp, /vb, /g, /sus, /ame, /me, /do, /dop, /gooc, /b, /limpiarchat, /solidchat, /verdesc\n\n");
+
+	strcat(str, "/desactivarconsejos, /activarconsejos\n\n");
 
     strcat(str, "/verbalance, /depositar, /retirar, /transferir\n");
 
