@@ -144,7 +144,7 @@ public Timer_Consejo() {
 		format(str, sizeof(str), TIP_PREFIX"%s", g_TipL1[idx]);
 		SendClientMessage(i, -1, str);
 		if(g_TipL2[idx][0]) {
-			format(str, sizeof(str), TIP_L2_CLR"%s", g_TipL2[idx]);
+			format(str, sizeof(str), TIP_PREFIX"%s", g_TipL2[idx]);
 			SendClientMessage(i, -1, str);
 		}
 	}
@@ -178,7 +178,7 @@ CMD:vertip(playerid, params[]) {
 	format(str, sizeof(str), TIP_PREFIX"%s", g_TipL1[idx]);
 	SendClientMessage(playerid, -1, str);
 	if(g_TipL2[idx][0]) {
-		format(str, sizeof(str), TIP_L2_CLR"%s", g_TipL2[idx]);
+		format(str, sizeof(str), TIP_PREFIX"%s", g_TipL2[idx]);
 		SendClientMessage(playerid, -1, str);
 	}
 	SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Tip #%d de %d (0 a %d).", idx, TIP_COUNT, TIP_COUNT - 1);
