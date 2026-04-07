@@ -217,6 +217,11 @@ CMD:renunciar(playerid, params[])
 	mysql_f_tquery(MYSQL_HANDLE, 128, @Callback: "" @Format: "UPDATE `biz_employees` SET `bizEmpId`=0, `bizEmpDuty`=0 WHERE `pID`=%i;", PlayerInfo[playerid][pID]);
 	return 1;
 }
+CMD:negocioservicio(playerid, params[])
+{
+	return cmd_negociotrabajo(playerid, params);
+}
+
 CMD:negociotrabajo(playerid, params[])
 {
 	new bizid = Biz_IsPlayerOutsideOrInsideAny(playerid);
