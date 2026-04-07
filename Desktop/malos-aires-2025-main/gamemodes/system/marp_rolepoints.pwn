@@ -23,6 +23,10 @@ CMD:darpuntoderol(playerid, params[])
 	
 	PlayerInfo[targetid][pRolePoints]++;
 
+	new q_rp[128];
+	mysql_format(MYSQL_HANDLE, q_rp, sizeof(q_rp), "UPDATE accounts SET pRolePoints=%d WHERE id=%d", PlayerInfo[targetid][pRolePoints], PlayerInfo[targetid][pID]);
+	mysql_tquery(MYSQL_HANDLE, q_rp);
+
 	new query[350];
 	mysql_format(MYSQL_HANDLE, query, sizeof(query), \
 		"INSERT INTO `role_points` \
@@ -58,6 +62,10 @@ CMD:quitarpuntoderol(playerid, params[])
 	SendFMessage(targetid, COLOR_LIGHTYELLOW2, "El administrador %s te ha quitado un punto de rol. Razón: %s.", GetPlayerCleanName(playerid), reason);
 
 	PlayerInfo[targetid][pRolePoints]--;
+
+	new q_rp[128];
+	mysql_format(MYSQL_HANDLE, q_rp, sizeof(q_rp), "UPDATE accounts SET pRolePoints=%d WHERE id=%d", PlayerInfo[targetid][pRolePoints], PlayerInfo[targetid][pID]);
+	mysql_tquery(MYSQL_HANDLE, q_rp);
 
 	new query[350];
 	mysql_format(MYSQL_HANDLE, query, sizeof(query), \
@@ -117,4 +125,35 @@ public ShowRolePoints(ofplayerid, toplayerid)
 	return 1;
 }
 
+CMD:rankingpdr(playerid, params[])
+{
+	mysql_tquery(MYSQL_HANDLE, "SELECT Name, pRolePoints FROM accounts ORDER BY pRolePoints DESC LIMIT 10", "ShowRankingPDR", "i", playerid);
+	return 1;
+}
 
+forward ShowRankingPDR(playerid);
+public ShowRankingPDR(playerid)
+{
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	new rows = cache_num_rows();
+	if(!rows)
+		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] No hay datos en el ranking."), 1;
+
+	SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "========== TOP 10 - Puntos de Rol ==========");
+
+	new charName[MAX_PLAYER_NAME], points, rankStr[128];
+	for(new i = 0; i < rows; i++)
+	{
+		cache_get_value_name(i, "Name", charName, sizeof(charName));
+		cache_get_value_name_int(i, "pRolePoints", points);
+
+		for(new j = 0; charName[j]; j++)
+			if(charName[j] == '_') charName[j] = ' ';
+
+		format(rankStr, sizeof(rankStr), " #%d  %s  -  %d pts", i + 1, charName, points);
+		SendClientMessage(playerid, COLOR_WHITE, rankStr);
+	}
+	SendClientMessage(playerid, COLOR_LIGHTYELLOW2, "============================================");
+	return 1;
+}
