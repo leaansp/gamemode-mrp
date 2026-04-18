@@ -55,7 +55,7 @@ static const BizTypeAvailableItems[BIZ_TYPES_AMOUNT][] = { // TODO: separar en c
 	ITEM_ID_PACK_CERVEZA, ITEM_ID_BOTELLA_GASEOSA, ITEM_ID_LATA_GASEOSA, ITEM_ID_BOTELLA_FERNET, ITEM_ID_BOTELLA_GANCIA,
 	ITEM_ID_CHAMPAGNE, ITEM_ID_TEQUILA, ITEM_ID_LICOR, ITEM_ID_CAMPARI, ITEM_ID_RON_CALIDAD,
 	ITEM_ID_WHISKY_CALIDAD, ITEM_ID_VODKA_CALIDAD, ITEM_ID_VINO_CALIDAD, ITEM_ID_CHAMPAGNE_CALIDAD,
-	ITEM_ID_TEQUILA_CALIDAD, ITEM_ID_FRENCH_DECK, ITEM_ID_CHORIZO, 0},
+	ITEM_ID_TEQUILA_CALIDAD, ITEM_ID_FRENCH_DECK, ITEM_ID_CHORIZO, ITEM_ID_ASADOR, 0},
 
 	//AMMUNATION
 	{ITEM_ID_COLT45, ITEM_ID_DEAGLE, ITEM_ID_SHOTGUN, ITEM_ID_RIFLE, ITEM_ID_COLT_MAGAZINE, ITEM_ID_DEAGLE_MAGAZINE,
@@ -155,6 +155,8 @@ static const BizTypeAvailableItems[BIZ_TYPES_AMOUNT][] = { // TODO: separar en c
 new BizMaxAvailableItems[BIZ_TYPES_AMOUNT];
 
 new BizItemOrderSelected[MAX_PLAYERS];
+static g_AnStockBiz[MAX_PLAYERS];
+static g_AnStockIdx[MAX_PLAYERS];
 
 enum bCatalogInfo {
 	bItemid, //id del item en la lista global de items, para referenciar
@@ -928,29 +930,92 @@ Dialog:Gestion_Biz(playerid, response, listitem, inputtext[])
 	return 1;
 }
 
-CMD:anstock(playerid,params[])
+CMD:anstock(playerid, params[])
 {
-	// Verificar si es administrador
 	if(AccountInfo[playerid][accAdminLevel] == 0)
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tienes acceso a este comando.");
-	
-	// Verificar si tiene acceso avanzado a Property Control
+
 	new level = AccountInfo[playerid][accAdminLevel];
 	if(!(level == 8 || level == 9 || level == 12 || level == 13 || level == 16 || level == 17 || level == 19 || level == 20 || level == 21))
 		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Necesitas variables de Property Control para utilizar este comando.");
-	
+
 	new biz, index, cant;
 
-	if(sscanf(params, "iii", biz, index, cant))
-		return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/anstock [idnegocio] [index] [cantidad]");
-	if(!Biz_IsValidId(biz))
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID de negocio inválida.");
-	if(index < 0 || index >= MAX_BIZ_LISTITEM || !BusinessCatalog[biz][index][bItemid])
-		return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Index inválido.");
+	// Modo directo: /anstock id index cantidad
+	if(!sscanf(params, "iii", biz, index, cant))
+	{
+		if(!Biz_IsValidId(biz))
+			return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID de negocio invalida.");
+		if(index < 0 || index >= MAX_BIZ_LISTITEM || !BusinessCatalog[biz][index][bItemid])
+			return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Index invalido.");
 
-	SendFMessage(playerid, COLOR_WHITE, "%s - Stock anterior: %i - Stock actual: %i", ItemModel_GetName(BusinessCatalog[biz][index][bItemid]), BusinessCatalog[biz][index][bStock], cant);
-	BusinessCatalog[biz][index][bStock] = cant;
-	Biz_UpdateSQLItemStock(biz, index);
+		SendFMessage(playerid, COLOR_WHITE, "%s - Stock anterior: %i - Stock actual: %i", ItemModel_GetName(BusinessCatalog[biz][index][bItemid]), BusinessCatalog[biz][index][bStock], cant);
+		BusinessCatalog[biz][index][bStock] = cant;
+		Biz_UpdateSQLItemStock(biz, index);
+		return 1;
+	}
+
+	// Modo GUI: /anstock id
+	if(!sscanf(params, "i", biz))
+	{
+		if(!Biz_IsValidId(biz))
+			return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"ID de negocio invalida.");
+
+		g_AnStockBiz[playerid] = biz;
+		ShowDialogBizStock(playerid, biz, .useBothButtons = true,
+			.title = "¿Qué item deseas re-stockear?",
+			.onResponse = "AnStock_SelectItem");
+		return 1;
+	}
+
+	return SendClientMessage(playerid, COLOR_USAGE, "[USO] "COLOR_EMB_GREY"/anstock [idnegocio] | /anstock [idnegocio] [index] [cantidad]");
+}
+
+Dialog:AnStock_SelectItem(playerid, response, listitem, inputtext[])
+{
+	if(!response) return 1;
+
+	new bizid = g_AnStockBiz[playerid];
+	if(!Biz_IsValidId(bizid)) return 1;
+	if(listitem < 0 || listitem >= MAX_BIZ_LISTITEM || !BusinessCatalog[bizid][listitem][bItemid]) return 1;
+
+	g_AnStockIdx[playerid] = listitem;
+
+	new title[64];
+	format(title, sizeof(title), "Stock de: %s", ItemModel_GetName(BusinessCatalog[bizid][listitem][bItemid]));
+
+	new body[] = "20\n50\n100\n150\n200\n300\n500\n600";
+	Dialog_Show(playerid, AnStock_SelectAmount, DIALOG_STYLE_LIST, title, body, "Confirmar", "Volver");
+	return 1;
+}
+
+Dialog:AnStock_SelectAmount(playerid, response, listitem, inputtext[])
+{
+	new bizid = g_AnStockBiz[playerid];
+	new idx   = g_AnStockIdx[playerid];
+
+	if(!response)
+	{
+		if(Biz_IsValidId(bizid))
+			ShowDialogBizStock(playerid, bizid, .useBothButtons = true,
+				.title = "¿Qué item deseas re-stockear?",
+				.onResponse = "AnStock_SelectItem");
+		return 1;
+	}
+
+	if(!Biz_IsValidId(bizid)) return 1;
+	if(idx < 0 || idx >= MAX_BIZ_LISTITEM || !BusinessCatalog[bizid][idx][bItemid]) return 1;
+
+	static const amounts[] = {20, 50, 100, 150, 200, 300, 500, 600};
+	new cant = amounts[listitem];
+
+	new itemName[64];
+	format(itemName, sizeof(itemName), "%s", ItemModel_GetName(BusinessCatalog[bizid][idx][bItemid]));
+
+	BusinessCatalog[bizid][idx][bStock] = cant;
+	Biz_UpdateSQLItemStock(bizid, idx);
+
+	SendFMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Se ha rellenado el stock de %s.", itemName);
 	return 1;
 }
 

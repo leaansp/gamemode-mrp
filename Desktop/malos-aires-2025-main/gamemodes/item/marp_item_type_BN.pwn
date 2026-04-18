@@ -107,6 +107,82 @@ hook OnGameModeInitEnded()
 	return 1;
 }
 
+stock Choripan_SendUseMessage(playerid, param)
+{
+    static const p5[][96] = {
+        "¡Uy, la primera mordidita siempre es la más rica!",
+        "Primer bocado y ya se nota que vale cada peso.",
+        "Arrancar con un chori así es arrancar bien el día.",
+        "El primer mordisco te cambia el humor al toque.",
+        "¡Así se arranca una tarde de asado, con clase!",
+        "¡Primera mordida y ya estás sonriendo solo!",
+        "El olor ya prometía, pero el sabor es otro nivel.",
+        "Primer mordisco y ya sabés que vas a querer otro.",
+        "Así empieza una historia de amor con el chori.",
+        "Primer bocado. Todo está bien en este mundo."
+    };
+    static const p4[][96] = {
+        "Va tomando sabor, esto es gastronomía de verdad.",
+        "Segundo mordisco y confirmás que fue buena idea.",
+        "Cada bocado mejor que el anterior.",
+        "Esto está en su punto justo, un diez.",
+        "El pan se empapa del jugo... perfecta combinación.",
+        "No para de mejorar a medida que avanzan los bocados.",
+        "Eso es sabor casero, no de paquete.",
+        "Le estás encontrando la vuelta al asunto.",
+        "La salsa, el pan, la carne... todo en orden.",
+        "Segundo bocado. Vas por buen camino, compañero."
+    };
+    static const p3[][96] = {
+        "Llegaste a la mitad. Saboreéalo bien.",
+        "El ecuador del chori. Ya no hay vuelta atrás.",
+        "Mitad del camino. El sabor sigue en aumento.",
+        "Vas a la mitad, y cada bocado vale doble ahora.",
+        "Justo en el medio y el corazón empieza a doler un poco.",
+        "La mitad del chori ya pasó, pero dejó su huella.",
+        "A este ritmo, en dos bocados más te ponés triste.",
+        "Mitad del chori. Empieza la cuenta regresiva.",
+        "Esto se está acabando y todavía no estás listo.",
+        "Mitad justa. Ahora viene la parte difícil: soltar."
+    };
+    static const p2[][96] = {
+        "Te queda menos de la mitad del chori, te querés matar porque estaba buenísimo.",
+        "Solo queda un bocado más y eso te parte el alma.",
+        "Te diste cuenta que se acaba y el pecho aprieta.",
+        "Poco chori, mucho dolor. Así es la vida.",
+        "Queda casi nada y ya lo ves venir. Doloroso.",
+        "El final está cerca y no hay forma de pararlo.",
+        "Menos de la mitad y el corazón ya llora por dentro.",
+        "Quedan los últimos pedacitos. Los mejores y los más tristes.",
+        "Te quedás sin chori y nadie te va a entender el dolor.",
+        "Un bocado más y chau, mi amor. Ya casi no hay."
+    };
+    static const p1[][96] = {
+        "El último mordisco. Que descanse en paz.",
+        "Último bocado. Fin de una era.",
+        "Y así, sin avisar, el chori llegó a su fin.",
+        "El último pedazo siempre es el más amargo. No por el sabor.",
+        "Adiós, chori. Fuiste demasiado bueno para este mundo.",
+        "Último bocado y ya estás pensando en cuándo comer otro.",
+        "Se fue. Pero qué bien que vivió.",
+        "El fin llegó. Fue glorioso hasta el final.",
+        "Último mordisco. Llorás por dentro pero lo disimulás.",
+        "Final del chori. El silencio que queda lo dice todo."
+    };
+
+    new out[128];
+    switch(param)
+    {
+        case 5: format(out, sizeof(out), "[INFO] "COLOR_EMB_GREY"%s", p5[random(10)]);
+        case 4: format(out, sizeof(out), "[INFO] "COLOR_EMB_GREY"%s", p4[random(10)]);
+        case 3: format(out, sizeof(out), "[INFO] "COLOR_EMB_GREY"%s", p3[random(10)]);
+        case 2: format(out, sizeof(out), "[INFO] "COLOR_EMB_GREY"%s", p2[random(10)]);
+        case 1: format(out, sizeof(out), "[INFO] "COLOR_EMB_GREY"%s", p1[random(10)]);
+        default: return;
+    }
+    SendClientMessage(playerid, COLOR_INFO, out);
+}
+
 Item_OnUsed(playerid, hand, itemid, itemType)
 {
 	if(itemType != ITEM_BASIC_NEEDS)
@@ -139,6 +215,9 @@ Item_OnUsed(playerid, hand, itemid, itemType)
 	new str[128];
 	format(str, sizeof(str), "Consume un poco de su %s", ItemModel_GetName(itemid));
 	PlayerCmeMessage(playerid, 15.0, 4000, str);
+
+	if(itemid == ITEM_ID_CHORIPAN)
+		Choripan_SendUseMessage(playerid, GetHandParam(playerid, hand));
 
 	if(GetHandParam(playerid, hand) - 1 > 0) {
 		SetHandItemAndParam(playerid, hand, itemid, GetHandParam(playerid, hand) - 1);

@@ -876,7 +876,7 @@ public ItemModel_OnInit()
 		.itemid = ITEM_ID_CHORIPAN,
 		.name = "Choripán",
 		.paramName = "Usos",
-		.paramDefaultValue = 3,
+		.paramDefaultValue = 5,
 		.type = ITEM_BASIC_NEEDS,
 		.basePrice = 40,
 		.objectModel = 2769,
@@ -5309,6 +5309,24 @@ public ItemModel_OnInit()
 		.rightRot = Float:{0.0, 0.0, 0.0},
 		.rightScale = Float:{1.0, 1.0, 1.0},
 		.occupiedSpace = 6
+	);
+
+	ItemModel_SetNewDataId(
+		.itemid = ITEM_ID_ASADOR,
+		.name = "Parrilla",
+		.paramName = "Usos",
+		.paramDefaultValue = 1,
+		.type = ITEM_OTHER,
+		.basePrice = 500,
+		.objectModel = 19831,
+		.itemTag = ITEM_TAG_BOTH_HANDS | ITEM_TAG_SAVE | ITEM_TAG_GIVE,
+		.leftPos = Float:{0.0, 0.0, 0.0},
+		.leftRot = Float:{0.0, 0.0, 0.0},
+		.leftScale = Float:{1.0, 1.0, 1.0},
+		.rightPos = Float:{0.0, 0.0, 0.0},
+		.rightRot = Float:{0.0, 0.0, 0.0},
+		.rightScale = Float:{1.0, 1.0, 1.0},
+		.occupiedSpace = 2
 	);
 
 

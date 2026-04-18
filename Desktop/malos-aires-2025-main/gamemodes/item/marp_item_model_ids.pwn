@@ -369,4 +369,5 @@
 #define ITEM_ID_CHORIPAN				(323)
 #define ITEM_ID_MATE					(324)
 #define ITEM_ID_SPARE_TIRE             (325)
+#define ITEM_ID_ASADOR					(326)
 

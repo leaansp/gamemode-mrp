@@ -34,23 +34,27 @@ forward Asador_DoCook(streamer_id);
 // ===============================
 stock Asador_FindNearbyObject(playerid, Float:range = 3.0)
 {
-    new Float:x, Float:y, Float:z;
-    GetPlayerPos(playerid, x, y, z);
+    new Float:px, Float:py, Float:pz;
+    GetPlayerPos(playerid, px, py, pz);
 
+    // Buscar en el array de asadores registrados (mas confiable que GetNearbyItems)
+    for (new i = 0; i < Asador_Count; i++)
+    {
+        new Float:ox, Float:oy, Float:oz;
+        Streamer_GetFloatData(STREAMER_TYPE_OBJECT, STREAMER_TAG_OBJECT:Asador_Objs[i], E_STREAMER_X, ox);
+        Streamer_GetFloatData(STREAMER_TYPE_OBJECT, STREAMER_TAG_OBJECT:Asador_Objs[i], E_STREAMER_Y, oy);
+        Streamer_GetFloatData(STREAMER_TYPE_OBJECT, STREAMER_TAG_OBJECT:Asador_Objs[i], E_STREAMER_Z, oz);
+        if (floatabs(px - ox) <= range && floatabs(py - oy) <= range && floatabs(pz - oz) <= (range + 2.0))
+            return Asador_Objs[i];
+    }
+
+    // Fallback: buscar por modelo con streamer
     new STREAMER_TAG_OBJECT:objs[64];
-    new found = Streamer_GetNearbyItems(
-        x, y, z,
-        STREAMER_TYPE_OBJECT,
-        objs,
-        sizeof(objs),
-        range,
-        .worldid = GetPlayerVirtualWorld(playerid)
-    );
-
+    new found = Streamer_GetNearbyItems(px, py, pz, STREAMER_TYPE_OBJECT, objs, sizeof(objs), range);
     for (new i = 0; i < found; i++)
     {
         if (Streamer_GetIntData(STREAMER_TYPE_OBJECT, objs[i], E_STREAMER_MODEL_ID) == ASADOR_MODEL_ID)
-            return objs[i];
+            return _:objs[i];
     }
     return INVALID_STREAMER_ID;
 }
@@ -93,6 +97,26 @@ stock Asador_Create(streamer_id)
         1
     );
     return idx;
+}
+
+stock Asador_Destroy(idx)
+{
+    if (idx < 0 || idx >= Asador_Count) return 0;
+
+    DestroyDynamicObject(Asador_Objs[idx]);
+    DestroyDynamic3DTextLabel(Asador_Labels[idx]);
+    vector_clear(Asador_Containers[idx]);
+
+    new last = Asador_Count - 1;
+    if (idx != last)
+    {
+        Asador_Objs[idx]       = Asador_Objs[last];
+        Asador_Containers[idx] = Asador_Containers[last];
+        Asador_Cooking[idx]    = Asador_Cooking[last];
+        Asador_Labels[idx]     = Asador_Labels[last];
+    }
+    Asador_Count--;
+    return 1;
 }
 
 // ===============================
@@ -199,7 +223,7 @@ public Asador_DoCook(streamer_id)
 
     // producir choripanes
     for (new i = 0; i < 3; i++)
-        Asador_AddItem(streamer_id, ITEM_ID_CHORIPAN, 1);
+        Asador_AddItem(streamer_id, ITEM_ID_CHORIPAN, 5);
 
     // ¿hay más chorizos?
     for (new j = 0; j < vector_size(vec); j += 2)
@@ -219,8 +243,79 @@ public Asador_DoCook(streamer_id)
 }
 
 // ===============================
-// Command
+// Exclusion zones
 // ===============================
+static const Float:NoAsadorZones[][4] = {
+    // {X, Y, Z, Radio}
+    {0.0, 0.0, 0.0, 150.0}  // Villa Fierro -- coordenadas pendientes
+};
+
+// ===============================
+// Commands
+// ===============================
+CMD:colocarparrilla(playerid, params[])
+{
+    if (Item_IsHandlingCooldownOn(playerid))
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Debes esperar antes de usar la parrilla.");
+
+    new hand = SearchHandsForItem(playerid, ITEM_ID_ASADOR);
+    if (hand == -1)
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tenes una parrilla en la mano.");
+
+    new Float:px, Float:py, Float:pz;
+    GetPlayerPos(playerid, px, py, pz);
+
+    for (new i = 0; i < sizeof(NoAsadorZones); i++)
+    {
+        if (IsPlayerInRangeOfPoint(playerid, NoAsadorZones[i][3], NoAsadorZones[i][0], NoAsadorZones[i][1], NoAsadorZones[i][2]))
+            return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No podes colocar una parrilla en esta zona.");
+    }
+
+    new Float:angle;
+    GetPlayerFacingAngle(playerid, angle);
+    new STREAMER_TAG_OBJECT:streamer_obj = CreateDynamicObject(ASADOR_MODEL_ID, px, py, pz - 0.9, 0.0, 0.0, angle);
+
+    SetHandItemAndParam(playerid, hand, 0, 0);
+    Asador_Create(streamer_obj);
+
+    PlayerActionMessage(playerid, 15.0, "coloca una parrilla en el suelo.");
+    ApplyAnimationEx(playerid, "carry", "putdwn105", 20.0, 0, 0, 0, 0, 0, 1);
+    Item_ApplyHandlingCooldown(playerid);
+
+    return SendClientMessage(playerid, COLOR_INFO, "Colocaste la parrilla. Usa /choripan con un chorizo para cocinar.");
+}
+
+CMD:levantarparrilla(playerid, params[])
+{
+    if (Item_IsHandlingCooldownOn(playerid))
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"Debes esperar antes de usar la parrilla.");
+
+    new streamer_obj = Asador_FindNearbyObject(playerid);
+    if (streamer_obj == INVALID_STREAMER_ID)
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No hay una parrilla cerca.");
+
+    new idx = Asador_GetIndex(streamer_obj);
+    if (idx == -1) return 1;
+
+    if (Asador_Cooking[idx])
+        return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"La parrilla esta cocinando, espera.");
+
+    new vec = Asador_Containers[idx];
+    if (vec && vector_size(vec) > 0)
+        return SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"La parrilla tiene items adentro, vaciala antes de levantarla.");
+
+    if (!SetAnyHandItemAndParam(playerid, ITEM_ID_ASADOR, 1))
+        return SendClientMessage(playerid, COLOR_ERROR, "[ERROR] "COLOR_EMB_GREY"No tenes las manos libres.");
+
+    Asador_Destroy(idx);
+
+    PlayerActionMessage(playerid, 15.0, "levanta la parrilla del suelo.");
+    ApplyAnimationEx(playerid, "carry", "liftup105", 20.0, 0, 0, 0, 0, 0, 1);
+    Item_ApplyHandlingCooldown(playerid);
+
+    return SendClientMessage(playerid, COLOR_INFO, "Levantaste la parrilla.");
+}
+
 CMD:choripan(playerid, params[])
 {
     if (Item_IsHandlingCooldownOn(playerid))
