@@ -97,65 +97,27 @@ mysql_f_tquery(MYSQL_HANDLE, 256, "OnCargarJugador", "SELECT * FROM accounts WHE
   - Branch test server: `Test`
   - Branch producción: `main`
 
-### Flujo de deploy al servidor de test
+### Flujo de deploy (test y producción)
 
 **IMPORTANTE: No pushear al GitLab sin confirmación explícita del usuario.**
 
-1. Commitear y pushear al GitHub personal (origin) — esto se puede hacer libremente
-2. Cuando el usuario confirme, pushear la rama local a GitLab rama Test:
-   ```bash
-   git push gitlab feature/hotkeys:Test
-   ```
-3. El usuario se conecta al VPS via Putty (IP: 51.222.86.176, puerto 22)
-4. En el VPS:
-   ```bash
-   cd malosaires-test/malos-aires-2025
-   sudo git pull
-   sudo sampctl build
-   sudo systemctl restart samp-test
-   ```
-
-### Flujo de deploy a main (producción)
-
-**CRITICO: NUNCA hacer force push a main. NUNCA borrar commits del historial.**
-
-El repo local (`feature/hotkeys`) y `gitlab/main` tienen historiales divergidos — no se puede hacer push directo. El flujo correcto usa el worktree `deploy-test`:
-
-```
-Worktree deploy-test: C:/Users/Admin/Desktop/deploy-test
+Deploy directo — sin cherry-pick:
+```bash
+git push gitlab feature/hotkeys:Test --force
+git push gitlab feature/hotkeys:main --force
 ```
 
-**Pasos:**
+El usuario se conecta al VPS via Putty y corre:
+```bash
+cd malosaires-test/malos-aires-2025
+sudo git pull && sudo sampctl build && sudo systemctl restart samp-test
+```
 
-1. Identificar qué commits de `feature/hotkeys` faltan en `deploy-test`:
-   ```bash
-   cd C:/Users/Admin/Desktop/deploy-test
-   git log --oneline feature/hotkeys --not HEAD
-   # Lista los commits a cherry-pickear (de más viejo a más nuevo)
-   ```
+**Archivos solo para GitHub — NO van a GitLab:**
+- `CLAUDE.md` — instrucciones internas, no relevantes para el servidor
+- `informes/` — documentación interna
 
-2. Cherry-pickear en orden cronológico (más viejo primero):
-   ```bash
-   git cherry-pick <hash_viejo> ... <hash_nuevo>
-   ```
-
-3. Conflictos típicos que aparecen siempre — resolverlos así:
-   - `CLAUDE.md`: no existe en producción → `git cherry-pick --skip`
-   - Archivos en `informes/` o con prefijo `Desktop/malos-aires-2025-main/`: son docs → `git add <archivo>` y continuar
-   - `gamemodes/marp_core.amx`: binario → `git checkout --ours gamemodes/marp_core.amx && git add gamemodes/marp_core.amx`
-   - Archivos de `gamemodes/` con "file location" warning: → `git add <archivo>` y continuar
-
-4. Si `gitlab/main` tiene commits que deploy-test no tiene, hacer merge para preservar todo:
-   ```bash
-   git fetch gitlab
-   git merge gitlab/main --no-edit
-   # Resolver conflicto de .amx si aparece: usar --ours (nuestra versión es la más nueva)
-   ```
-
-5. Pushear:
-   ```bash
-   git push gitlab HEAD:main
-   ```
+Estos archivos se commitean y pushean solo a `origin` (GitHub). Al hacer push a GitLab se incluyen igual por el force push, pero no se mantienen activamente allá.
 
 ### Revertir en el VPS
 ```bash
