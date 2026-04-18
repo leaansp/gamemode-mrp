@@ -5378,6 +5378,48 @@ stock ItemModel_GetRightScale(itemid, &Float:x, &Float:y, &Float:z)
 	z = ServerItemModels[itemid][RightScale][2];
 }
 
+stock ItemModel_SetLeftPos(itemid, Float:x, Float:y, Float:z)
+{
+	ServerItemModels[itemid][LeftPos][0] = x;
+	ServerItemModels[itemid][LeftPos][1] = y;
+	ServerItemModels[itemid][LeftPos][2] = z;
+}
+
+stock ItemModel_SetLeftRot(itemid, Float:x, Float:y, Float:z)
+{
+	ServerItemModels[itemid][LeftRot][0] = x;
+	ServerItemModels[itemid][LeftRot][1] = y;
+	ServerItemModels[itemid][LeftRot][2] = z;
+}
+
+stock ItemModel_SetLeftScale(itemid, Float:x, Float:y, Float:z)
+{
+	ServerItemModels[itemid][LeftScale][0] = x;
+	ServerItemModels[itemid][LeftScale][1] = y;
+	ServerItemModels[itemid][LeftScale][2] = z;
+}
+
+stock ItemModel_SetRightPos(itemid, Float:x, Float:y, Float:z)
+{
+	ServerItemModels[itemid][RightPos][0] = x;
+	ServerItemModels[itemid][RightPos][1] = y;
+	ServerItemModels[itemid][RightPos][2] = z;
+}
+
+stock ItemModel_SetRightRot(itemid, Float:x, Float:y, Float:z)
+{
+	ServerItemModels[itemid][RightRot][0] = x;
+	ServerItemModels[itemid][RightRot][1] = y;
+	ServerItemModels[itemid][RightRot][2] = z;
+}
+
+stock ItemModel_SetRightScale(itemid, Float:x, Float:y, Float:z)
+{
+	ServerItemModels[itemid][RightScale][0] = x;
+	ServerItemModels[itemid][RightScale][1] = y;
+	ServerItemModels[itemid][RightScale][2] = z;
+}
+
 stock ItemModel_AttachOnHand(playerid, itemid, hand)
 {
 	if(hand == HAND_RIGHT) {

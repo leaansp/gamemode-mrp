@@ -154,6 +154,31 @@ Sin esta tabla, el comando falla con error MySQL y los nombres custom no se pers
 
 ---
 
+## 8. Tabla `item_model_pos` (nueva)
+
+```sql
+CREATE TABLE IF NOT EXISTS `item_model_pos` (
+  `itemid`  SMALLINT UNSIGNED NOT NULL,
+  `hand`    TINYINT UNSIGNED  NOT NULL,
+  `posx`    FLOAT NOT NULL DEFAULT 0,
+  `posy`    FLOAT NOT NULL DEFAULT 0,
+  `posz`    FLOAT NOT NULL DEFAULT 0,
+  `rotx`    FLOAT NOT NULL DEFAULT 0,
+  `roty`    FLOAT NOT NULL DEFAULT 0,
+  `rotz`    FLOAT NOT NULL DEFAULT 0,
+  `scalex`  FLOAT NOT NULL DEFAULT 1,
+  `scaley`  FLOAT NOT NULL DEFAULT 1,
+  `scalez`  FLOAT NOT NULL DEFAULT 1,
+  PRIMARY KEY (`itemid`, `hand`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+```
+
+Sistema: `/manoderechaadmin` y `/manoizquierdaadmin` (admin nivel 20).
+Guarda posiciones/rotaciones/escalas globales de ítems en manos, por ítem y por mano.
+Sin esta tabla, el servidor crashea al cargar `item_model_pos` en `OnGameModeInitEnded`.
+
+---
+
 ## Resumen
 
 | # | Accion | Archivo |
@@ -165,5 +190,6 @@ Sin esta tabla, el comando falla con error MySQL y los nombres custom no se pers
 | 5 | ALTER TABLE accounts ADD COLUMN pMuteTW, pMuteTWReason | — (ejecutar directo) |
 | 6 | Sistema negocios: ALTER business + biz_employees + CREATE biz_reviews | — (ejecutar directo) |
 | 7 | CREATE TABLE biz_rank_names | — (ejecutar directo) |
+| 8 | CREATE TABLE item_model_pos | — (ejecutar directo) |
 
 Los tres primeros usan `IF NOT EXISTS` o `DEFAULT` seguros — no rompen datos existentes si se ejecutan dos veces (excepto los ALTER, que darian error si la columna ya existe, pero no perderian datos).

@@ -325,6 +325,7 @@ forward Holster_OnEditAttached(playerid, response, index, modelid, boneid, Float
 
 hook OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ)
 {
+	if(ItemModelAdmin_OnEdit(playerid, response, index, modelid, boneid, fOffsetX, fOffsetY, fOffsetZ, fRotX, fRotY, fRotZ, fScaleX, fScaleY, fScaleZ)) return 1;
 	if(index == ATTACH_INDEX_ID_HOLSTER) return Holster_OnEditAttached(playerid, response, index, modelid, boneid, fOffsetX, fOffsetY, fOffsetZ, fRotX, fRotY, fRotZ, fScaleX, fScaleY, fScaleZ);
 	if(!response)
 		return 1;
