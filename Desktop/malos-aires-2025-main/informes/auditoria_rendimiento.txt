@@ -1,0 +1,168 @@
+AUDITORIA DE RENDIMIENTO - MALOS AIRES ROLEPLAY
+================================================
+Fecha: 07/04/2026
+
+
+========================================
+1. LO QUE CRASHEA EL CLIENTE DEL JUGADOR
+========================================
+
+PROBLEMA: RemoveBuildingForPlayer supera el limite de 1000
+----------------------------------------------------------
+Cuando un jugador se conecta al servidor, el servidor le manda una lista de
+"instrucciones de borrado" que le dicen al GTA cuales edificios del mapa
+original tiene que borrar (para que no se superpongan con el mapeo custom).
+
+El cliente de GTA acepta un maximo de 1000 de estas instrucciones por sesion.
+Si recibe mas de 1000, el juego crashea y el jugador se desconecta.
+
+Estado actual del servidor: 1051 RemoveBuildingForPlayer activos.
+Limite: 1000.
+Exceso: 51 instrucciones de mas.
+
+Esto significa que AHORA MISMO cualquier jugador que se conecte puede sufrir
+un crash al entrar al servidor.
+
+Nota importante: esto NO es un crash del servidor, es un crash del cliente.
+El servidor sigue funcionando, pero el jugador ve que su juego se cierra solo.
+
+Solucion: reducir los RemoveBuildingForPlayer a menos de 1000 agrupando
+llamadas del mismo modelo que esten cerca en el mapa (en vez de borrar cada
+edificio uno por uno, borrar todos los de un area con una sola instruccion
+de radio mas grande). Estimado: se puede bajar de 1051 a ~470-500.
+
+Los archivos que mas contribuyen al problema:
+  - map_traffic.pwn: 129 (postes y senales de transito)
+  - map_barrio_brown.pwn: 89
+  - map_donorione.pwn: 76
+  - map_prision_federal2022.pwn: 62
+  - map_callestierra.pwn: 48
+  - marp_maps.pwn: 46
+  - map_jefferson.pwn: 44
+  ... y muchos mas
+
+
+========================================
+2. QUE PASA CON EL EXCESO DE OBJETOS EN EL MAPA
+========================================
+
+Los objetos del mapeo custom (casas, villas, edificios, postes, etc.) se
+crean con CreateDynamicObject, que usa el plugin Streamer.
+
+El Streamer NO envia todos los objetos a todos los jugadores al mismo tiempo.
+Solo envia los objetos que estan dentro del radio de vision del jugador, y
+tiene un limite de cuantos puede mostrar a la vez.
+
+Limite configurado en el servidor: 850 objetos por jugador simultaneamente.
+
+En la zona de Villa Fierro:
+  - A 100 unidades del centro: 466 objetos dinamicos
+  - A 150 unidades: 628 objetos dinamicos
+  - A 300 unidades: 1248 objetos dinamicos
+
+Que pasa cuando se supera el limite de 850:
+  - El Streamer prioriza los objetos mas cercanos al jugador
+  - Los objetos mas lejanos dejan de renderizarse
+  - El jugador ve partes del mapa que "desaparecen"
+  - NO hay crash, solo problemas visuales
+
+Esto NO crashea ni el servidor ni el cliente. Es solo un problema estetico.
+
+El mismo concepto aplica a los objetos de /mapro (conos, vallas, mapeos
+de policia, etc.). Agregar objetos con /mapro NO genera crashes. En el peor
+caso, en zonas muy densas como Villa Fierro, algunos objetos del fondo
+pueden dejar de verse mientras haya muchos objetos cerca.
+
+
+========================================
+3. PROBLEMAS DE RENDIMIENTO DEL SERVIDOR (no crashean pero lo enlentecen)
+========================================
+
+3.1 Anticheat muy frecuente (AC_Process cada 500ms)
+----------------------------------------------------
+El sistema anticheat revisa a TODOS los jugadores conectados cada 500ms
+(2 veces por segundo). Por cada jugador hace calculos de posicion, velocidad,
+estado del vehiculo, etc.
+
+Con 50 jugadores conectados: 100 revisiones completas por segundo.
+Con 100 jugadores: 200 revisiones por segundo.
+
+Esto consume CPU del servidor innecesariamente. Subirlo a 1000ms (1 vez por
+segundo) reduciria el consumo a la mitad sin afectar la efectividad del
+anticheat.
+
+3.2 Queries bloqueantes de MySQL (4 encontradas)
+------------------------------------------------
+La mayoria de las consultas a la base de datos en este servidor son
+"asincronicas" (no bloquean el servidor mientras esperan respuesta de la DB).
+Pero se encontraron 4 consultas "bloqueantes" que congelan el servidor
+entero mientras esperan:
+
+  - /identidad (comando de policia): hace una consulta bloqueante a la DB
+  - /avfixallmodels (comando admin): hace UNA consulta bloqueante POR CADA
+    vehiculo del servidor. Con 500 vehiculos, el servidor se congela por
+    varios segundos cada vez que se ejecuta este comando.
+  - Sistema de muebles: hace una consulta bloqueante al crear muebles.
+
+Estas no crashean, pero si un admin ejecuta /avfixallmodels todos los
+jugadores conectados sienten lag durante varios segundos.
+
+3.3 Streamer sin configurar para labels y pickups
+-------------------------------------------------
+El servidor solo configuro el limite de objetos visuales (850). Los textos
+flotantes 3D (labels), pickups, y areas de deteccion usan valores por
+defecto que pueden no estar optimizados. Con muchos jugadores conectados
+esto puede causar lag de red.
+
+
+========================================
+4. LO QUE NO CRASHEA (aclaraciones)
+========================================
+
+- Agregar conos/vallas con /mapro: NO crashea.
+- Tener muchos objetos en el mapa: NO crashea, solo pueden desaparecer
+  visualmente si superan el limite del Streamer.
+- Vehículos en el servidor: NO crashean por cantidad (limite de SA-MP es
+  2000, el servidor tiene ~500).
+- Autos que desaparecen: no es por el mapeo. SA-MP solo muestra ~110
+  vehiculos por jugador a la vez. En zonas con muchos autos estacionados
+  algunos no se renderizan. Tampoco crashea.
+
+
+========================================
+5. RESUMEN DE TAREAS PENDIENTES
+========================================
+
+URGENTE (causa crashes reales ahora mismo):
+  [!] Reducir RemoveBuildingForPlayer de 1051 a menos de 1000
+      Estimado: se puede bajar a ~470-500 sin cambiar nada visualmente.
+
+ALTO (afecta rendimiento del servidor):
+  [!] Subir AC_Process de 500ms a 1000ms
+  [!] Convertir las 4 queries bloqueantes a queries asincronicas
+
+MEDIO (optimizacion general):
+  [ ] Configurar limites del Streamer para labels, pickups y areas
+  [ ] Revisar y eliminar vehiculos del servidor que no tienen dueno ni uso
+  [ ] Optimizar mapeos con clustering de RemoveBuildingForPlayer para
+      tener margen comodo para futuros mapeos (~500 removals libres)
+
+
+========================================
+6. MARGENES ACTUALES PARA AGREGAR COSAS
+========================================
+
+RemoveBuildingForPlayer:
+  Limite: 1000 | Actual: 1051 | Margen: -51 (NEGATIVO, hay que reducir)
+  Si se optimiza: ~470-500 | Margen disponible: ~500-530 removals nuevos
+
+Objetos dinamicos (Streamer):
+  Limite visible por jugador: 850 | No hay limite total en el servidor
+  Margen: amplio, se pueden agregar miles de objetos mas
+
+Vehiculos:
+  Limite SA-MP: 2000 | Actual: ~500 | Margen: ~1500 vehiculos mas
+
+/mapro:
+  Limite del sistema: 128 proyectos x 128 objetos = 16.384 objetos maximos
+  Margen: amplio

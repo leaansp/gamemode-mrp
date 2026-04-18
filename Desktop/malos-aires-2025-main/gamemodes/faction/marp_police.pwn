@@ -454,6 +454,8 @@ CMD:ariete(playerid, params[]) {
 		House[houseid][Locked] = 0;
 		LockerStatus[houseid] = 1;
 		PlayerActionMessage(playerid, 15.0, "toma el ariete y golpea la puerta hasta forzarla.");
+		SendPlayerMessageInRange(30.0, playerid, "{E44A4A}[INFO] {FFFF00}Se escucha a la distancia un fuerte estruendo y griterio.", COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW);
+		SendPlayerMessageInRange(30.0, playerid, "{E44A4A}[INFO] {FFFF00}La situacion es confusa y comienza a llamar la atencion de la gente a los alrededores.", COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW);
 		ApplyAnimationEx(playerid, "POLICE", "Door_Kick", 4.1, 0, 0, 0, 0, 0, 1);
 		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Forzaste la puerta y el armario de esta casa.");
 		ServerFormattedLog(LOG_TYPE_ID_ADMIN, .id=houseid, .entry="/ariete", .playerid=playerid, .params=<"Puerta+Armario Casa:%d", houseid>);
@@ -466,6 +468,8 @@ CMD:ariete(playerid, params[]) {
 	{
 		LockerStatus[houseid] = 1;
 		PlayerActionMessage(playerid, 15.0, "toma el ariete y rompe el candado del armario.");
+		SendPlayerMessageInRange(30.0, playerid, "{E44A4A}[INFO] {FFFF00}Se escucha a la distancia un fuerte estruendo y griterio.", COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW);
+		SendPlayerMessageInRange(30.0, playerid, "{E44A4A}[INFO] {FFFF00}La situacion es confusa y comienza a llamar la atencion de la gente a los alrededores.", COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW);
 		ApplyAnimationEx(playerid, "POLICE", "Door_Kick", 4.1, 0, 0, 0, 0, 0, 1);
 		SendClientMessage(playerid, COLOR_INFO, "[INFO] "COLOR_EMB_GREY"Forzaste el armario de esta casa.");
 		ServerFormattedLog(LOG_TYPE_ID_ADMIN, .id=houseid, .entry="/ariete", .playerid=playerid, .params=<"Armario Casa:%d", houseid>);

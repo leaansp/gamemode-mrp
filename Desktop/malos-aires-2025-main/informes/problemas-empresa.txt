@@ -1,0 +1,5 @@
+- se activaron todos los bonos de repente y eramos solamente dos en el local
+
+- cuando le das /negociocontratar y la otra persona acepta no pasa absolutamente nada, no puede usar /cn ni nada LISTO
+
+- tengo que meter para que se guarden las reseñas que creo que me olvide de agregarlo en el sql. agregar todas las lineas de nuevo x si m olvide de alguna 

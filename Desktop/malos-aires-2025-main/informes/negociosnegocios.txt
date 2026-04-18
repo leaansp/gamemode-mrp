@@ -1,0 +1,118 @@
+❯ no lo hagas pero analiza que deberias hacer para que con un cmd que sea /negociosactivos se abra un menu desplegable
+que diga qué negocios tienen empleados en servicio (osea, /negocioservicio o algo asi era) y que diga tipo el nombre
+del negocio, un guión tipo "-" Empleados en servicio: (numero de empleados en servicio en verde), otro guión (-) y en
+rojo claro ponga /prop (ID del negocio)
+
+y que cuando selecciones alguno con enter te lo marque y te  diga en el chat [INFO] El negocio se ha marcado en el
+mapa.
+
+si el negocio no tiene empleados en servicio, que desaparezca del menu. Si no hay /negociosactivos, que aparezca algo
+como, "22[INFO] En este país son todos unos vagos. Nadie quiere laburar. ¡No hay negocios activos en este momento!" y
+otro q diga "[INFO] ¿Qué estás esperando para abrir tu propio negocio?"
+
+Si la persona sale del negocio y se aleja más alla de un radio de 20 metros de la puerta donde tocas H y entrás, que le
+ aparezca un mensaje que diga "[INFO] ¿Qué haces abandonando tu lugar de trabajo? ¡Te van a cagar a pedos!" y otro
+"[INFO] Si en 5 minutos no volvés, dejarás de estar en servicio y no cobraras nada. Recuerda poner /negociotrabajo
+
+averiguar lo de los sueldos
+
+● Primero déjame explorar el sistema de negocios para entender cómo está estructurado actualmente.
+
+● Explore(Explorar sistema de negocios)
+  ⎿  Done (19 tool uses · 83.5k tokens · 1m 17s)
+  (ctrl+o to expand)
+
+● Acá está el análisis completo de qué habría que hacer:
+
+  ---
+  Análisis: /negociosactivos + sistema de alejamiento
+
+  1. Comando /negociosactivos — marp_biz_user.pwn
+
+  Lógica del comando:
+  - Iterar de 1 a MAX_BUSINESS, chequear Business[bizid][bLoaded]
+  - Por cada negocio cargado, iterar sobre todos los jugadores conectados con foreach(new id : Player)
+  - Contar cuántos tienen BizEmp_IsOnDuty(id) == 1 y BizEmp_IsEmployee(id, bizid) == 1
+  - Si el conteo es > 0, armar una línea para el dialog y guardar el bizid en un array de mapeo
+
+  Array de mapeo necesario (para saber qué bizid corresponde a cada item del listado cuando el jugador selecciona uno):
+  static NegActivosIds[MAX_PLAYERS][MAX_BUSINESS]; // mapeo listitem → bizid
+  static NegActivosCount[MAX_PLAYERS];             // cuántos items tiene el jugador en su dialog
+
+  Formato de cada línea (para DIALOG_STYLE_LIST):
+  NombreNegocio - Empleados en servicio: {00FF00}3{FFFFFF} - {FF6666}/prop 12
+  Nota: los colores en DIALOG_STYLE_LIST pueden funcionar con color embedding {RRGGBB}.
+
+  Sin negocios activos: en vez de abrir dialog, enviar dos SendClientMessage con los mensajes hardcodeados. El texto
+  tiene caracteres especiales (é, á, ¡) que hay que escribir en bytes Windows-1252 en el script Python (\xe9, \xe1,
+  \xa1, etc.).
+
+  ---
+  2. Dialog de selección — DLG_NegociosActivos
+
+  Dialog_Open(playerid, "DLG_NegociosActivos", DIALOG_STYLE_LIST, "Negocios Activos", str, "Marcar", "Cerrar");
+
+  En el handler del dialog:
+  - listitem → buscar en NegActivosIds[playerid][listitem] para obtener el bizid real
+  - Llamar SetPlayerCheckpoint con Business[bizid][bOutsideX/Y/Z] y radio 3.0
+  - Enviar [INFO] El negocio se ha marcado en el mapa.
+  - Limpiar el checkpoint en OnPlayerEnterCheckpoint (igual que ya hace /prop)
+
+  ---
+  3. Sistema de alerta por alejamiento — timer periódico
+
+  Variables nuevas (en marp_biz_employees.pwn):
+  static BizEmpAwayWarned[MAX_PLAYERS]; // 1 = ya recibió la advertencia, timer corriendo
+  static BizEmpAwayTimer[MAX_PLAYERS];  // ID del timer de 5 min para sacar de servicio
+
+  Timer periódico global (cada ~10 segundos, en OnGameModeInit o en marp_biz.pwn):
+  - Iterar sobre todos los jugadores conectados
+  - Si BizEmp_IsOnDuty(id), obtener su bizid = BizEmployeeInfo[id][e_BIZ_EMP_ID]
+  - Calcular distancia desde el jugador hasta Business[bizid][bOutsideX/Y/Z] con GetPlayerDistanceFromPoint
+  - Si distancia > 20.0 y BizEmpAwayWarned[id] == 0:
+    - Enviar los dos mensajes de advertencia
+    - Marcar BizEmpAwayWarned[id] = 1
+    - Iniciar timer de 5 minutos (SetTimerEx("BizEmp_AutoOffDuty", 300000, false, "i", id))
+  - Si distancia <= 20.0 y BizEmpAwayWarned[id] == 1:
+    - Cancelar timer (KillTimer(BizEmpAwayTimer[id]))
+    - Resetear BizEmpAwayWarned[id] = 0
+
+  Callback BizEmp_AutoOffDuty(playerid):
+  - Si el jugador sigue conectado y sigue fuera de servicio range:
+    - Ejecutar la misma lógica de sacar de servicio que hace /negociotrabajo (poner e_BIZ_EMP_DUTY = 0, update DB,
+  notificar compañeros)
+    - Resetear BizEmpAwayWarned[id] = 0
+  - Resetear BizEmpAwayTimer[playerid] = 0 siempre al final
+
+  Resetear en OnPlayerDisconnect:
+  - KillTimer(BizEmpAwayTimer[playerid]), resetear flags
+
+  ---
+  4. Sueldos — estado actual y qué falta
+
+  El campo e_BIZ_EMP_SALARY existe pero no está implementado. Los empleados hoy solo reciben propinas directas.
+
+  Para implementar sueldos habría que decidir el modelo:
+  - Sueldo fijo por payday: usar e_BIZ_EMP_SALARY como monto fijo que se paga en cada payday (el sistema ya tiene
+  Biz_OnPlayerPayday)
+  - Porcentaje de ventas: distribuir parte de BizPayCheck[bizid] entre los empleados que estuvieron en servicio durante
+  ese payday
+
+  Lo más natural con la arquitectura actual sería hookearse en Biz_OnPlayerPayday o en Biz_Payday para iterar los
+  empleados conectados del negocio que estén en servicio y pagarles.
+
+  ---
+  Resumen de archivos a tocar
+
+  ┌────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────┐
+  │        Archivo         │                                         Qué va                                          │
+  ├────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────┤
+  │ marp_biz_user.pwn      │ Comando /negociosactivos + handler DLG_NegociosActivos                                  │
+  ├────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────┤
+  │ marp_biz_employees.pwn │ Variables BizEmpAwayWarned/Timer, timer periódico de chequeo, callback                  │
+  │                        │ BizEmp_AutoOffDuty, reset en disconnect                                                 │
+  ├────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────┤
+  │ marp_biz.pwn           │ Iniciar el timer periódico en OnGameModeInit (si no se pone en employees)               │
+  └────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────┘
+
+  Todo tendría que hacerse con scripts Python en modo binario por el encoding Windows-1252.

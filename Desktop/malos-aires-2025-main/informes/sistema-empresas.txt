@@ -1,0 +1,310 @@
+ Plan: Mejora del Sistema de Negocios
+
+ Context
+
+ El sistema de negocios actual (gamemodes/business/) tiene estructura sólida pero funcionalidades limitadas:
+ - Empleados solo en talleres mecánicos (BIZ_MECH)
+ - Sin chat grupal de empleados
+ - Sin anuncio de apertura al servidor
+ - Sin comando /prop para localizar negocios
+ - Sin sistema de propinas
+ - Sin rangos de empleados
+ - /negocioradio existe pero sin alias /emisora
+
+ El objetivo es extender este sistema sin romper lo existente, agregando las features pedidas de forma modular.
+
+ ---
+ Estado actual relevante
+
+ Archivos clave:
+ - gamemodes/business/marp_biz_core.pwn — enum e_BUSINESS_INFO, array Business[MAX_BUSINESS]
+ - gamemodes/business/marp_biz_core_db.pwn — callbacks SQL (SELECT/UPDATE)
+ - gamemodes/business/marp_biz_employees.pwn — sistema de empleados (solo BIZ_MECH hoy)
+ - gamemodes/business/marp_biz_user.pwn — /negociollave, /negocioradio
+ - gamemodes/business/marp_biz_purchase.pwn — menú de compra (PMM)
+ - gamemodes/business/marp_biz.pwn — entry point, includes
+
+ DB actual:
+ - Tabla business: campos de coordenadas, nombre, dueño, tipo, etc.
+ - Tabla business_stock: items y precios
+ - Tabla biz_employees: pID, bizEmpId, bizEmpDuty
+
+ ---
+ Cambios de Base de Datos
+
+ Modificar tabla biz_employees
+
+ ALTER TABLE biz_employees ADD COLUMN bizEmpRankName VARCHAR(32) DEFAULT 'Empleado';
+ ALTER TABLE biz_employees ADD COLUMN bizEmpRankLevel TINYINT DEFAULT 0;
+ ALTER TABLE biz_employees ADD COLUMN bizEmpSalary INT DEFAULT 0;
+
+ Modificar tabla business
+
+ ALTER TABLE business ADD COLUMN bDescription VARCHAR(128) DEFAULT '';
+
+ Agregar a informes/sql_pendiente.md antes del deploy.
+
+ ---
+ Features a implementar
+
+ 1. Generalizar empleados a todos los tipos de negocio
+
+ Archivo: marp_biz_employees.pwn
+ - Quitar el if (Biz_GetType(bizid) != BIZ_MECH) en /negociocontratar y /negociodespedir
+ - El sistema de empleados ya existe, solo está restringido por tipo
+
+ 2. Sistema de rangos de empleados
+
+ Archivo: marp_biz_employees.pwn
+
+ Agregar al enum e_BIZ_EMP_INFO:
+ e_BIZ_EMP_RANK_NAME[32],  // nombre del rango
+ e_BIZ_EMP_RANK_LEVEL      // nivel 0-5
+
+ Nuevo comando /negociodarrango <player> <nombre> (solo dueño):
+ - Asigna nombre de rango al empleado
+ - Actualiza en DB: UPDATE biz_employees SET bizEmpRankName=X WHERE pID=Y
+
+ Mostrar rango en /cn y en mensajes de negocio.
+
+ 3. Chat grupal de empleados /cn [mensaje]
+
+ Archivo: marp_biz_employees.pwn (nuevo bloque al final)
+
+ Lógica:
+ - El jugador debe ser empleado o dueño de algún negocio
+ - Determinar bizid del jugador (por BizEmployeeInfo[playerid][e_BIZ_EMP_ID] o KeyChain)
+ - Enviar a todos los jugadores que son empleados/dueño del mismo negocio
+ - Formato: [NEGOCIO] [Rango] Nombre: mensaje en color dorado/amarillo
+ - También alias /chatn
+
+ CMD:cn(playerid, params[]) {
+     // Determinar bizid del jugador
+     // Para cada jugador online: si es empleado del mismo negocio → enviar msg
+     // Formato: "[NEGOCIO] [Encargado] NombreJugador: mensaje"
+ }
+
+ 4. Anuncio de apertura al servidor
+
+ Archivo: marp_biz_user.pwn — modificar /negociollave
+
+ Cuando el negocio pasa de bLocked=1 a bLocked=0 (apertura):
+ // Obtener zona con GetVehicleZoneName o usando coords del negocio
+ // SendClientMessageToAll con:
+ // [ANUNCIO] (nombre) ha abierto sus puertas en (zona). Para más información, utiliza /prop (bizid).
+ - Cooldown de 5 minutos para no spammear (variable estática BizLastAnnounce[MAX_BUSINESS])
+ - Color del anuncio: naranja/dorado (0xFFAA00FF)
+
+ Para obtener el barrio usar GetPlayerZoneName posicionando desde coords del negocio, o la función de zona existente
+ del proyecto.
+
+ 5. Comando /prop [bizid]
+
+ Archivo: marp_biz_user.pwn (nuevo CMD)
+
+ Sin argumento: busca negocio más cercano al jugador.
+ Con argumento: usa ese bizid.
+
+ Acciones:
+ 1. Mostrar diálogo con info del negocio (nombre, tipo, dueño, descripción, productos con precios)
+ 2. Crear checkpoint en coordenadas de entrada del negocio (color verde/azul estético)
+ 3. Mensaje: [INFO] Se marcó la ubicación de (nombre) en tu mapa.
+
+ Usar SetPlayerCheckpoint(playerid, x, y, z, 3.0) con la posición bOutsideX/Y/Z.
+ El checkpoint se elimina cuando el jugador lo alcanza (OnPlayerEnterCheckpoint).
+
+ 6. Comando /ofrecerproducto <playerid>
+
+ Archivo nuevo: gamemodes/business/marp_biz_offer.pwn (incluir en marp_biz.pwn)
+
+ Lógica:
+ - Emisor: debe ser empleado on-duty de un negocio abierto
+ - Target: jugador cercano (máx 5 metros)
+ - Abre el menú de compra del negocio para el target (función Biz_OpenShopMenu(targetid, bizid) que ya existe en
+ marp_biz_purchase.pwn)
+ - El target puede comprar normalmente
+
+ 7. Sistema de propinas post-compra
+
+ Archivo: marp_biz_purchase.pwn
+
+ Después de que el jugador confirma una compra exitosa:
+ 1. Si la compra fue iniciada por /ofrecerproducto: guardar quién fue el empleado
+ 2. Mostrar ShowPlayerDialog tipo INPUT: "¿Querés dejar propina al empleado? (0 para no)"
+ 3. Si ingresa 0 o cancela: no pasa nada
+ 4. Si ingresa monto > 0:
+   - Si tiene dinero: GivePlayerCash(playerid, -monto), GivePlayerCash(empleadoid, +monto)
+   - Mensaje al comprador: [NEGOCIO] Le dejaste $X de propina a Nombre.
+   - Mensaje al empleado: [NEGOCIO] Nombre te dejó $X de propina.
+   - Si NO tiene dinero:
+       - Al comprador: [INFO] Intentaste darle propina, pero no tenías un peso. Quedaste un poco mal. El empleado se
+ dio cuenta.
+     - Al empleado: [NEGOCIO] El cliente te trató de dar propina, pero parece que amagó. Evidentemente, quedó como un
+ boludo. + [NEGOCIO] ¿Cómo reaccionas ante esto? (mensaje cosmético, sin mecánica)
+
+ Almacenar el empleado oferente en variable estática BizOfferEmployee[MAX_PLAYERS] (limpiada tras cada compra).
+
+ 8. Alias /emisora para radio
+
+ Archivo: marp_biz_user.pwn
+
+ CMD:emisora(playerid, params[]) return cmd_negocioradio(playerid, params);
+
+ 9. Comando /negociodescripcion <texto>
+
+ Archivo: marp_biz_user.pwn (extra sugerido)
+
+ - Dueño establece descripción de hasta 128 chars
+ - Se muestra en /prop y en el label 3D del negocio
+
+ ---
+ Features adicionales (incluir en esta versión)
+
+ 10. Notificación de entrada/salida de servicio a todos los compañeros
+
+ Archivo: marp_biz_employees.pwn — en /negociotrabajo (toggle duty)
+
+ Cuando un empleado activa/desactiva servicio:
+ - Notificar a todos los jugadores online que son empleados o dueño del mismo negocio
+ - Formato: [NEGOCIO] Nombre entró/salió de servicio en (nombre negocio).
+
+ 11. Sistema de reseñas (/reseña)
+
+ Tabla nueva: biz_reviews
+ CREATE TABLE biz_reviews (
+   bizid SMALLINT(6),
+   pID INT(11),
+   rating TINYINT(4),  -- 1 a 5 estrellas
+   PRIMARY KEY (bizid, pID)   -- una reseña por jugador por negocio
+ );
+
+ En memoria: BusinessRating[MAX_BUSINESS] (promedio × 10, int) y BusinessReviewCount[MAX_BUSINESS]
+
+ Flujo:
+ - Al entrar al interior del negocio (Biz_OnPlayerEnterInside): si el jugador no dejó reseña aún, mostrar: [NEGOCIO]
+ ¿Qué te pareció este negocio? Usá /reseña para puntuarlo.
+ - /reseña sin argumento abre dialog de selección 1-5 estrellas
+ - Una reseña por jugador por negocio (UPDATE si ya existe)
+ - /prop muestra: Promedio: ★★★★☆ (4.2/5 — 23 reseñas)
+
+ Archivo: gamemodes/business/marp_biz_reviews.pwn (nuevo, incluir en marp_biz.pwn)
+
+ 12. Comando /negociopromo <descuento> [duracion_minutos]
+
+ Archivo: marp_biz_user.pwn
+
+ - Solo el dueño puede usarlo (dentro del negocio)
+ - Descuento: 1–80% (libre elección del dueño)
+ - Duración: 1–240 minutos (default 60 si no se especifica)
+ - En memoria: BizPromo[MAX_BUSINESS] (porcentaje) y BizPromoExpiry[MAX_BUSINESS] (GetTickCount)
+ - Al calcular precio en marp_biz_purchase.pwn: aplicar descuento si hay promo activa
+ - Cuando se abre el menú de compra: mostrar [PROMO -X%] junto a los precios
+ - Al activar: broadcast a todos los jugadores online: [ANUNCIO] (nombre negocio) tiene una promo de X% de descuento
+ por Y minutos. ¡Apurate!
+
+ ---
+ Archivos a modificar/crear
+
+ ┌───────────────────────────────────────────┬──────────────────────────────────────────────────────────────┐
+ │                  Archivo                  │                            Acción                            │
+ ├───────────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+ │ gamemodes/business/marp_biz_core.pwn      │ Agregar bDescription al enum                                 │
+ ├───────────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+ │ gamemodes/business/marp_biz_core_db.pwn   │ SELECT/UPDATE de bDescription en queries                     │
+ ├───────────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+ │ gamemodes/business/marp_biz_employees.pwn │ Generalizar tipos + rangos + /cn + /chatn + /negociodarrango │
+ ├───────────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+ │ gamemodes/business/marp_biz_user.pwn      │ Anuncio apertura + /prop + /emisora + /negociodescripcion    │
+ ├───────────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+ │ gamemodes/business/marp_biz_purchase.pwn  │ Sistema de propinas                                          │
+ ├───────────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+ │ gamemodes/business/marp_biz_offer.pwn     │ NUEVO — /ofrecerproducto                                     │
+ ├───────────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+ │ gamemodes/business/marp_biz_reviews.pwn   │ NUEVO — /reseña, promedios                                   │
+ ├───────────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+ │ gamemodes/business/marp_biz.pwn           │ Include de nuevos archivos                                   │
+ ├───────────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+ │ informes/sql_pendiente.md                 │ Agregar ALTERs + CREATE TABLE de DB                          │
+ └───────────────────────────────────────────┴──────────────────────────────────────────────────────────────┘
+
+ ---
+ Orden de implementación
+
+ 1. SQL pendiente (biz_employees + business + biz_reviews)
+ 2. Cambios DB + bDescription en core
+ 3. Generalizar empleados + rangos + notificaciones a compañeros + /cn
+ 4. Anuncio de apertura + /prop (con promedio de reseñas)
+ 5. /ofrecerproducto + propinas
+ 6. Sistema de reseñas (/reseña, prompt al entrar)
+ 7. /negociopromo + integración en menú de compra
+ 8. /emisora + /negociodescripcion
+
+ ---
+ Verificación
+
+ 1. sampctl build — debe compilar sin errores ni warnings nuevos
+ 2. Testear en local (sampctl run test):
+   - Contratar empleado en negocio tipo REST o 247
+   - Usar /cn como empleado y como dueño
+   - Abrir negocio → verificar anuncio en chat
+   - /prop 1 → verificar checkpoint en mapa
+   - Empleado usa /ofrecerproducto → comprador compra → dialog de propina
+   - Probar con y sin dinero para propina
+ 3. Verificar que comandos anteriores siguen funcionando (/negociollave, /negociogestionar, etc.)
+
+-- 
+
+Features implementadas
+
+  ┌───────────────────────┬────────────────────────────────────────┬────────────────────────────────────────────────┐
+  │        Feature        │                Comando                 │                  Descripción                   │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Empleados en todos    │ /negociocontratar, /negociodespedir,   │ Ya no requiere BIZ_MECH                        │
+  │ los tipos             │ /negociotrabajo                        │                                                │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Sistema de rangos     │ /negociodarrango <player> <rango>      │ El dueño asigna nombre de rango a cada         │
+  │                       │                                        │ empleado                                       │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Chat grupal           │ /cn [msg] y /chatn [msg]               │ Formato: [NEGOCIO] [Rango] Nombre: msg         │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Toggle de servicio    │ /negociotrabajo                        │ Ahora actúa como toggle on/off; notifica a     │
+  │                       │                                        │ todos los compañeros                           │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Anuncio de apertura   │ /negociollave                          │ Broadcast al servidor cuando se abre (cooldown │
+  │                       │                                        │  5 min)                                        │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Localizar negocio     │ /prop [bizid]                          │ Muestra info + checkpoint en el mapa, incluye  │
+  │                       │                                        │ reseñas                                        │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Descripción del       │ /negociodescripcion <texto>            │ El dueño configura una descripción             │
+  │ negocio               │                                        │                                                │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Ofrecer producto      │ /ofrecerproducto <player>              │ Empleado en servicio abre el menú de compra al │
+  │                       │                                        │  cliente                                       │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Sistema de propinas   │ (automático post-compra)               │ Diálogo de propina, con mensajes según si      │
+  │                       │                                        │ tiene o no dinero                              │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Alias radio           │ /emisora                               │ Alias de /negocioradio                         │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Sistema de reseñas    │ /resena                                │ 1-5 estrellas, prompt al entrar al local,      │
+  │                       │                                        │ promedio en /prop                              │
+  ├───────────────────────┼────────────────────────────────────────┼────────────────────────────────────────────────┤
+  │ Promociones           │ /negociopromo <descuento%> [minutos]   │ Descuento configurable, se aplica en los       │
+  │                       │                                        │ precios del menú, broadcast                    │
+  └───────────────────────┴────────────────────────────────────────┴────────────────────────────────────────────────┘
+
+  SQL pendiente en informes/sql_pendiente.md (entrada #6) — ejecutar antes del deploy.
+
+✻ Brewed for 15m 22s
+
+--
+
+el SQL en cuestion q hay q agregar:
+
+ CREATE TABLE IF NOT EXISTS `biz_reviews` (
+    `bizid`  SMALLINT(6) NOT NULL,
+    `pID`    INT(11)     NOT NULL,
+    `rating` TINYINT(4)  NOT NULL DEFAULT 0,
+    PRIMARY KEY (`bizid`, `pID`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

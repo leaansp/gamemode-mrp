@@ -235,3 +235,13 @@ print(count)  # Debe ser 0 o muy bajo
 Restaurar desde `C:\Users\Admin\Desktop\gitlab_clean\` (versiones limpias en Windows-1252)
 o desde `git show HEAD:ruta/al/archivo.pwn` si el commit de HEAD está limpio,
 y re-aplicar los cambios con Python binario.
+
+## Archivos clave por sistema
+
+| Sistema | Archivo |
+|---|---|
+| Comandos policiales (PMA) | `gamemodes/faction/marp_police.pwn` |
+| Armario de casas (`/arm`, `/ariete`) | `gamemodes/house/marp_armarios.pwn` |
+| Ropero de casas (`/ropero`) | `gamemodes/house/marp_ropero.pwn` |
+| Chat y mensajes en rango | `gamemodes/player/marp_chat.pwn` |
+| Colores | `gamemodes/util/marp_colors.pwn` |

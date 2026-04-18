@@ -1,0 +1,267 @@
+Análisis de /ref
+
+  Cómo funciona
+
+  /ref es un alias de cmd_refuerzos. Acepta 4 tipos:
+
+  ┌────────┬────────────────────────────────────┐
+  │  Tipo  │           Destinatarios            │
+  ├────────┼────────────────────────────────────┤
+  │ /ref 1 │ Gendarmería (FAC_SIDE) en servicio │
+  ├────────┼────────────────────────────────────┤
+  │ /ref 2 │ PMA (FAC_PMA) en servicio          │
+  ├────────┼────────────────────────────────────┤
+  │ /ref 3 │ HMA (FAC_HOSP) en servicio         │
+  ├────────┼────────────────────────────────────┤
+  │ /ref 4 │ GNA + PMA combinados               │
+  └────────┴────────────────────────────────────┘
+
+  Lo que hace es iterar sobre todos los conectados y llamar SetPlayerMarkerForPlayer(oficial, quien_pidió, COLOR_BACKUP)
+   — un marcador azul en el mapa de cada oficial/médico apuntando a quien pidió refuerzo.
+
+  ---
+  ¿Por qué "desaparece"?
+
+  No desaparece realmente. Persiste indefinidamente.
+
+  SetPlayerMarkerForPlayer en SA-MP es permanente — no tiene duración automática. El problema es que el código no tiene
+  ningún sistema de limpieza:
+
+  - ❌ No hay timer que limpie después de X tiempo
+  - ❌ No hay limpieza en OnPlayerDisconnect — si quien pidió el refuerzo se desconecta, el marcador azul sigue
+  apareciendo en el mapa de todos los demás
+  - ❌ No hay limpieza en OnPlayerSpawn ni OnPlayerDeath
+  - ❌ No hay variable que rastree quién tiene un refuerzo activo
+
+  Lo que parece "desaparecer" es cuando el servidor reinicia (resetea todo) o cuando alguien ejecuta /noref.
+
+  ---
+  El bug crítico de /noref
+
+  /noref hace esto:
+  SetPlayerMarkerForPlayer(i, playerid, 0xFFFFFF00);
+
+  0xFFFFFF00 no es transparente — es amarillo. El marcador no se elimina, cambia de azul a amarillo. El refuerzo sigue
+  visualmente activo para todos.
+
+  ---
+  Otros bugs
+
+  EndPlayerDuty no resetea MedDuty:
+  stock EndPlayerDuty(playerid) {
+      CopDuty[playerid] = 0;
+      SIDEDuty[playerid] = 0;
+      // MedDuty[playerid] = 0;  ← FALTA
+  }
+  Los médicos pueden quedar en servicio indefinidamente en la variable.
+
+  Cualquiera puede ejecutar /noref: No verifica si quien lo ejecuta es el mismo que pidió el refuerzo. Un oficial puede
+  cancelar el refuerzo de otro.
+
+  No hay tracking del refuerzo activo: No existe ninguna variable g_refuerzo_activo[playerid]. El sistema no sabe si ya
+  hay un refuerzo pedido o quién lo pidió.
+
+  ---
+  Resumen del estado real
+
+  ┌──────────────────────────────┬──────────────────────────────┐
+  │          Escenario           │   ¿Se limpia el marcador?    │
+  ├──────────────────────────────┼──────────────────────────────┤
+  │ /noref                       │ No — cambia a amarillo (bug) │
+  ├──────────────────────────────┼──────────────────────────────┤
+  │ Quien pidió se desconecta    │ No — marcador queda huérfano │
+  ├──────────────────────────────┼──────────────────────────────┤
+  │ Quien pidió muere            │ No                           │
+  ├──────────────────────────────┼──────────────────────────────┤
+  │ Quien pidió cambia personaje │ No                           │
+  ├──────────────────────────────┼──────────────────────────────┤
+  │ Servidor reinicia            │ Sí                           │
+  └──────────────────────────────┴──────────────────────────────┘
+
+  El sistema está incompleto — funciona para poner el marcador pero no tiene ningún mecanismo para sacarlo
+  correctamente.
+
+  ¿Querés que lo corrija?
+
+✻ Brewed for 2m 57s
+
+❯ lo que sucede es que la persona pone /ref; pero hay dos escenarios. El que está lejos no lo ve, y tiene que poner
+/ref 4 (que es el que funciona correctamente supuestamente, los demas fallan) varias veces para que el que está lejos
+no lo vea. Y hay veces que dura un tiempo aleatorio y se borra y hay que darle tres o cuatro veces de nuevo. Ahí existe
+ un problema aparte de los que me dijiste
+
+● Eso que describís es un problema diferente y específico de SA-MP. Déjame ver el server.cfg y buscar cualquier código
+  que pueda estar pisando los marcadores periódicamente.
+
+  Searched for 2 patterns, read 1 file (ctrl+o to expand)
+
+● Encontré el problema exacto. Es más grave de lo que parecía.
+
+  ---
+  El problema real: SetPlayerColor destruye los marcadores
+
+  En SA-MP, cada vez que se llama SetPlayerColor sobre un jugador, se resetean TODOS los SetPlayerMarkerForPlayer que
+  existían sobre él. Es un comportamiento de la engine: el color global pisa todos los overrides por-jugador.
+
+  Y esto pasa en OnPlayerSpawn en marp_core.pwn:1392:
+
+  // OnPlayerSpawn
+  SetPlayerColor(playerid, 0xFFFFFF00);  // ← borra TODOS los marcadores de /ref
+
+  El flujo exacto del bug:
+
+  Oficial A ejecuta /ref → marcador azul en todos los oficiales
+      ↓
+  Oficial A muere en la persecución
+      ↓
+  OnPlayerDeath → OnPlayerSpawn → SetPlayerColor(A, 0xFFFFFF00)
+      ↓
+  Los marcadores de /ref se borran para todos
+      ↓
+  Oficiales vuelven a llamar /ref
+
+  Esto explica el "tiempo aleatorio": el marcador dura exactamente hasta que quien lo pidió muere, respawnea, entra/sale
+   de adminduty, sale de la cárcel — cualquier evento que llame SetPlayerColor sobre él.
+
+  ---
+  El problema de la distancia
+
+  El servidor usa ShowPlayerMarkers(PLAYER_MARKERS_MODE_GLOBAL) — en teoría todos deberían verlo sin importar distancia.
+   Pero en SA-MP hay una limitación del cliente: los blips del radar no se renderizan para jugadores fuera del rango de
+  streaming (~300 unidades) aunque el modo sea GLOBAL. El marcador existe en el servidor, pero el cliente no lo dibuja.
+
+  /ref 4 no "funciona mejor" por diseño — lo que pasa es que combina GNA+PMA, entonces hay más chances de que haya
+  alguien cerca del que lo pidió que sí lo vea y pueda responder.
+
+  ---
+  Resumen de todos los problemas
+
+  ┌─────────────────────────────────┬───────────────────────────────────────────────────────────────────────────────┐
+  │            Problema             │                                     Causa                                     │
+  ├─────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+  │ Marcador desaparece             │ SetPlayerColor en OnPlayerSpawn borra todos los overrides de                  │
+  │ aleatoriamente                  │ SetPlayerMarkerForPlayer                                                      │
+  ├─────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+  │ El lejano no lo ve              │ Limitación del cliente SA-MP: blips no se renderizan fuera de ~300u aunque    │
+  │                                 │ sea GLOBAL                                                                    │
+  ├─────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+  │ /noref no funciona              │ 0xFFFFFF00 no es transparente, cambia a amarillo en vez de borrar             │
+  ├─────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+  │ Marcadores huérfanos            │ No hay limpieza en OnPlayerDisconnect                                         │
+  └─────────────────────────────────┴───────────────────────────────────────────────────────────────────────────────┘
+
+  ¿Querés que lo arregle? La solución correcta sería reemplazar SetPlayerMarkerForPlayer por un MapIcon dinámico (que sí
+   es visible a cualquier distancia) y re-aplicarlo automáticamente en OnPlayerSpawn si el refuerzo sigue activo.
+
+✻ Brewed for 1m 8s
+
+❯ okey, decime cómo solucionarías cada problema y qué debería pasar cuando lo pruebe.
+
+● Solución por problema
+
+  ---
+  1. Marcador que desaparece al respawnear
+
+  Causa: SetPlayerColor en OnPlayerSpawn borra todos los SetPlayerMarkerForPlayer.
+
+  Solución: Guardar quién tiene un refuerzo activo y re-aplicar los marcadores automáticamente en OnPlayerSpawn.
+
+  new g_RefuerzoActivo[MAX_PLAYERS] = -1;  // -1 = sin refuerzo, X = playerid que pidió
+  new g_RefuerzoTipo[MAX_PLAYERS] = 0;
+
+  // En OnPlayerSpawn, después del SetPlayerColor:
+  //   recorrer todos los jugadores, si alguno tiene refuerzo activo, reaplicar
+  //   SetPlayerMarkerForPlayer(playerid_que_spawneó, quien_pidió, COLOR_BACKUP)
+
+  Qué vas a notar al probarlo: El oficial que pidió /ref puede morir y respawnear — el marcador azul sigue apareciendo
+  para todos sin necesidad de volver a ejecutar el comando.
+
+  ---
+  2. El jugador lejano no lo ve
+
+  Causa: SetPlayerMarkerForPlayer usa blips del radar que el cliente no renderiza fuera de ~300 unidades.
+
+  Solución: Reemplazar por SetPlayerMapIcon — los iconos de mapa sí son visibles a cualquier distancia, aparecen en el
+  mapa grande (tecla M) y en el minimapa sin importar la distancia.
+
+  Cada oficial/médico que recibe el refuerzo obtiene un ícono en la posición del que lo pidió. Se actualiza con un timer
+   cada pocos segundos mientras el refuerzo esté activo.
+
+  Qué vas a notar al probarlo: Abrís el mapa (M) y ves el ícono del refuerzo aunque estés al otro lado del mapa. También
+   aparece en el minimapa como un punto diferenciado.
+
+  ---
+  3. /noref no borra el marcador
+
+  Causa: 0xFFFFFF00 es amarillo, no transparente.
+
+  Solución: Al cancelar, remover los SetPlayerMapIcon de cada oficial y restaurar SetPlayerMarkerForPlayer al color
+  original del jugador (0xFFFFFF00 que en este servidor = invisible). Además limpiar g_RefuerzoActivo.
+
+  Qué vas a notar al probarlo: /noref elimina completamente el ícono del mapa para todos los oficiales.
+
+  ---
+  4. Marcadores huérfanos al desconectarse
+
+  Causa: OnPlayerDisconnect no limpia los marcadores/íconos que otros tienen sobre el jugador.
+
+  Solución: En OnPlayerDisconnect, si g_RefuerzoActivo[playerid] == playerid (tiene refuerzo activo), ejecutar la lógica
+   de /noref automáticamente antes de que se vaya.
+
+  Qué vas a notar al probarlo: Si el oficial que pidió refuerzo se desconecta, el ícono desaparece del mapa de todos los
+   demás instantáneamente.
+
+  ---
+  5. MedDuty que no se resetea
+
+  Causa: EndPlayerDuty no pone MedDuty[playerid] = 0.
+
+  Solución: Agregar esa línea. Es un fix de una sola línea.
+
+  Qué vas a notar al probarlo: Un médico que muere o se desconecta ya no sigue apareciendo como "en servicio" para el
+  sistema de refuerzos.
+
+  ---
+  Comportamiento esperado final
+
+  Cuando esté todo corregido, el flujo debería ser así:
+
+  1. Oficial ejecuta /ref 2 → todos los PMA ven un ícono en el mapa (visible a cualquier distancia) apuntando al oficial
+  2. El oficial muere → respawnea → el ícono sigue ahí, no desaparece
+  3. El oficial ejecuta /noref → el ícono desaparece completamente del mapa de todos
+  4. El oficial se desconecta → el ícono desaparece automáticamente
+  5. Un médico fuera de servicio → /ref 3 no lo marca
+
+  ---
+  ¿Arrancamos? Si querés puedo implementarlo todo de una o ir problema por problema.
+
+❯ pero escuchame, /noref debería al oficial de la PMA o de la GNA sacar su /ref si lo puso antes. Y si quieren los
+demas ponerse todos el /ref y 1 pone /noref deberían seguir apareciendo los demas menos el que puso /ref. Funcionaría
+asi la solucion que me planteas no? si 1 pone /noref no debería sacarselo a los demas, solo a si mismo, se entiende?
+
+● Sí, entiendo perfectamente. Y sí, la solución que planteé soporta eso — g_RefuerzoActivo[playerid] es por jugador, no
+  global. Cada uno rastrea su propio refuerzo.
+
+  Entonces el flujo sería:
+
+  - Oficial A ejecuta /ref → ícono de A aparece en el mapa de todos
+  - Oficial B ejecuta /ref → ícono de B aparece en el mapa de todos
+  - Oficial A ejecuta /noref → solo se borra el ícono de A, el de B sigue
+  - Oficial B muere y respawnea → el ícono de B se re-aplica solo
+
+  Cada jugador es dueño de su propio refuerzo. /noref solo cancela el tuyo.
+
+  ¿Arrancamos con la implementación?
+
+Buena idea hacerlo por etapas. Te propongo este orden:
+
+  1. Tracking del refuerzo activo — agregar g_RefuerzoActivo y g_RefuerzoTipo por jugador, que se setean al ejecutar
+  /ref y se limpian con /noref (solo el propio)
+  2. Limpieza en OnPlayerDisconnect y OnPlayerDeath — que al desconectarse/morir se cancele el refuerzo automáticamente
+  3. Re-aplicar en OnPlayerSpawn — que si tenés refuerzo activo y respawneás, se re-apliquen los marcadores
+  4. Reemplazar por SetPlayerMapIcon — solución al problema de distancia
+  5. Sonido — PlayerPlaySound al recibir el refuerzo
+
+  ¿Arrancamos con la etapa 1?
+
+❯ arrancá con la etapa 1.

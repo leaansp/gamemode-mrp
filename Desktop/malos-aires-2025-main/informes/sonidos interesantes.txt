@@ -1,0 +1,21 @@
+5200 - Continuous buzz.
+5201 - Bling
+5202 - Bumblebee video game take damage
+5203 - Bumblebee video game game over
+5204 - Bumblebee video game firing sound
+5205 - Bumblebee video game beep
+5206 - Bumblebee video game death
+5200 - Continuous buzz.
+5201 - Bling
+5202 - Bumblebee video game take damage
+5203 - Bumblebee video game game over
+5204 - Bumblebee video game firing sound
+5205 - Bumblebee video game beep
+5206 - Bumblebee video game death
+
+DECLINE 17001
+KEYPAD_BEEP - 21000 este para el ref 
+KEYPAD_BEEP2 - 41603
+KEYPAD_FAIL - 21001 este para el boton de panico
+RADAR_LEVEL_WARNING - 30600 o este para el boton de panico
+KEYPAD_PASS - 21002

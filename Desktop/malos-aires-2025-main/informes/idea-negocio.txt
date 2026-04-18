@@ -1,0 +1,9 @@
+que con un cmd que sea /negociosactivos se abra un menu desplegable que diga qué negocios tienen empleados en servicio (osea, /negocioservicio o algo asi era) y que diga tipo el nombre del negocio, un guión tipo "-" Empleados en servicio: (numero de empleados en servicio en verde), otro guión (-) y en rojo claro ponga /prop (ID del negocio)
+
+y que cuando selecciones alguno con enter te lo marque y te  diga en el chat [INFO] El negocio se ha marcado en el mapa.
+
+si el negocio no tiene empleados en servicio, que desaparezca del menu. Si no hay /negociosactivos, que aparezca algo como, "22[INFO] En este país son todos unos vagos. Nadie quiere laburar. ¡No hay negocios activos en este momento!" y otro q diga "[INFO] ¿Qué estás esperando para abrir tu propio negocio?"
+
+Si la persona sale del negocio y se aleja más alla de un radio de 20 metros de la puerta donde tocas H y entrás, que le aparezca un mensaje que diga "[INFO] ¿Qué haces abandonando tu lugar de trabajo? ¡Te van a cagar a pedos!" y otro "[INFO] Si en 5 minutos no volvés, dejarás de estar en servicio y no cobraras nada. Recuerda poner /negociotrabajo 
+
+averiguar lo de los sueldos
