@@ -113,11 +113,12 @@ cd malosaires-test/malos-aires-2025
 sudo git pull && sudo sampctl build && sudo systemctl restart samp-test
 ```
 
-**Archivos solo para GitHub — NO van a GitLab:**
-- `CLAUDE.md` — instrucciones internas, no relevantes para el servidor
-- `informes/` — documentación interna
+**Archivos que NUNCA se suben a GitLab (ni main ni Test):**
+- `CLAUDE.md`
+- `informes/`
+- `.claude/`
 
-Estos archivos se commitean y pushean solo a `origin` (GitHub). Al hacer push a GitLab se incluyen igual por el force push, pero no se mantienen activamente allá.
+Solo se pushean a `origin` (GitHub).
 
 ### Revertir en el VPS
 ```bash
